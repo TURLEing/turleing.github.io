@@ -45,7 +45,7 @@
         content="2021-08-02">
       <meta 
         property="og:article:modified_time" 
-        content="2021-08-02">
+        content="2021-08-04">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -373,7 +373,7 @@
 显然，初始化 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo stretchy="false">[</mo><mn>0</mn><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>=</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">S[0][i]=i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord">0</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>。</p>
 <p>那我们的问题就转化为求 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo stretchy="false">[</mo><mi>r</mi><mo stretchy="false">]</mo><mo>−</mo><mi>S</mi><mo stretchy="false">[</mo><mi>l</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">S[r]-S[l]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mclose">]</span></span></span></span> 的大小，那就纳闷了，我们该用什么东西来类比减法呢？<br />
 答案是没必要类比，我们可以将其看作 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo stretchy="false">[</mo><mi>r</mi><mo stretchy="false">]</mo><mo>+</mo><mo stretchy="false">(</mo><mo>−</mo><mi>S</mi><mo stretchy="false">[</mo><mi>l</mi><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S[r]+ (-S[l])</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">−</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mclose">]</span><span class="mclose">)</span></span></span></span>，这就很有意思了，等价于求出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo stretchy="false">[</mo><mi>l</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">S[l]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mclose">]</span></span></span></span> 该排列的”逆元“。</p>
-<p>据那个大佬说这里的逆元指的就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>n</mi><mi>v</mi><mi>e</mi><mi>r</mi><mi>s</mi><mi>e</mi><mi>o</mi><mi>f</mi><mi>p</mi><mi>e</mi><mi>r</mi><mi>m</mi><mi>u</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">inverse of permutation</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">p</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">m</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span></span></span></span>，直译就是逆排序但我没搜到。大概意思就是将第 i 位置上的数 j调换为 第 j 位置上的数 i。<br />
+<p>据那个大佬说这里的逆元指的就是 inverse of permutation，直译就是逆排序但我没在百度搜到。大概意思就是将第 i 位置上的数 j调换为 第 j 位置上的数 i。<br />
 不是很懂有什么应用，但能做出来，那不管了（</p>
 <pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;map&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> mp make_pair </span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> pr pair<span class="hljs-meta-string">&lt;int,int&gt;</span> </span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">int</span> t,n,m,q,l,r;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>cin&gt;&gt;t;<br><span class="hljs-keyword">while</span> (t--)<br>&#123;<br>	cin&gt;&gt;n&gt;&gt;m;  <span class="hljs-keyword">int</span> p[n+<span class="hljs-number">1</span>][m+<span class="hljs-number">1</span>];<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j=<span class="hljs-number">1</span>;j&lt;=m;j++) cin&gt;&gt;p[i][j];<br>	<span class="hljs-keyword">int</span> pre[n+<span class="hljs-number">1</span>][m+<span class="hljs-number">1</span>],inv[n+<span class="hljs-number">1</span>][m+<span class="hljs-number">1</span>];<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++) pre[<span class="hljs-number">0</span>][i]=inv[<span class="hljs-number">0</span>][i]=i;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j=<span class="hljs-number">1</span>;j&lt;=m;j++) <br>		pre[i][j]=p[i][pre[i<span class="hljs-number">-1</span>][j]],inv[i][pre[i][j]]=j;<br>	cin&gt;&gt;q; map&lt;pr,ll&gt; hash;<br>	<span class="hljs-keyword">while</span> (q--)	&#123;<br>		cin&gt;&gt;l&gt;&gt;r; ll ans=<span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">if</span> ( hash.<span class="hljs-built_in">count</span>(<span class="hljs-built_in">mp</span>(l,r)) ) ans=hash[<span class="hljs-built_in">mp</span>(l,r)];<br>		<span class="hljs-keyword">else</span> &#123;<br>			<span class="hljs-keyword">for</span> (ll i=<span class="hljs-number">1</span>;i&lt;=m;i++) ans+=(ll)pre[r][inv[l<span class="hljs-number">-1</span>][i]]*i; <br>			hash[<span class="hljs-built_in">mp</span>(l,r)]=ans;<br>		&#125;<br>		cout&lt;&lt;ans&lt;&lt;endl;<br>	&#125;<br>&#125;<br>&#125;<br></code></pre>
 <h3 id="j-course-selection"><a class="markdownIt-Anchor" href="#j-course-selection"></a> J. Course Selection</h3>
@@ -421,7 +421,7 @@
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">BUPT 虚拟会（其三） </div>
+            <div class="nav-title">BUPT赛后会（其三） </div>
           
         </div>
       </a>
@@ -558,12 +558,6 @@
       </a>
     
       <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
-      </a>
-    
-      <a 
         href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
         title="主席树">
         <div class="tags-list-item">主席树</div>
@@ -585,6 +579,12 @@
         href="/tags/%E6%A0%91%E5%BD%A2DP/" 
         title="树形DP">
         <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
       </a>
     
   </div>
@@ -621,7 +621,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-08-04</div>
-        <a href="/2021/08/04/BUPT-WEL-3/"><div class="recent-posts-item-content">BUPT 虚拟会（其三）</div></a>
+        <a href="/2021/08/04/BUPT-WEL-3/"><div class="recent-posts-item-content">BUPT赛后会（其三）</div></a>
       </div>
     
       <div class="recent-posts-item">
