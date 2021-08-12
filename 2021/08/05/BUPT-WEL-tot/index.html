@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>BUPT迎新会（合集）</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="BUPT迎新会（合集）">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2021/08/05/BUPT-WEL-tot/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2021-08-05">
+      <meta 
+        property="og:article:modified_time" 
+        content="2021-08-13">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="动态规划">
+        
+          <meta 
+            property="og:article:tag" 
+            content="思维">
+        
+          <meta 
+            property="og:article:tag" 
+            content="树上启发式合并">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      BUPT迎新会（合集）
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-08-05T15:39:20.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2021-08-05</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%AB%9E%E8%B5%9B/" 
+          class="post-meta-link">
+          竞赛
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2.3k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+            class="post-meta-link">
+            动态规划
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E6%80%9D%E7%BB%B4/" 
+            class="post-meta-link">
+            思维
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+            class="post-meta-link">
+            树上启发式合并
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h3 id="alizard-lounge"><a class="markdownIt-Anchor" href="#alizard-lounge"></a> A.Lizard lounge</h3>
+<h4 id="题意"><a class="markdownIt-Anchor" href="#题意"></a> 题意：</h4>
+<p>给定一系列肥宅的坐标（有高度）以及电视的坐标，肥宅可以看到电视当且仅当面朝电视前方所有人的高度小于该肥宅高度。假设可踢掉任意肥宅，问最多可看到电视的肥宅人数。</p>
+<h4 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析：</h4>
+<p>大概就是按照角度把所有肥宅分类，一条线上跑LIS就行了。。<br />
+每次跑LIS清空数组，如果用 memset 会炸成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mi>M</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(NM)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mclose">)</span></span></span></span>（ M 是最大高度），我为了这个交了 5 发；<br />
+xd 同学用了撤销操作的想法，保证时间复杂度控制在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mo>⋅</mo><mi>l</mi><mi>o</mi><mi>g</mi><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N \cdot logN)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span>，简单且巧妙但我就是没想到。</p>
+<hr />
+<h3 id="btree-requests"><a class="markdownIt-Anchor" href="#btree-requests"></a> B.Tree Requests</h3>
+<h4 id="题意-2"><a class="markdownIt-Anchor" href="#题意-2"></a> 题意：</h4>
+<p>给定一个以 1 为根的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span> 个结点的树，每个点上有一个字母（ a-z ），每个点的深度定义为该节点到 1 号结点路径上的点数。<br />
+每次询问 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a,b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span></span></span></span> 查询以 a 为根的子树内深度为 b 的结点上的字母重新排列之后是否能构成回文串。</p>
+<h4 id="分析-2"><a class="markdownIt-Anchor" href="#分析-2"></a> 分析：</h4>
+<p>看完题我只会把树建好然后 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 暴力搞，比赛后才知道有树上启发式合并这种东西，要学的东西还有很多。</p>
+<p>考虑将询问全部离线，对于每个点求出其对应询问的所有答案。<br />
+首先将这棵树重链剖分，在深搜的过程中我们可以<strong>优先处理轻儿子并在关于轻儿子的询问结束后清空答案数组</strong>，最后再<strong>处理重儿子，但此时我们不必清空答案数组</strong>，这样我们能够在处理其父亲的询问时只需要把所有轻儿子的贡献重新统计即可。<br />
+由于轻儿子修改次数不会超过logn，所以大胆删去并不会影响时间复杂度。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstdio&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> maxn 500010</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">e</span>&#123;</span><span class="hljs-keyword">int</span> id,d;&#125;;  vector&lt;e&gt; ask[maxn];<br><span class="hljs-keyword">int</span> n,m,cnt[maxn][<span class="hljs-number">27</span>],d[maxn],f[maxn],s[maxn],son[maxn];<br><span class="hljs-keyword">int</span> dfn[maxn],st,id[maxn],ans[maxn];<br>vector&lt;<span class="hljs-keyword">int</span>&gt; g[maxn];  <br><span class="hljs-keyword">char</span> str[maxn]; <br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-keyword">int</span> u,<span class="hljs-keyword">int</span> fa)</span></span><br><span class="hljs-function"></span>&#123;<br>	s[u]=<span class="hljs-number">1</span>; d[u]=d[fa]+<span class="hljs-number">1</span>; dfn[u]=++st; id[st]=u;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> v: g[u]) &#123;<br>		<span class="hljs-keyword">if</span> (v==fa) <span class="hljs-keyword">continue</span>; <span class="hljs-built_in">dfs</span>(v,u);<br>		s[u]+=s[v]; <span class="hljs-keyword">if</span> (s[v]&gt;s[son[u]]) son[u]=v;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">chg</span><span class="hljs-params">(<span class="hljs-keyword">int</span> u,<span class="hljs-keyword">int</span> k)</span> </span>&#123; cnt[d[u]][str[u]-<span class="hljs-string">&#x27;a&#x27;</span>+<span class="hljs-number">1</span>]+=k; &#125;<br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">check</span><span class="hljs-params">(<span class="hljs-keyword">int</span> d)</span></span>&#123;<br>	<span class="hljs-keyword">int</span> ans=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=<span class="hljs-number">26</span>;i++) ans+=(cnt[d][i] &amp; <span class="hljs-number">1</span>);<br>	<span class="hljs-keyword">return</span> (ans&lt;=<span class="hljs-number">1</span>); <br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">DFS</span><span class="hljs-params">(<span class="hljs-keyword">int</span> u,<span class="hljs-keyword">bool</span> kp)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> v: g[u]) &#123;<br>		<span class="hljs-keyword">if</span> (v==f[u] || v==son[u]) <span class="hljs-keyword">continue</span>; <span class="hljs-built_in">DFS</span>(v,<span class="hljs-number">0</span>);<br>	&#125;<br>	<span class="hljs-comment">//先处理全部的轻儿子 </span><br>	<span class="hljs-keyword">if</span> ( son[u] ) <span class="hljs-built_in">DFS</span>(son[u],<span class="hljs-number">1</span>); <span class="hljs-comment">// 最后处理重儿子，此时cnt函数只存了重儿子 </span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> v:g[u])&#123;<br>		<span class="hljs-keyword">if</span> (v==f[u] || v==son[u]) <span class="hljs-keyword">continue</span>;<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=dfn[v];i&lt;=dfn[v]+s[v]<span class="hljs-number">-1</span>;i++) <span class="hljs-built_in">chg</span>(id[i],<span class="hljs-number">1</span>); <br>	&#125;	<span class="hljs-built_in">chg</span>(u,<span class="hljs-number">1</span>);  <span class="hljs-comment">//重新加上轻儿子和自己 </span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;ask[u].<span class="hljs-built_in">size</span>();i++) <br>		ans[ask[u][i].id]=<span class="hljs-built_in">check</span>(ask[u][i].d);  <span class="hljs-comment">//离线查询</span><br>	<span class="hljs-keyword">if</span> (!kp) <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=dfn[u];i&lt;=dfn[u]+s[u]<span class="hljs-number">-1</span>;i++) <span class="hljs-built_in">chg</span>(id[i],<span class="hljs-number">-1</span>); <span class="hljs-comment">//由于轻儿子修改次数不会超过logn，所以大胆删去 </span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">2</span>,x;i&lt;=n;i++) &#123;<br>		<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;x); f[i]=x;<br>		g[i].<span class="hljs-built_in">push_back</span>(x); g[x].<span class="hljs-built_in">push_back</span>(i);<br>	&#125;<br>	<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%s&quot;</span>,str+<span class="hljs-number">1</span>);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>,u,k;i&lt;=m;i++) &#123;<br>		<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;k); ask[u].<span class="hljs-built_in">push_back</span>(&#123;i,k&#125;);<br>	&#125;<br>	<span class="hljs-built_in">dfs</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);  <span class="hljs-built_in">DFS</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++) <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>,ans[i]?<span class="hljs-string">&quot;Yes&quot;</span>:<span class="hljs-string">&quot;No&quot;</span>);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre>
+<h3 id="c-range-increments"><a class="markdownIt-Anchor" href="#c-range-increments"></a> C. Range Increments</h3>
+<h4 id="题意-3"><a class="markdownIt-Anchor" href="#题意-3"></a> 题意：</h4>
+<p>给定一个序列，对于其任意子区间进行减一操作，直至全部变为 0 ，问最小操作数。</p>
+<h4 id="分析-3"><a class="markdownIt-Anchor" href="#分析-3"></a> 分析：</h4>
+<p>这题一看就是典型的数据结构题，然后我就被差分曹翻了。</p>
+<p>我的想法是线段树维护区间最大 / 最小值，如果 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>1</mn><mo separator="true">,</mo><mi>n</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1,n]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">n</span><span class="mclose">]</span></span></span></span> 的最大值为 0 ，标志查询结束。<br />
+为了找出当前所有连续的非 0 区间，对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>1</mn><mo separator="true">,</mo><mi>i</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1,i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">i</span><span class="mclose">]</span></span></span></span> 区间其最大值必然是递增的，可以利用<strong>二分</strong>找出最小的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span> 使其区间最大值非 0 ，这就确定了最靠左的非 0 子区间的左端点。<br />
+我们继续在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mi>i</mi><mo separator="true">,</mo><mi>n</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[i,n]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">n</span><span class="mclose">]</span></span></span></span> 范围内找出第一个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span></span></span></span> 使得 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[i,j]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mclose">]</span></span></span></span> 区间的最小值为 0 ，则 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">j-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 便是该非 0 子区间的右端点。</p>
+<p>然后就没了，思路挺直白的但是时间就白白浪费了。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstdio&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstdlib&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> mid (l+r)/2</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> mp make_pair</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> maxn=<span class="hljs-number">1e5</span>+<span class="hljs-number">1</span>;<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tree</span>&#123;</span><br>	<span class="hljs-keyword">int</span> mx,mn;<br>&#125;tr[maxn*<span class="hljs-number">4</span>];<br><span class="hljs-keyword">int</span> tg[maxn*<span class="hljs-number">4</span>],a[maxn],n; vector&lt; pair&lt;<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt; &gt; ans;<br><br><br><span class="hljs-comment">/*segment treee*/</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o)</span></span>&#123;tr[o] = &#123;<span class="hljs-built_in">max</span>(tr[o*<span class="hljs-number">2</span>].mx,tr[o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>].mx) , <span class="hljs-built_in">min</span>(tr[o*<span class="hljs-number">2</span>].mn,tr[o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>].mn)&#125;;&#125;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">pd</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o)</span></span>&#123;<br>	<span class="hljs-keyword">int</span> k=tg[o]; tg[o]=<span class="hljs-number">0</span>;<br>	tr[o*<span class="hljs-number">2</span>].mx+=k; tr[o*<span class="hljs-number">2</span>].mn+=k;<br>	tr[o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>].mx+=k; tr[o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>].mn+=k;<br>	tg[o*<span class="hljs-number">2</span>]+=k; tg[o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>]+=k;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (l==r) &#123;tr[o] = &#123;a[l],a[l]&#125;; <span class="hljs-keyword">return</span>;&#125;<br>	<span class="hljs-built_in">build</span>(o*<span class="hljs-number">2</span>,l,mid); <span class="hljs-built_in">build</span>(o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);<br>	<span class="hljs-built_in">pushup</span>(o);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">query_mn</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r,<span class="hljs-keyword">int</span> x,<span class="hljs-keyword">int</span> y)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (x&lt;=l &amp;&amp; r&lt;=y) <span class="hljs-keyword">return</span> tr[o].mn;<br>	<span class="hljs-keyword">if</span> (l&gt;y || r&lt;x) <span class="hljs-keyword">return</span> inf/<span class="hljs-number">2</span>;<br>	<span class="hljs-keyword">if</span> (tg[o]) <span class="hljs-built_in">pd</span>(o);<br>	<span class="hljs-keyword">return</span> <span class="hljs-built_in">min</span>(<span class="hljs-built_in">query_mn</span>(o*<span class="hljs-number">2</span>,l,mid,x,y),<span class="hljs-built_in">query_mn</span>(o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">query_mx</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r,<span class="hljs-keyword">int</span> x,<span class="hljs-keyword">int</span> y)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (x&lt;=l &amp;&amp; r&lt;=y) <span class="hljs-keyword">return</span> tr[o].mx;<br>	<span class="hljs-keyword">if</span> (l&gt;y || r&lt;x) <span class="hljs-keyword">return</span> -inf/<span class="hljs-number">2</span>;<br>	<span class="hljs-keyword">if</span> ( tg[o]!=<span class="hljs-number">0</span> ) <span class="hljs-built_in">pd</span>(o);<br>	<span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(<span class="hljs-built_in">query_mx</span>(o*<span class="hljs-number">2</span>,l,mid,x,y),<span class="hljs-built_in">query_mx</span>(o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-keyword">int</span> o,<span class="hljs-keyword">int</span> l,<span class="hljs-keyword">int</span> r,<span class="hljs-keyword">int</span> x,<span class="hljs-keyword">int</span> y)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (x&lt;=l &amp;&amp; r&lt;=y) &#123; tr[o].mn--,tr[o].mx--; tg[o]--; <span class="hljs-keyword">return</span>;&#125;<br>	<span class="hljs-keyword">if</span> (l&gt;y || r&lt;x) <span class="hljs-keyword">return</span>; <span class="hljs-keyword">if</span> ( tg[o]!=<span class="hljs-number">0</span> ) <span class="hljs-built_in">pd</span>(o);<br>	<span class="hljs-built_in">update</span>(o*<span class="hljs-number">2</span>,l,mid,x,y); <span class="hljs-built_in">update</span>(o*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y);<br>	<span class="hljs-built_in">pushup</span>(o);<br>&#125;<br><br><span class="hljs-comment">/* binary search*/</span><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">head</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">int</span> l=<span class="hljs-number">1</span>,r=n,ans=<span class="hljs-number">-1</span>;<br>	<span class="hljs-keyword">while</span> (l&lt;=r) &#123;<br>		<span class="hljs-keyword">if</span> ( <span class="hljs-built_in">query_mx</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,<span class="hljs-number">1</span>,mid)&gt;<span class="hljs-number">0</span> ) ans=mid,r=mid<span class="hljs-number">-1</span>;<br>		<span class="hljs-keyword">else</span> l=mid+<span class="hljs-number">1</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> ans;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">back</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">int</span> l=x,r=n,ans=<span class="hljs-number">-1</span>;<br>	<span class="hljs-keyword">while</span> (l&lt;=r) &#123;<br>		<span class="hljs-keyword">if</span> ( <span class="hljs-built_in">query_mn</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,x,mid)&gt;<span class="hljs-number">0</span> ) ans=mid,l=mid+<span class="hljs-number">1</span>;<br>		<span class="hljs-keyword">else</span> r=mid<span class="hljs-number">-1</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> ans;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	ios::<span class="hljs-built_in">sync_with_stdio</span>(<span class="hljs-number">0</span>); cin.<span class="hljs-built_in">tie</span>(<span class="hljs-number">0</span>);<br>	cin&gt;&gt;n;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cin&gt;&gt;a[i]; <span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n);<br>	<span class="hljs-keyword">while</span> (<span class="hljs-built_in">query_mx</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,<span class="hljs-number">1</span>,n) != <span class="hljs-number">0</span>) &#123;<br>		<span class="hljs-keyword">int</span> fro = <span class="hljs-built_in">head</span>(); <span class="hljs-keyword">int</span> to = <span class="hljs-built_in">back</span>(fro);<br>		ans.<span class="hljs-built_in">push_back</span>( <span class="hljs-built_in">mp</span>(fro,to) );<br>		<span class="hljs-built_in">update</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,fro,to);<br>	&#125;<br>	cout&lt;&lt;ans.<span class="hljs-built_in">size</span>()&lt;&lt;endl;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> i=<span class="hljs-number">0</span>;i&lt;ans.<span class="hljs-built_in">size</span>();i++) cout&lt;&lt;ans[i].first&lt;&lt;<span class="hljs-string">&quot; &quot;</span>&lt;&lt;ans[i].second&lt;&lt;endl;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre>
+<h3 id="d-zagreb-sorts-machines"><a class="markdownIt-Anchor" href="#d-zagreb-sorts-machines"></a> D. Zagreb Sorts Machines</h3>
+<h4 id="题解"><a class="markdownIt-Anchor" href="#题解"></a> 题解：</h4>
+<p>有N台机器重量各不相等，现在要求把这些机器按照重量排序，重量从左到右依次递增。<br />
+移动机器只能做交换操作，但交换机器要花费一定的费用，费用的大小就是交换机器重量的和，求将所有机器变为有序的最小代价。</p>
+<h4 id="分析-4"><a class="markdownIt-Anchor" href="#分析-4"></a> 分析：</h4>
+<p>将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 排序后可确定每个元素最终的位置 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>，我们将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span> 向 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> 连有向边，可以证明最后所有元素会形成好几个环。<br />
+且我们始终能在任意环内找到一个最优的处理方案：每个对应元素和环内最小值位置交换，最终一定会使环内元素有序。<br />
+设 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><msub><mi>n</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">mn_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 为第 i 个环的最小元素， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><msub><mi>m</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">sm_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 为第 i 个环的总和， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><msub><mi>m</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">nm_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 为第 i 个环的元素数量。不难得到上述处理方案的贡献为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><msub><mi>n</mi><mi>i</mi></msub><mo>∗</mo><mo stretchy="false">(</mo><mi>n</mi><msub><mi>m</mi><mi>i</mi></msub><mo>−</mo><mn>2</mn><mo stretchy="false">)</mo><mo>+</mo><mi>s</mi><msub><mi>m</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">mn_i*(nm_i-2)+sm_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61528em;vertical-align:-0.15em;"></span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>但是 WA 了，想到可能这个环本身的最小值就很大，那样还是不能使答案更优。于是我们有个贪心的想法，先把整个序列最小的值换过来，进行上述操作之后在换回去，这样的贡献为:</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>M</mi><mi>i</mi><mi>n</mi><mo>∗</mo><mi>n</mi><msub><mi>m</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>+</mo><mi>s</mi><msub><mi>m</mi><mi>i</mi></msub><mo>+</mo><mo stretchy="false">(</mo><mi>M</mi><mi>i</mi><mi>n</mi><mo>+</mo><mi>m</mi><msub><mi>n</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Min*nm_i)+sm_i+(Min+mn_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> maxn=<span class="hljs-number">50005</span>;<br><span class="hljs-keyword">int</span> f[maxn],a[maxn],b[maxn],bel[maxn],cnt,n; <span class="hljs-keyword">bool</span> v[maxn];<br>ll mn[maxn],nm[maxn],sm[maxn],ans;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span>&#123;<span class="hljs-keyword">return</span> (x==f[x])?x:f[x]=<span class="hljs-built_in">get</span>(f[x]);&#125;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">merge</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a,<span class="hljs-keyword">int</span> b)</span></span>&#123;<br>	<span class="hljs-keyword">int</span> f1=<span class="hljs-built_in">get</span>(a),f2=<span class="hljs-built_in">get</span>(b); <span class="hljs-keyword">if</span> (f1!=f2) f[f1]=f2;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	ios::<span class="hljs-built_in">sync_with_stdio</span>(<span class="hljs-number">0</span>); cin.<span class="hljs-built_in">tie</span>(<span class="hljs-number">0</span>);<br>	<span class="hljs-built_in">memset</span>(mn,<span class="hljs-number">0x3f</span>,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(mn));<br>	cin&gt;&gt;n; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cin&gt;&gt;b[i],a[i]=b[i],f[i]=i;<br>	<span class="hljs-built_in">sort</span>(b+<span class="hljs-number">1</span>,b+n+<span class="hljs-number">1</span>);  mn[<span class="hljs-number">0</span>]=b[<span class="hljs-number">1</span>];<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>,k;i&lt;=n;i++) k=<span class="hljs-built_in">lower_bound</span>(b+<span class="hljs-number">1</span>,b+n+<span class="hljs-number">1</span>,a[i])-b,<span class="hljs-built_in">merge</span>(i,k);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) <span class="hljs-keyword">if</span> (i==f[i]) bel[i]=++cnt; <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) &#123;<br>		<span class="hljs-keyword">int</span> bl=bel[<span class="hljs-built_in">get</span>(i)];  <br>		mn[bl]=<span class="hljs-built_in">min</span>(mn[bl],(ll)a[i]); sm[bl]+=a[i]; nm[bl]++;<br>	&#125;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=cnt;i++) <br>	ans+=<span class="hljs-built_in">min</span>(mn[i]*(nm[i]<span class="hljs-number">-2</span>)+sm[i],mn[<span class="hljs-number">0</span>]*nm[i]+sm[i]+mn[<span class="hljs-number">0</span>]+mn[i]);<br>	cout&lt;&lt;ans&lt;&lt;endl;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2021/08/05/BUPT-WEL-tot/">
+            http://example.com/2021/08/05/BUPT-WEL-tot/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2021/08/04/BUPT-WEL-3/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">BUPT赛后会（其三） </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#alizard-lounge"><span class="toc-text"> A.Lizard lounge</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#btree-requests"><span class="toc-text"> B.Tree Requests</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c-range-increments"><span class="toc-text"> C. Range Increments</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d-zagreb-sorts-machines"><span class="toc-text"> D. Zagreb Sorts Machines</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E8%A7%A3"><span class="toc-text"> 题解：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>6</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>10</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont bilibili-fill society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#alizard-lounge"><span class="toc-text"> A.Lizard lounge</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#btree-requests"><span class="toc-text"> B.Tree Requests</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c-range-increments"><span class="toc-text"> C. Range Increments</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d-zagreb-sorts-machines"><span class="toc-text"> D. Zagreb Sorts Machines</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E8%A7%A3"><span class="toc-text"> 题解：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          竞赛
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#alizard-lounge"><span class="toc-text"> A.Lizard lounge</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#btree-requests"><span class="toc-text"> B.Tree Requests</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c-range-increments"><span class="toc-text"> C. Range Increments</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d-zagreb-sorts-machines"><span class="toc-text"> D. Zagreb Sorts Machines</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E8%A7%A3"><span class="toc-text"> 题解：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-08-05</div>
+        <a href="/2021/08/05/BUPT-WEL-tot/"><div class="recent-posts-item-content">BUPT迎新会（合集）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-08-04</div>
+        <a href="/2021/08/04/BUPT-WEL-3/"><div class="recent-posts-item-content">BUPT赛后会（其三）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-08-02</div>
+        <a href="/2021/08/02/BUPT-WEL-2/"><div class="recent-posts-item-content">BUPT堡羚会（其二）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-07-29</div>
+        <a href="/2021/07/29/BUPT-WEL/"><div class="recent-posts-item-content">BUPT迎新会（其一）</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
