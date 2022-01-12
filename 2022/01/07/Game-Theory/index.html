@@ -36,6 +36,10 @@
         content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
     
     
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;面对各类 ACM 模拟赛与 CF 比赛中频繁出现的博弈类问题，我们可以借着网课小作复习。&lt;/p&gt;">
+    
     
       <meta 
         property="og:type" 
@@ -45,7 +49,7 @@
         content="2022-01-07">
       <meta 
         property="og:article:modified_time" 
-        content="2022-01-07">
+        content="2022-01-09">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -291,7 +295,7 @@
     
     
       <span class="dot"></span>
-      <span>911 字</span>
+      <span>1.1k 字</span>
     
   </div>
   
@@ -319,6 +323,7 @@
     id="section" 
     class="post-content">
     <p>面对各类 ACM 模拟赛与 CF 比赛中频繁出现的博弈类问题，我们可以借着网课小作复习。</p>
+<span id="more"></span>
 <h2 id="一-定义与一些概念"><a class="markdownIt-Anchor" href="#一-定义与一些概念"></a> 一. 定义与一些概念</h2>
 <p>一个博弈类游戏必须满足以下条件：</p>
 <ol>
@@ -337,7 +342,7 @@
 <h2 id="二取石子游戏模型nim-游戏"><a class="markdownIt-Anchor" href="#二取石子游戏模型nim-游戏"></a> 二.取石子游戏模型（Nim 游戏）</h2>
 <p>给定 n 堆石子，每堆有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 个，两个玩家轮流取走任意一堆的任意个物品，取不了的人输掉游戏。</p>
 <p>假设两人都以最优策略进行游戏，问在任意状态下是必败还是必胜？</p>
-<h3 id="nim-和"><a class="markdownIt-Anchor" href="#nim-和"></a> Nim 和：</h3>
+<h3 id="1-nim-和"><a class="markdownIt-Anchor" href="#1-nim-和"></a> 1. Nim 和：</h3>
 <p>我们引入 <strong>Nim和</strong> 的概念：对于 n 堆石子，其 Nim 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>=</mo><msub><mi>a</mi><mn>1</mn></msub><mo>⊕</mo><msub><mi>a</mi><mn>2</mn></msub><mo>⊕</mo><msub><mi>a</mi><mn>3</mn></msub><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">=a_1\oplus a_2\oplus a_3...</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⊕</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⊕</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span></span></span></span>。</p>
 <p>有如下定理：<strong>若 Nim 和等于0，则该状态为必败状态，反之为必胜状态。</strong></p>
 <h3 id="证明"><a class="markdownIt-Anchor" href="#证明"></a> 证明：</h3>
@@ -347,6 +352,14 @@
 <li>根据属性 3，对于 Nim 和为 0 的情况，无论移动多少石子，必将走到 Nim 和非 0 的状态。</li>
 </ol>
 <p>Nim 游戏是一个模型，很多乱起八糟的规则可以通过一系列过程转换为该模型。</p>
+<h3 id="2-anti-nim"><a class="markdownIt-Anchor" href="#2-anti-nim"></a> 2. Anti-Nim</h3>
+<p>若将规则更改为：取到最后一个石子的人输掉游戏，就成了反 Nim 游戏。</p>
+<p>根据以下规则推导：</p>
+<pre><code>1. 若存在奇数个 “只有一个石子” 的堆，则此时为必败点；
+2. 否则，若该状态的 SG 函数值非 0，且当只有一堆石子多于 1 个，我们可以将其转换为情况 1，使得当前状态为必胜点；或是通过常规 Nim 游戏的套路将其转化为 SG 值为 0的情况；
+3. 若 SG 值为 0，由于此时必存在两堆以上的石子的数目多于 1，下个状态 SG 值必大于 0，因此最终会回到必败点。
+</code></pre>
+<p>综上，若石子堆都只有一个石子的话就按奇偶，否则就正常分析。</p>
 <h2 id="三-dag-游戏与-sg-函数"><a class="markdownIt-Anchor" href="#三-dag-游戏与-sg-函数"></a> 三. DAG 游戏与 SG 函数</h2>
 <p>假若博弈论游戏的各个状态可以构成一个 DAG（或状态转移图），则我们可以引入 <strong>SG函数</strong>，将博弈问题转化为搜索问题从而暴力解决（？）</p>
 <p>给出 SG函数的定义：对于某一状态 x，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>G</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>m</mi><mi>e</mi><mi>x</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">SG(x)=mex(S)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">G</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span></span></span></span>，其中 S 是 x 状态所有后继状态的集合，而 mex 函数表示该集合内 <strong>最小且不存在的</strong> 非负整数。</p>
@@ -474,7 +487,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nim-%E5%92%8C"><span class="toc-text"> Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-nim-%E5%92%8C"><span class="toc-text"> 1. Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-anti-nim"><span class="toc-text"> 2. Anti-Nim</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -491,7 +504,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>12</span>
+    <span>13</span>
     <span>文章</span>
   </a>
   <a 
@@ -530,7 +543,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nim-%E5%92%8C"><span class="toc-text"> Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-nim-%E5%92%8C"><span class="toc-text"> 1. Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-anti-nim"><span class="toc-text"> 2. Anti-Nim</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
       </div>
     </article>
   
@@ -548,13 +561,6 @@
       <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业课学习
-          <span class="categories-list-item-badge">4</span>
-        </div>
-      </a>
-    
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
           <span class="categories-list-item-badge">5</span>
         </div>
       </a>
@@ -563,6 +569,13 @@
         <div class="categories-list-item">
           社团推送
           <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">5</span>
         </div>
       </a>
     
@@ -587,81 +600,9 @@
       </a>
     
       <a 
-        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
-        title="字符串">
-        <div class="tags-list-item">字符串</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
-        title="多项式">
-        <div class="tags-list-item">多项式</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%9E%84%E9%80%A0/" 
-        title="构造">
-        <div class="tags-list-item">构造</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
-        title="生成函数入门">
-        <div class="tags-list-item">生成函数入门</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BC%A9%E7%82%B9/" 
-        title="缩点">
-        <div class="tags-list-item">缩点</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
-        title="树上启发式合并">
-        <div class="tags-list-item">树上启发式合并</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%80%9D%E7%BB%B4/" 
-        title="思维">
-        <div class="tags-list-item">思维</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
-        title="动态规划">
-        <div class="tags-list-item">动态规划</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
-        title="主席树">
-        <div class="tags-list-item">主席树</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%95%B0%E8%AE%BA/" 
-        title="数论">
-        <div class="tags-list-item">数论</div>
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
       </a>
     
       <a 
@@ -671,9 +612,81 @@
       </a>
     
       <a 
-        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
       </a>
     
   </div>
@@ -694,7 +707,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nim-%E5%92%8C"><span class="toc-text"> Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 一. 定义与一些概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%8F%96%E7%9F%B3%E5%AD%90%E6%B8%B8%E6%88%8F%E6%A8%A1%E5%9E%8Bnim-%E6%B8%B8%E6%88%8F"><span class="toc-text"> 二.取石子游戏模型（Nim 游戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-nim-%E5%92%8C"><span class="toc-text"> 1. Nim 和：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-text"> 证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-anti-nim"><span class="toc-text"> 2. Anti-Nim</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-dag-%E6%B8%B8%E6%88%8F%E4%B8%8E-sg-%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. DAG 游戏与 SG 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-text"> 证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BB%84%E5%90%88%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B9%B6"><span class="toc-text"> 四. 组合游戏的并</span></a></li></ol>
     </article>
   
   
@@ -709,6 +722,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-01-08</div>
+        <a href="/2022/01/08/CSAPP-chapter-7/"><div class="recent-posts-item-content">CSAPP  第七章小结</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-01-07</div>
         <a href="/2022/01/07/Virtual-Machine-by-Cpp/"><div class="recent-posts-item-content">基于高级语言实现虚拟机</div></a>
       </div>
@@ -721,11 +739,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-11-30</div>
         <a href="/2021/11/30/CSAPP-chapter-5/"><div class="recent-posts-item-content">CSAPP 第五章小结</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-11-02</div>
-        <a href="/2021/11/02/vocaloid-talking/"><div class="recent-posts-item-content">“媲美人声”真的是虚拟歌姬的未来吗？</div></a>
       </div>
     
   </div>
