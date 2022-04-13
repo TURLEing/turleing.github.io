@@ -49,7 +49,7 @@
         content="2022-01-20">
       <meta 
         property="og:article:modified_time" 
-        content="2022-02-21">
+        content="2022-03-03">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -331,29 +331,32 @@ f_{i} - f_{i-1} \leq 1
 <p>如果跑 spfa 出了负环就是无解， 终点不可达即为任意（无穷）解。</p>
 <h2 id="三-生成函数"><a class="markdownIt-Anchor" href="#三-生成函数"></a> 三. 生成函数</h2>
 <p>转隔壁 <a target="_blank" rel="noopener" href="https://turleing.github.io/2021/08/23/duo-xiang-shi/">多项式全家桶</a> 。</p>
-<h2 id="数位-dp"><a class="markdownIt-Anchor" href="#数位-dp"></a> 数位 DP</h2>
+<h2 id="四-数位-dp"><a class="markdownIt-Anchor" href="#四-数位-dp"></a> 四. 数位 DP</h2>
 <p>对于与数位有关的、范围较大的题目，可以套路性地用数位 DP 求解。我们利用低数位总是会重复的性质（如 <code>1~9400</code> 中，至少有八次你会枚举 <code>0~9999</code>），因此数位 DP 的第一维通常是 <strong>满 i 位时所有数的贡献</strong>，之后再根据不同的条件进行限制、转移。</p>
 <h3 id="t1-恨七不成妻"><a class="markdownIt-Anchor" href="#t1-恨七不成妻"></a> T1 : 恨七不成妻</h3>
-<p>**题意：**求在一定区间内和7无关的数字的平方和。一个数与 7 有关当且仅当：</p>
+<p><strong>题意：</strong></p>
+<p>求在一定区间内和7无关的数字的平方和。一个数与 7 有关当且仅当：</p>
 <pre><code>1、整数中某一位是7；
+2、整数的每一位加起来的和是7的整数倍；
+3、这个整数是7的整数倍；
 </code></pre>
-<p>2、整数的每一位加起来的和是7的整数倍；<br />
-　　3、这个整数是7的整数倍；</p>
 <p><strong>分析：</strong></p>
 <p>考虑对于任意 x，求出 1~x 所有与 7 无关的数的平方和，答案转化为前缀和的形式；对于题目要求的条件，我们还应该维护<strong>每一位加起来</strong>及<strong>该数本身</strong>对于 7 的模数。</p>
 <p>综上，我们设 f[i,f1,f2] 为当前是满 i 位，且上述的两个条件模数为 f1,f2 时的平方和。当一个数从高位向低位转移计算平方和的时候，我们将其拆成两部分（最高位及低位），递归地计算并合并。</p>
 <p>利用平方和公式求解时，发现还需维护：满 i 位时与 7 无关的数的<strong>个数以及和</strong>。</p>
-<p><strong>代码：</strong></p>
+<h3 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> <strong>代码：</strong></h3>
 <pre class="highlight"><code class="hljs cpp"><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> p = <span class="hljs-number">1e9</span>+<span class="hljs-number">7</span>;<br>ll n, m, num[<span class="hljs-number">21</span>], pw[<span class="hljs-number">21</span>];  <span class="hljs-comment">//囊括所有影响状态的变量</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ans</span>&#123;</span><br>    ll nm, sm, sm1;<br>    <span class="hljs-built_in">ans</span>() &#123; nm = sm = sm1 = <span class="hljs-number">0</span>;&#125;<br>    <span class="hljs-built_in">ans</span>(ll nm,ll sm,ll sm1) : <span class="hljs-built_in">nm</span>(nm), <span class="hljs-built_in">sm</span>(sm), <span class="hljs-built_in">sm1</span>(sm1) &#123;&#125;<br>&#125;f[<span class="hljs-number">21</span>][<span class="hljs-number">10</span>][<span class="hljs-number">10</span>];<br><br><span class="hljs-function">ans <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-keyword">int</span> k, <span class="hljs-keyword">int</span> f1, <span class="hljs-keyword">int</span> f2, <span class="hljs-keyword">bool</span> is_max)</span>  </span><br><span class="hljs-function"><span class="hljs-comment">// f1 -&gt; 数位和膜 7，f2 -&gt; 整数膜 7</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!k) <span class="hljs-keyword">return</span> (f1 &amp;&amp; f2 ? <span class="hljs-built_in">ans</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) : <span class="hljs-built_in">ans</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>));<br>    <span class="hljs-keyword">if</span> (!is_max &amp;&amp; f[k][f1][f2].nm) <span class="hljs-keyword">return</span> f[k][f1][f2];<br>    <span class="hljs-keyword">int</span> mx = is_max ? num[k] : <span class="hljs-number">9</span>; ans sum, now;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;=mx;i++) &#123;<br>        <span class="hljs-keyword">if</span> (i==<span class="hljs-number">7</span>) <span class="hljs-keyword">continue</span>;<br>        now = <span class="hljs-built_in">dfs</span>(k<span class="hljs-number">-1</span>, (i+f1)%<span class="hljs-number">7</span>, (f2*<span class="hljs-number">10</span>+i)%<span class="hljs-number">7</span>, is_max &amp;&amp; i==mx);<br>        ll hi = i*pw[k<span class="hljs-number">-1</span>] %p, hi2 = hi*hi%p;<br>        sum.nm = (sum.nm + now.nm) %p,<br>        sum.sm = (sum.sm + now.nm*hi %p + now.sm %p) %p,<br>        sum.sm1 = (sum.sm1 + now.nm*hi2 %p + <span class="hljs-number">2</span>*hi*now.sm %p + now.sm1 %p) %p;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (!is_max) f[k][f1][f2] = sum; <span class="hljs-keyword">return</span> sum;<br>&#125;<br><br><span class="hljs-function">ll <span class="hljs-title">solve</span><span class="hljs-params">(ll x)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> p=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (x) num[++p] = x%<span class="hljs-number">10</span>, x /= <span class="hljs-number">10</span>;<br>    ans t = <span class="hljs-built_in">dfs</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>); <br>    <span class="hljs-keyword">return</span> t.sm1;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    pw[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=<span class="hljs-number">20</span>;i++) pw[i] = pw[i<span class="hljs-number">-1</span>] * <span class="hljs-number">10</span> %p;<br>    <span class="hljs-keyword">int</span> t; cin &gt;&gt;t;<br>    <span class="hljs-keyword">while</span> (t--) &#123;<br>        cin &gt;&gt; n &gt;&gt; m;<br>        <span class="hljs-keyword">if</span> (!n &amp;&amp; !m) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        cout &lt;&lt; (<span class="hljs-built_in">solve</span>(m) - <span class="hljs-built_in">solve</span>(n<span class="hljs-number">-1</span>) + p)%p &lt;&lt; endl;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre>
-<h2 id="二分答案"><a class="markdownIt-Anchor" href="#二分答案"></a> 二分答案</h2>
-<p>**题意：**给定两个大小为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span> 的序列，求两序列交叉乘积的第 k 小。</p>
+<h2 id="五-二分答案"><a class="markdownIt-Anchor" href="#五-二分答案"></a> 五. 二分答案</h2>
+<p><strong>题意：</strong></p>
+<p>给定两个大小为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span> 的序列，求两序列交叉乘积的第 k 小。</p>
 <p><strong>分析：</strong></p>
 <p>二分答案 mid，check 函数判断 <strong>两序列交叉乘积有多少个小于 mid</strong> 即可。<br />
 将两个序列排序后，我们只需要将一号指针 p1 指向序列 1 的头，二号指针 p2 指向序列 2 的尾，依次判断当前数是否满足条件即可。</p>
 <p>由单调性，当 a[p1]*b[p2] &gt; k 时，a[p1+1]*b[p2] &gt; k 必然成立，因此整个时间复杂度是 O(n) 的。</p>
 <p><strong>代码：</strong></p>
 <pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">check</span><span class="hljs-params">(ll x)</span></span><br><span class="hljs-function"></span>&#123;<br>    ll cnt = <span class="hljs-number">0</span>, j = m;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) &#123;<br>        <span class="hljs-keyword">while</span> (j &amp;&amp; a[i]+b[j]&gt;=x) j--;<br>        cnt += j;  <span class="hljs-comment">//单调性，用尺取法计算小于 x 的对数</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> (cnt &lt; k);<br>&#125;<br><br></code></pre>
-<h2 id="单调队列"><a class="markdownIt-Anchor" href="#单调队列"></a> 单调队列</h2>
+<h2 id="六-单调队列"><a class="markdownIt-Anchor" href="#六-单调队列"></a> 六. 单调队列</h2>
+<p><strong>题意：</strong></p>
 <p>给定一个长度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>的序列<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>a</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>a</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">a_1,a_2,…,a_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>和一个参数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span> <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>≤</mo><mi>n</mi><mo>≤</mo><mn>100000</mn><mo separator="true">,</mo><mn>1</mn><mo>≤</mo><mi>m</mi><mo>≤</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(1\leq n\leq 100000,1\leq m\leq 10^9)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</p>
 <ul>
 <li>
@@ -477,7 +480,7 @@ f_{i} - f_{i-1} \leq 1
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 四. 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 五. 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 六. 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -494,7 +497,7 @@ f_{i} - f_{i-1} \leq 1
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>18</span>
+    <span>20</span>
     <span>文章</span>
   </a>
   <a 
@@ -506,7 +509,7 @@ f_{i} - f_{i-1} \leq 1
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>18</span>
+    <span>19</span>
     <span>标签</span>
   </a>
 </div>
@@ -533,7 +536,7 @@ f_{i} - f_{i-1} \leq 1
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 四. 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 五. 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 六. 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -582,6 +585,12 @@ f_{i} - f_{i-1} \leq 1
     </i>热门标签
   </div>
   <div class="tags-list">
+    
+      <a 
+        href="/tags/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/" 
+        title="专业课学习">
+        <div class="tags-list-item">专业课学习</div>
+      </a>
     
       <a 
         href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
@@ -673,12 +682,6 @@ f_{i} - f_{i-1} \leq 1
         <div class="tags-list-item">Trie树</div>
       </a>
     
-      <a 
-        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
-      </a>
-    
   </div>
 </div>
   </article>
@@ -697,7 +700,7 @@ f_{i} - f_{i-1} \leq 1
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%9F%A9%E9%98%B5%E5%8A%A0%E9%80%9F"><span class="toc-text"> 一. 矩阵加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-count"><span class="toc-text"> T1: Count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#t2-fibo-%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="toc-text"> T2: Fibo 平方和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="toc-text"> 二. 差分约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%8C%BA%E9%97%B4"><span class="toc-text"> T1：最小覆盖区间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-text"> 三. 生成函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E4%BD%8D-dp"><span class="toc-text"> 四. 数位 DP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#t1-%E6%81%A8%E4%B8%83%E4%B8%8D%E6%88%90%E5%A6%BB"><span class="toc-text"> T1 : 恨七不成妻</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="toc-text"> 五. 二分答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="toc-text"> 六. 单调队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
     </article>
   
   
@@ -712,6 +715,16 @@ f_{i} - f_{i-1} \leq 1
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-04-13</div>
+        <a href="/2022/04/13/oop-of-cpp2/"><div class="recent-posts-item-content">Cpp 面向对象入门（其二</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-04-13</div>
+        <a href="/2022/04/13/oop-of-cpp1/"><div class="recent-posts-item-content">Cpp 面向对象入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-02-09</div>
         <a href="/2022/02/09/CSAPP-chatper-6/"><div class="recent-posts-item-content">CSAPP 第六、九章小姐：内存与虚拟内存</div></a>
       </div>
@@ -719,16 +732,6 @@ f_{i} - f_{i-1} \leq 1
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-02-07</div>
         <a href="/2022/02/07/Linear-Base/"><div class="recent-posts-item-content">线性基学习笔记</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-01-22</div>
-        <a href="/2022/01/22/CSAPP-chapter-8/"><div class="recent-posts-item-content">CSAPP 第八章小结：异常</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-01-20</div>
-        <a href="/2022/01/20/winter-traing/"><div class="recent-posts-item-content">【知识点梳理】一些寒假培训遇到的好题</div></a>
       </div>
     
   </div>
