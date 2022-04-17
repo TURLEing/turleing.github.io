@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
-  <title>CSAPP 第五章小结：优化</title>
+  <title>Gossip in night</title>
   
     
       <meta 
         property="og:title" 
-        content="CSAPP 第五章小结：优化">
+        content="Gossip in night">
     
     
       <meta 
         property="og:url" 
-        content="http://example.com/2021/11/30/CSAPP-chapter-5/index.html">
+        content="http://example.com/2022/04/17/Gossip-in-night/index.html">
     
     
       <meta 
@@ -36,24 +36,24 @@
         content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
     
     
-      <meta 
-        property="og:img" 
-        content="&lt;p&gt;一些早就知道却没用过 或是 从来没听说过可能会有用 的优化方式。&lt;/p&gt;">
-    
     
       <meta 
         property="og:type" 
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2021-11-30">
+        content="2022-04-17">
       <meta 
         property="og:article:modified_time" 
-        content="2022-01-22">
+        content="2022-04-17">
       <meta 
         property="og:article:author" 
         content="天泽龟">
       
+        
+          <meta 
+            property="og:article:tag" 
+            content="随笔">
         
       
     
@@ -268,91 +268,160 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      CSAPP 第五章小结：优化
+      Gossip in night
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-11-30T01:53:07.000Z">
+    <time datetime="2022-04-17T15:37:18.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2021-11-30</span>
+      <span>2022-04-17</span>
     </time>
     
-      <span class="dot"></span>
-      
-        <a 
-          href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/" 
-          class="post-meta-link">
-          专业课学习
-        </a>
-      
-    
     
       <span class="dot"></span>
-      <span>1.7k 字</span>
+      <span>2k 字</span>
     
   </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E9%9A%8F%E7%AC%94/" 
+            class="post-meta-link">
+            随笔
+          </a>
+        
+      </div>
+    </div>
   
   </header>
   <div 
     id="section" 
     class="post-content">
-    <p>一些早就知道却没用过 或是 从来没听说过可能会有用 的优化方式。</p>
-<span id="more"></span>
-<h2 id="一-编译器-优化方式"><a class="markdownIt-Anchor" href="#一-编译器-优化方式"></a> 一. <strong>编译器</strong> 优化方式：</h2>
-<ol>
-<li>
-<p>减小计算量：乘法比加法来的时间慢，能转化成加法的尽量不用乘法。</p>
-</li>
-<li>
-<p>多维数组引用：由于行优先的原则，一行元素总是在内存上连续的，而连续内存引用更快。所以遍历多维数组的时候应该以之前的维数为基遍历，切忌越维遍历。</p>
-</li>
-<li>
-<p>循环调用函数：对于遍历字符串时，如果判断条件写成 <code>i&lt;strlen(s)</code> 就会爆炸；原因是 <code>strlen()</code> 本身是一个 <strong>线性函数</strong>，所以遍历算法大致上 是 O(n^2) 的。</p>
-</li>
-</ol>
-<p>编译器不会优化该问题的原因是：在遍历字符串内部时我们可能会改变字符串长度，所以编译器会很小心的对待长度，每次都会重新计算一遍；</p>
-<p>另一个原因是，strlen 函数在 string.h 库里，它可能会在编译之后才在链接阶段被使用，编译器不能对 strlen 功能做出判断。</p>
-<ol start="4">
-<li><strong>Memory Matters（这个不知道）</strong>:</li>
-</ol>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">sum_row</span><span class="hljs-params">(<span class="hljs-keyword">double</span> *a, <span class="hljs-keyword">double</span> *b, <span class="hljs-keyword">int</span> n)</span> </span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>		b[i] = <span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; n; j++)<br>			b[i] += a[i * n + j];<br>	&#125;<br>&#125;<br></code></pre>
-<p>假设我写了这么一个程序，很直白就是说；但是他的汇编代码十分不正常：编译器首先从内存读出 b[i] 存在寄存器 %xmm0，再将 a[i*n+j] 加到寄存器中，又重新把值赋给内存。 得到了如下汇编代码：</p>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-number">0x0000000000401594</span> &lt;+<span class="hljs-number">52</span>&gt;:	<span class="hljs-built_in">lea</span>    (%r11,%rax,<span class="hljs-number">1</span>),%r9d  <span class="hljs-comment">// hold a_i address</span><br><span class="hljs-number">0x0000000000401598</span> &lt;+<span class="hljs-number">56</span>&gt;:	movslq %r9d,%r9  <br><span class="hljs-number">0x000000000040159b</span> &lt;+<span class="hljs-number">59</span>&gt;:	<span class="hljs-built_in">movsd</span>  (%r10),%xmm0  <span class="hljs-comment">// b_i into register</span><br><span class="hljs-number">0x00000000004015a0</span> &lt;+<span class="hljs-number">64</span>&gt;:	<span class="hljs-built_in">addsd</span>  (%rcx,%r9,<span class="hljs-number">8</span>),%xmm0  <span class="hljs-comment">// add a_i</span><br><span class="hljs-number">0x00000000004015a6</span> &lt;+<span class="hljs-number">70</span>&gt;:	movsd  %xmm0,(%r10)  <span class="hljs-comment">// register into b_i</span><br></code></pre>
-<p><strong>如此在内存与寄存器传送数据，极大地拖慢了程序运行速度。</strong> 怎么会是呢？原来，有一种可能就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo stretchy="false">[</mo><mn>3</mn><mo stretchy="false">]</mo><mo>=</mo><mi>A</mi><mo>+</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">B[3]=A+3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mopen">[</span><span class="mord">3</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">A</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span></span></span></span>，即 B 数组覆盖（或替身）A 中的某一行，这被称作 <strong>内存别名使用</strong>。如果改变了 B 数组，同时也改变了 A 中的值，导致求和结果的不同。</p>
-<p>因此，编译器无法否定内存别名使用的情况，这需要我们引入局部变量，先将求和结果存储于 val 结尾在赋值，就可以防止类似反复调用内存的问题。</p>
-<p>优化后的汇编代码片段如下：</p>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-number">0x0000000000401590</span> &lt;+<span class="hljs-number">48</span>&gt;:	<span class="hljs-built_in">lea</span>    (%r10,%rax,<span class="hljs-number">1</span>),%r9d  <span class="hljs-comment">//hold a_i address</span><br><span class="hljs-number">0x0000000000401594</span> &lt;+<span class="hljs-number">52</span>&gt;:	movslq %r9d,%r9<br><span class="hljs-number">0x0000000000401597</span> &lt;+<span class="hljs-number">55</span>&gt;:	<span class="hljs-built_in">addsd</span>  (%rcx,%r9,<span class="hljs-number">8</span>),%xmm0  <span class="hljs-comment">// add a_i into val</span><br><span class="hljs-number">0x000000000040159d</span> &lt;+<span class="hljs-number">61</span>&gt;:	add    $<span class="hljs-number">0x1</span>,%eax<br></code></pre>
-<p>这便减少了内存调用，加快了程序运行速率。</p>
-<h2 id="二-指令级别的并行程序"><a class="markdownIt-Anchor" href="#二-指令级别的并行程序"></a> 二. 指令级别的并行程序：</h2>
-<h3 id="1-理解现代处理器"><a class="markdownIt-Anchor" href="#1-理解现代处理器"></a> 1. 理解现代处理器：</h3>
-<p>这些优化是基于处理器所实现的，可以在任何机器上进行。</p>
-<p>在微处理器层面上，我们有两种下界描述其最大性能：</p>
-<ul>
-<li><strong>延迟界限</strong>：当一系列操作按照顺序执行时，<strong>指令级并行</strong>所带来的限制要求下一条指令开始前目前的指令必须结束；</li>
-<li><strong>吞吐量界限</strong>：代表处理器功能单元的原始计算能力。</li>
-</ul>
-<p>超标量处理器允许其在每个时钟周期执行多个 <strong>乱序</strong> 操作；整个设计有两个主要部分：<strong>指令控制单元（ICU）</strong> 以及 <strong>执行单元（EU）</strong>，区别于按序流水线相比，乱序处理器能达到更高的指令集并行度。</p>
-<p>ICU 从 指令缓存 中读取指令并译码，再将其发给 EU 操作。</p>
-<p>面对选择分支时，我们通常使用 <strong>预测分支</strong> 的技术，猜测程序是否选择分支，并通过预测分支的目标地址，使用 <strong>投机执行</strong> 的技术，取出对应的指令提前译码；如果之后确认预测错误，则返回到分支点的状态。</p>
-<h3 id="2-功能单元"><a class="markdownIt-Anchor" href="#2-功能单元"></a> 2. 功能单元</h3>
-<p><img src="https://s2.loli.net/2022/01/06/ZuKRBMUJrYHtbwy.png" alt="功能单元.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/ZuKRBMUJrYHtbwy.png" class="lozad post-image"></p>
-<p>一个功能单元应该能完成多项任务，例如从处理器将数据写到内存的存储单元，不仅应该具备写入的功能，也应做到地址运算。</p>
-<p>功能单元的性能由以下数值刻画：一是延迟（latency），表示完成运算的总时间；二是发射时间，表示两同类型的运算之间所需的最小时钟周期；最后一个是容量（capacity），表示能执行概运算的功能单元的数量。</p>
-<p>我们引入一个叫 <code>CPE</code> 的指标，判断进行一次计算所需要的 <code>时钟周期</code> 是多少。我们所需要优化的就是单次运算的 CPE。在编译层面上我们优化后至多可降到：</p>
-<p><img src="https://i.loli.net/2021/11/30/bcSsnQgmdLHDhf4.png" alt="" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/11/30/bcSsnQgmdLHDhf4.png" class="lozad post-image"></p>
-<p>整型乘法之所以需要三个时钟周期是取决于现代 CPU 的设计方法。假设指令序列是内存上连续的一串，CPU 会提前读取一串指令再将它们分开，一些无关联的指令就可以同时执行（利用<strong>指令的并行性</strong>），这可以极大加快计算机的处理速度，我们称为  <strong>超标量乱序执行</strong>。</p>
-<p>同时，功能单元可以利用 <strong>流水线</strong> 技术进行优化。实际上，对于一个乘法器它被分成了三个阶段，一次乘法运算需要三个时钟周期，那么三次乘法运算就需要九个时钟周期。所幸的是，利用流水线优化，我们可以压缩到7个甚至更少（这依赖于指令的并行性）。如下图：</p>
-<p><img src="https://i.loli.net/2021/11/30/Hd1mrESJxnUYaVL.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/11/30/Hd1mrESJxnUYaVL.png" class="lozad post-image"></p>
-<h3 id="3-循环展开-及-提高并行性"><a class="markdownIt-Anchor" href="#3-循环展开-及-提高并行性"></a> 3. 循环展开 及 提高并行性</h3>
-<p><strong>循环展开</strong> 是指通过增加每次迭代计算的元素数量从而减少迭代次数的技巧。例如如果同时处理前置和的两个元素，使得迭代数量减半，其中计算循环索引和条件计算的时间便大大减小了。如此操作可以使得 CPE 逼近延迟界限。我们称其为 <strong>2*1展开</strong>。</p>
-<p><img src="https://s2.loli.net/2022/01/06/y5FtPifbJrj32RE.png" alt="21.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/y5FtPifbJrj32RE.png" class="lozad post-image"></p>
-<p>由于我们将答案始终存储在单独的变量中，而在之前的计算完成之前都不能计算其新值。这也是为何突破不了延迟界限的原因。</p>
-<p>因此，我们可以将答案就拆开，acc0 表示偶数的累计值， acc1表示奇数的累计值，最后处理落单的元素、将其合并为完整的答案。我们称其为 <strong>2*2 循环展开</strong>。</p>
-<p><img src="https://s2.loli.net/2022/01/06/CXk7ZNYWMlEfAxP.png" alt="22.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/CXk7ZNYWMlEfAxP.png" class="lozad post-image"></p>
-<p>总的来说，重新组合变换能减少计算中关键路径上的操作数量。由于浮点数不符合结合律，大多数编译器不会对浮点运算做重新结合。</p>
+    <h1 id="四月十七日-2221"><a class="markdownIt-Anchor" href="#四月十七日-2221"></a> 四月十七日 22：21</h1>
+<h1 id="是夜晚"><a class="markdownIt-Anchor" href="#是夜晚"></a> 是夜晚</h1>
+<p>仍没返校的他坐在桌前，一如既往。</p>
+<p>面前摆着他的笔记本，现在正在显示出一行行随笔，但是几分钟前还是一份 60 行的代码。</p>
+<p>他刚才终于 AC 了这道题，这道调了他一下午的题，原因是线段树模板写错了。</p>
+<p>这点小事本来不值得他破防，但可惜的是他联想起这礼拜一塌糊涂的生活：</p>
+<pre><code>每天熬到两三点做着无意义的事，刷着无意义的视频，肝着无意义的活动，聊着无意义的天，仿佛无意义才是你人生的意义。
+
+更别提周六，你的周六上午是在昏迷中度过了，大脑弥散出浓郁的酒精味。你的下午是在游戏中度过的，而在晚上你的肌肉在浏览b站，分泌的是肾上腺素而非多巴胺。你寻思明天应该做一些有意义的事情，因此大发慈悲地将睡觉时间调整为一点四十。
+</code></pre>
+<p>但仔细想想，他似乎没什么可干不是吗 — — 我指的是，他的作业都做完了，那些无趣的军事理论也吸引不了他，那他为什么不能给他放个小小的假呢？</p>
+<pre><code>你回忆起自己曾立下过什么长远的目标，而具体的内容仿佛已经丢到了某个过期的文件夹里了。
+
+没什么可干？但是你的周日是动漫社的选拔活动外加 ACM 小队打比赛啊。
+
+希望你的假期并不包括养出来的十磅肉。
+</code></pre>
+<p>他刷着视频：今天是明天，明天需要睡眠。</p>
+<h1 id="zzz"><a class="markdownIt-Anchor" href="#zzz"></a> Zzz…</h1>
+<p>他的早上是从八点半开始的，伴随着奇怪的宿醉感。</p>
+<pre><code>你的母亲催促着你起床，但你只觉得世界翻了天。
+</code></pre>
+<p>他上午磨磨蹭蹭地写完了一份四级考试题，填词十个空错了五个，他觉得很好笑。</p>
+<pre><code>还有呢？
+</code></pre>
+<h1 id="可悲"><a class="markdownIt-Anchor" href="#可悲"></a> 可悲。</h1>
+<p>他中午吃过午饭，开始在 ACM 群里摇人打比赛：一个队友去做核酸、一个队友失踪，他决定自己先开题。</p>
+<pre><code>除了两道签到，不会。
+</code></pre>
+<p>他发现 F 挺可做的，一开始以为是个简单的背包但发现 “每组至少选一个” 的条件需要套一个状压，再上一个线段树优化 DP。</p>
+<pre><code>弱智的选择，但你很合适。
+你很喜欢把简单的问题复杂化，企图拔高你微乎其微的水平。
+
+但是拔高给谁看呢。
+</code></pre>
+<p>他在敲代码，敲了二十多分钟发现自己订的复习资料送到了，他可以开始期中复习了。</p>
+<p>下楼时他考虑买一杯奶茶，但是想起来自己已经胖了十斤，肉故作罢。</p>
+<pre><code>你是不是以复习资料没送到为由而颓废的？
+这个借口*并不*有趣。
+</code></pre>
+<p>回来，他继续敲代码，两个队友陆陆续续来了，一位同他吐槽城市苛刻的抗疫政策，一位同他分享一个 “我觉得是好消息而他认为是坏消息” 的消息：他找了什么奇怪的借口返校了。</p>
+<pre><code>你不知道他为什么对你来说是坏消息。
+</code></pre>
+<p>然后，他和另一位队友 emo 了，想到马上动漫社社长组选拔要开始，他匆匆离开了群聊，几人不欢而散。</p>
+<p>他掏出了准备好的稿子，枯燥地在等候室等待着，冷鸟的《群青》被他循环了一遍又一遍。</p>
+<pre><code>但这并不能帮你提升情绪。
+你只是没事干。
+
+那你为啥不回去调试代码呢。
+</code></pre>
+<p>突然，他进去了。</p>
+<h1 id="喂喂请问能听到吗"><a class="markdownIt-Anchor" href="#喂喂请问能听到吗"></a> 喂喂，请问能听到吗？</h1>
+<p>他摆正腔调，说了一些准备好的话。简单的问了几个问题就结束了，准备得似乎很成功。</p>
+<pre><code>你感到愉悦与释然、但更多是不安。要是这样他们都不要你怎么办？
+
+你已经畏惧于相信一些必然发生的事物将会发生。
+
+但你成功竞选一事并不是必然。
+</code></pre>
+<p>他继续调试题目，此时他没有发现自己线段树写错了。他猪脑宕机了。</p>
+<p>一位超人在QQ上找到了他，说他自己 icpc 打铁了求安慰。</p>
+<pre><code>你并不想安慰他，你都没去成 icpc，不应该他来安慰你？
+
+但是你能感受到他真的很伤心，和你调不出来这道题一样。
+</code></pre>
+<p>他安慰了那位超人，并获悉超人也返校了，并且都是在学校里打的比赛。</p>
+<pre><code>你突然想到，那位队友不会也去打 icpc 区域赛了吧。
+
+你祈祷他没有放弃你。
+</code></pre>
+<p>他继续调试题目，此时他还没有发现自己线段树写错了。他决定吃饭。</p>
+<p>吃饭，一位仍未返校的朋友喊他出去<em>散步</em>，并催促他快点已经在门口等了。</p>
+<p>他答应，并继续慢条斯理的吃饭。</p>
+<pre><code>你总不能很乐意地去当街溜子吧。
+</code></pre>
+<p>他和那位朋友在街上漫步，环顾着刻在DNA里的小城的街道，躲避着街上的坑洼，而那位朋友在旁边听英语四级听力。</p>
+<pre><code>你可能会质疑他怎么才开始听去年的听力，
+但请不要这么做，你明知他的英语比你好。
+</code></pre>
+<p>听完了，谈及他的那位队友返校一事。朋友顿了一会儿：“啊，哈工大深的几位马上也要走，那不就剩咱俩没返校了吗。”</p>
+<h1 id="啥哈哈哈草"><a class="markdownIt-Anchor" href="#啥哈哈哈草"></a> “啥，哈哈哈草”</h1>
+<pre><code>你感到一种 何处无月，何处无竹柏，但少闲着如吾两人者尔 的豁达。
+
+但这当然是假的，苏轼不会窝在床上看手机。
+</code></pre>
+<p>那位朋友和他又吐槽了快递送不进来、吐槽了狗屎的防疫政策，足足绕了一个小时才回了家。他跟那位朋友交谈甚欢，但朋友觉得不过是饭后散步的路程在他看来堪比马拉松。</p>
+<pre><code>你只是想回家窝着，不管干什么都行。
+</code></pre>
+<p>他突然发现自己动漫社社长组选拔过了，社长组除了他全是妹子，虽扬言自己不社恐可以和妹子共事的他感到了一丝尴尬。</p>
+<pre><code>你在担心她们会不会踢你走啊。
+</code></pre>
+<p>回家路上，他和最喜欢的学长进行动漫社交接，他努力显得自己很积极。</p>
+<pre><code>你想和学长多聊会儿天，因为他是你最喜欢的学长。
+
+但你并不熟知非学长的他，你觉得很失落。
+</code></pre>
+<p>回家，继续调代码。他仍然没有发现自己的线段树写错了，但是有好友邀请你来网易云音乐一起听歌。</p>
+<pre><code>你欣然答应了他，并瞟了一眼他送你的卡西欧以及自制的木质笔筒 — — 你喜欢它，你*真的*很喜欢它。
+</code></pre>
+<h1 id="他放的歌我全点红心了还"><a class="markdownIt-Anchor" href="#他放的歌我全点红心了还"></a> 他放的歌我全点红心了还。</h1>
+<pre><code>那，那你还很喜欢他的听歌品味，他的做事态度。
+
+他是你的好友，你感到欣慰。
+</code></pre>
+<p>于是，在歌声里，你发现你的线段树写错了。这点小事本来不值得他破防，但可惜的是他联想起这礼拜一塌糊涂的生活。</p>
+<p>他发现自己的生活也没那么糟糕了。</p>
+<h1 id="我现在有事儿干了我他妈的要在期中考前刷穿我买的资料"><a class="markdownIt-Anchor" href="#我现在有事儿干了我他妈的要在期中考前刷穿我买的资料"></a> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</h1>
+<h1 id="我就喜欢打-acm去不了区域赛我多练习不练习抱怨个屁"><a class="markdownIt-Anchor" href="#我就喜欢打-acm去不了区域赛我多练习不练习抱怨个屁"></a> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</h1>
+<h1 id="我有那么多喜欢的人我深深尊敬着他们我爱他们"><a class="markdownIt-Anchor" href="#我有那么多喜欢的人我深深尊敬着他们我爱他们"></a> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</h1>
+<p>他的发病就到此结束了吧，应该。</p>
+<p>我的发病就到此结束了啊，确实。</p>
+<pre><code>你要相信，你会过得很好。
+我会相信，我会过得更好。</code></pre>
 
   </div>
   <div>
@@ -372,8 +441,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="http://example.com/2021/11/30/CSAPP-chapter-5/">
-            http://example.com/2021/11/30/CSAPP-chapter-5/
+            href="http://example.com/2022/04/17/Gossip-in-night/">
+            http://example.com/2022/04/17/Gossip-in-night/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -383,29 +452,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2022/01/07/Game-Theory/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">博弈论学习笔记 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2021/11/02/vocaloid-talking/" 
+        href="/2022/04/13/oop-of-cpp2/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">“媲美人声”真的是虚拟歌姬的未来吗？ </div>
+            <div class="nav-title">Cpp 面向对象入门（其二 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -459,7 +514,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -515,7 +570,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
       </div>
     </article>
   
@@ -679,7 +734,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
     </article>
   
   
