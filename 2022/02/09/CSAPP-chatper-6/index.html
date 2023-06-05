@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>CSAPP 第六、九章小姐：内存与虚拟内存</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="CSAPP 第六、九章小姐：内存与虚拟内存">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/02/09/CSAPP-chatper-6/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;枯燥而丰富的 CSAPP 学习生活结束了。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-02-09">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-02-25">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      CSAPP 第六、九章小姐：内存与虚拟内存
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-02-08T17:54:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-02-09</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业课学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.1k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>枯燥而丰富的 CSAPP 学习生活结束了。</p>
+<span id="more"></span>
+<h1 id="第四章-存储器层次结构"><a class="markdownIt-Anchor" href="#第四章-存储器层次结构"></a> 第四章： 存储器层次结构</h1>
+<p>在简单的模型中，我们将存储器视作一个线性数组，CPU 可以在常熟世间内访问每个存储器的位置。但实际上，存储器系统是一个 <strong>具有不同容量、成本和访问时间</strong> 的设备层次结构，这都基于一个称作 <strong>局部性</strong> 的基本属性，使得该层次结构可以得到最优实现。</p>
+<h2 id="一-局部性"><a class="markdownIt-Anchor" href="#一-局部性"></a> 一。局部性</h2>
+<p>局部性指一个程序倾向于引用 <strong>临近于最近引用过的数据项</strong> 的数据项。局部性分为时间局部性和空间局部性。在 <strong>时间局部性</strong> 中，被引用过一次的内存位置在不久的将来会被多次引用；在 <strong>空间局部性</strong> 中，若一个内存被引用一次，那么程序在不久的将来会引用附件的内存位置。</p>
+<p>对于以下的代码片段：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sumv</span><span class="hljs-params">(<span class="hljs-keyword">int</span> *v)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> i, sum = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++) sum += v[i];<br>    <span class="hljs-keyword">return</span> sum;<br>&#125;<br></code></pre>
+<p>该程序片段具有良好的空间局部性，因为它每次顺序访问数组中下一个元素，我们称其具有 <strong>步长为 1 的引用模式</strong>。若将 <code>i++</code> 改为 <code>i+=k</code>，我们称作 “步长为 k”。随着步长增加，空间局部性下降。</p>
+<p>对于二维嵌套数组，如果按照行优先顺序读元素的话能具有良好的空间局部性，但按照列顺序扫描的话会导致其步长为 N，使得程序效率降低。</p>
+<h2 id="二-缓存"><a class="markdownIt-Anchor" href="#二-缓存"></a> 二。缓存</h2>
+<p>一般而言，<strong>缓存</strong> 是一个小而快速的存储设备，作为更大更慢的存储设备中数据对象的缓冲区。<strong>存储器层次结构的核心思想</strong> 是，对于每一个 k，位于 k 层的更快更小的存储设备作为位于 k+1 层存储设备的缓存。</p>
+<p>我们将第 k+1 层的存储器划分为一个个连续的数据对象组，称为 <strong>块</strong>。每个块有唯一的地址，且大小固定（通常）。第 k 层的缓存始终包含下一层 <strong>块的一个子集</strong> 的副本，且数据总是以块为最小单位进行复制传送的。L1 和 L0 之间的传送 通常使用的是 1 个字大小的块。L2 和 L1 之间（以及 L3 和 L2 之间、L4 和 L3 之间）的传送通常使用的是几十个字节的块。</p>
+<p>当第 k+1 层的数据对象 d 可以在 k 层缓存中查找到，我们称其为 <strong>缓存命中</strong>。否则称为 <strong>缓存不命中</strong>，此时我们将 k+1 层中的数据 d 一个副本存在 k 层缓存中。如果 k 层缓存是满的，我们可能会覆盖一个块，被替换的这个块称为 <strong>牺牲块</strong>；如果此时 k 层缓存是空的，那任何数据对象都不会命中，我们称其为 <strong>冷不命中</strong>。</p>
+<h2 id="三-通用结构"><a class="markdownIt-Anchor" href="#三-通用结构"></a> 三。通用结构</h2>
+<p>考虑一个计算机系统，其存储器地址有 m 位，共有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi><mo>=</mo><msup><mn>2</mn><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">M=2^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span></span></span></span></span></span></span> 个不同的地址；其中高速缓存被组织为一个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>=</mo><msup><mn>2</mn><mi>s</mi></msup></mrow><annotation encoding="application/x-tex">S=2^s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span></span></span> 个缓存组的数组，而每个组包含 E 个缓存行，每个行又是由 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo>=</mo><msup><mn>2</mn><mi>b</mi></msup></mrow><annotation encoding="application/x-tex">B=2^b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.849108em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">b</span></span></span></span></span></span></span></span></span></span></span> 字节的数据块组成（草什么套娃）；<br />
+每行开头有一个有效位，告诉我们这行是否包含有意义的信息，还有 <code>t=m-b-s</code> 个标记位，唯一标识组中的一个行。</p>
+<p>对于一个地址，参数 s, b 将其分为了三个字段，s 位组索引告诉我们这个字存储在哪一个组中；t 位标记位和每组的标记匹配，告诉我们组中哪一行包含这个字；b 位块偏移给出了数据在 B 字节中的位置。</p>
+<p><img src="https://s2.loli.net/2022/02/09/gAlU2JpbYMzfs1P.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/09/gAlU2JpbYMzfs1P.png" class="lozad post-image"></p>
+<p>当 CPU 执行一条读取内存字 w 的指令时，他会向 L1 缓存请求这个字，这分为三步走：</p>
+<ul>
+<li>组选择：根据组索引位确定在哪个组；</li>
+<li>行匹配：若该组 <strong>有效位设置</strong>，且 <strong>组标记位和地址中的标记位相同</strong>，则块偏移选择起始字节；若一个组有多行，则需要逐一检查。</li>
+<li>字选择：把块看成一个数组，直接加上偏移量即可。</li>
+<li>行替换：若缓存不命中，从下一层取出被请求的块并替换一个现存行。</li>
+</ul>
+<p>对于一个组只有一行的 <strong>直接映射高速缓存</strong>（即 E=1），直接替换当前行即可；对于 <strong>组相联高速缓存</strong>，我们有更多策略，其中常用的是 LFU (Least-Frequently-Used) 策略，替换在过去某个时间窗口内 <strong>引用次数最少</strong> 的那一行；LRU (Least-Recently-Used) 策略，替换最后一次 <strong>访问时间最久远</strong> 的那一行。</p>
+<p>直接映射高速缓存模型简单，但却容易出现冲突不命中的问题（详细可见书 P431）。因为我们在 x 和 y 的块之间 <strong>抖动（thrash）</strong>。术语 “抖动” 描述的是，缓存反复地加载和驱逐含有相同的高速缓存块的组的情况。</p>
+<p>此外，还有关于 <strong>写</strong> 的问题，懒得抄了：</p>
+<p><img src="https://s2.loli.net/2022/02/09/uHFnEG4Vx9Wq6lt.png" alt="Screenshot 2022-02-09 135037.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/09/uHFnEG4Vx9Wq6lt.png" class="lozad post-image"></p>
+<p>通常，我们采用 <strong>写回</strong> 和 <strong>写分配</strong> 的缓存模型，因为其利用了良好的局部性。</p>
+<h1 id="第六章-虚拟内存"><a class="markdownIt-Anchor" href="#第六章-虚拟内存"></a> 第六章： 虚拟内存</h1>
+<p>开始的系统中，各个进程共享 CPU 和主存资源。然而随着进程数量增多，内存可能会不够用，且容易发生冲突。为了 <strong>更有效地管理内存</strong>，现代系统提出了对主存的 <strong>抽象</strong>，叫做虚拟内存（VM）。</p>
+<h2 id="一-内存作为缓存的工具"><a class="markdownIt-Anchor" href="#一-内存作为缓存的工具"></a> 一。内存作为缓存的工具</h2>
+<p>概念上，虚拟内存是一个 <strong>存放于磁盘上，N个连续的字节大小的单元</strong> 组成的数组。每个字节有唯一的虚拟地址，作为到数组的索引，该数组的内容被缓存在主存中。虚拟内存的数据被划分为一个个固定大小的 <strong>虚拟页</strong>（VP）。任意时刻，虚拟页面包含以下板块：</p>
+<ul>
+<li><em>未分配的</em> ：VM 系统为分配地址到该页，没有数据与其关联，不占用磁盘空间；</li>
+<li><em>缓存的</em> ：当前已缓存于物理内存中的已分配页；</li>
+<li><em>未缓存的</em> ：未缓存在物理内存上的已分配页。</li>
+</ul>
+<p>虚拟内存系统必须有某种方法，来 <strong>判定一个虚拟页是否缓存在 DRAM 中的某个地方</strong>。系统还必须确定已缓存的虚拟页 <strong>存放在哪个物理页中</strong>。如果不命中，系统必须判断这个虚拟页 <strong>存在磁盘的哪个位置，在物理内存中选择一个牺牲页，并将虚拟页从磁盘复制到 DRAM 中，替换这个牺牲页</strong>。</p>
+<p>操作系统，MMU（内存管理单元）的地址翻译软件和存放在物理内存中的 <strong>页表</strong> 共同实现了这些功能。页表实现了虚拟页到物理页的映射，其实质上是包含了一个页表条目（PTE）的数组。</p>
+<p>我们假设每个 PTE 是由一个有效位和一个 n 位地址字段组成的。有效位表明了该虚拟页是否被缓存；若设置了有效位，则地址字段表示了 <strong>DRAM 中相应物理页的起始位置</strong>。若没有设置有效位，地址将指向该虚拟页 <strong>在磁盘上的起始位置</strong>。</p>
+<p>当 CPU 成功读取一个被缓存于 DRAM 的虚拟页时，我们称其<strong>页命中</strong>；否则称其为<strong>缺页</strong>，发生缺页会触发缺页异常：内核从磁盘复制对应的虚拟页到内存中，并选择某个牺牲页而取代他。结束异处理程序后会重新进行该指令，此刻没有了异常。</p>
+<p>在磁盘和内存之间传送页的活动叫做 <strong>页面调度</strong>。直到最后时刻，也就是当有不命中发生时，才换入页面的这种策略称为 <strong>按需页面调度</strong>。借助这种调度手段以及我们常见的 <strong>局部性原理</strong>，程序趋向于在一个较小的工作集中工作，程序开始时我们将工作集页面调度到内存，便可保证较少的缺页情况，减少不命中开销。</p>
+<h2 id="二-虚拟内存作为内存保护的工具"><a class="markdownIt-Anchor" href="#二-虚拟内存作为内存保护的工具"></a> 二。虚拟内存作为内存保护的工具</h2>
+<p>任何现代计算机系统必须为操作系统提供手段来控制对内存系统的访问。就像我们所看到的，提供独立的地址空间使得区分不同进程的私有内存变得容易。而且每次 CPU 生成一个地址时，地址翻译硬件都会读一个 PTE，所以通过 <strong>在 PTE 上添加一些额外的许可位来控制对一个虚拟页面内容的访问十分简单。</strong></p>
+<p><img src="https://s2.loli.net/2022/02/13/ewc5mD4hQ9URznA.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/13/ewc5mD4hQ9URznA.png" class="lozad post-image"></p>
+<p>如果一条指令违反了这些许可条件，那么 CPU 就触发一个一般保护故障，将控制传递给一个内核中的异常处理程序。Linux 一般将这种异常报告为 <strong>段错误</strong>。</p>
+<h2 id="三-虚拟地址及翻译"><a class="markdownIt-Anchor" href="#三-虚拟地址及翻译"></a> 三。虚拟地址及翻译</h2>
+<p>CPU 通过生成虚拟地址访问主存，这个虚拟地址在被送到内存之前先转换为适当的物理地址。将虚拟地址转化为物理地址的任务叫做 <strong>地址翻译</strong>。CPU 上的内存管理单元（MMU）利用存放在主存中的页表来 <strong>动态翻译虚拟地址</strong>。</p>
+<p>CPU 首先将页表基址寄存器（PTBR）指向当前页表。一个 n 位的虚拟地址包含两部分：p 位的虚拟页面偏移和一个 n-p 的虚拟页号。MMU 利用虚拟页号（VPN）选择适当的 PTE，<strong>将其页表条目中的物理页号（PPN）和虚拟地址的后 p 位偏移量串联</strong>，就得到了对应的物理地址。</p>
+<ol>
+<li>基本结构</li>
+</ol>
+<p>CPU硬件执行的步骤大致如下：</p>
+<ul>
+<li>笫l步： 处理器生成一个虚拟地址，并把它传送给 MMU。</li>
+<li>笫2步： MMU生成 PTE 地址，并从高速缓存／主存发送请求。</li>
+<li>笫3步： 高速缓存／主存向 MMU 返回PTE。</li>
+<li>笫4步： MMU 构造物理地址，并把它传送给高速缓存／主存。</li>
+<li>笫5步： 高速缓存／主存返回所请求的数据字给处理器</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/02/13/NQeZxvaygBGnj3k.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/13/NQeZxvaygBGnj3k.png" class="lozad post-image"></p>
+<ol start="2">
+<li>TLB 加速</li>
+</ol>
+<p>如果每次查阅 PTE 都可以在 L1 中，那开销大约是1~2周期，但我们连这个也可以省去。显然的是，页表条目也可以缓存，MMU 包括了一个关于 PTE 的小缓存，称为翻译后备缓冲器（TLB）。当 CPU 产生虚拟地址后，MMU 从 TLB 取出对应的 PTE（这发送在 CPU 中所以很快）。</p>
+<p>当发生TLB 不命中时，MMU 必须从 L1 缓存中取出 PTE，将其存放于 TLB 中。</p>
+<p><img src="https://s2.loli.net/2022/02/13/rS4H9xBtPyb1qFJ.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/13/rS4H9xBtPyb1qFJ.png" class="lozad post-image"></p>
+<ol start="3">
+<li>多级页表</li>
+</ol>
+<p>对于较大的虚拟空间来说，一个单独的页表可能会十分庞大（48位地址可达到 GB 量级），这还没算上其中大量的虚拟地址不会被访问到。</p>
+<p><img src="https://s2.loli.net/2022/02/13/bZyg5aTisBjSlh7.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/13/bZyg5aTisBjSlh7.png" class="lozad post-image"></p>
+<p>我们使用 <strong>多级页表</strong> 的方法对其进行压缩，这里以二级为例。一级页表中的每个 PTE 映射了虚拟空间中一个 4MB 的片段，一个片段由 1024 个<strong>连续的页面</strong>组成。若片 i 的每个页面都未被分配，则片段 i 为空，否则一级 PTE 将指向一个二级页表的基址；二级页表映射了 4KB 的虚拟内存页面，每一个 PTE 对应了虚拟空间中一个 4 字节的内存。</p>
+<p>这种方法从两个方面减少了内存要求。</p>
+<ul>
+<li>
+<p>第一， 如果一级页表中的一个 PTE 是空的，那么相应的二级页表就根本不会存在。</p>
+</li>
+<li>
+<p>第二， 只有一级页表才需要总是在主存中，虚拟内存系统可以在需要时创建、页面调入或调出二级页表，减少了主存的压力；</p>
+<p><img src="https://s2.loli.net/2022/02/13/N1LKXRnTyBISbsj.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/02/13/N1LKXRnTyBISbsj.png" class="lozad post-image"></p>
+</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/02/09/CSAPP-chatper-6/">
+            http://example.com/2022/02/09/CSAPP-chatper-6/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/04/13/oop-of-cpp1/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Cpp 面向对象入门（其一 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/02/07/Linear-Base/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">线性基学习笔记 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-text"> 第四章： 存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text"> 一。局部性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98"><span class="toc-text"> 二。缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%80%9A%E7%94%A8%E7%BB%93%E6%9E%84"><span class="toc-text"> 三。通用结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="toc-text"> 第六章： 虚拟内存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 一。内存作为缓存的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 二。虚拟内存作为内存保护的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%8F%8A%E7%BF%BB%E8%AF%91"><span class="toc-text"> 三。虚拟地址及翻译</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-text"> 第四章： 存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text"> 一。局部性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98"><span class="toc-text"> 二。缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%80%9A%E7%94%A8%E7%BB%93%E6%9E%84"><span class="toc-text"> 三。通用结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="toc-text"> 第六章： 虚拟内存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 一。内存作为缓存的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 二。虚拟内存作为内存保护的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%8F%8A%E7%BF%BB%E8%AF%91"><span class="toc-text"> 三。虚拟地址及翻译</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-text"> 第四章： 存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text"> 一。局部性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%93%E5%AD%98"><span class="toc-text"> 二。缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%80%9A%E7%94%A8%E7%BB%93%E6%9E%84"><span class="toc-text"> 三。通用结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="toc-text"> 第六章： 虚拟内存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 一。内存作为缓存的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-text"> 二。虚拟内存作为内存保护的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%8F%8A%E7%BF%BB%E8%AF%91"><span class="toc-text"> 三。虚拟地址及翻译</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

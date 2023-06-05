@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>【杂谈】吉他、孤独以及蓝色星球</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="【杂谈】吉他、孤独以及蓝色星球">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2023/01/25/bocchi-the-rock-talking/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://s2.loli.net/2023/01/25/JnuvCbkI2Upqwot.png">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;这是给漫社投的稿，本人觉得写的还行，就搬到博客来了。&lt;/p&gt;
+&lt;p&gt;应该是不涉及剧透之类的，但如果真有地方透了，也在此先向各位谢罪了 &lt;s&gt;（话说日常番剧透也无所谓吧）&lt;/s&gt;。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-01-25">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-01-25">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+  <div class="image-wrapper">
+    <img 
+      src="https://s2.loli.net/2023/01/25/JnuvCbkI2Upqwot.png" 
+      data-src="https://s2.loli.net/2023/01/25/JnuvCbkI2Upqwot.png"
+      srcset="data:image/svg+xml,%3Csvg%20xmlns=&#39;http://www.w3.org/2000/svg&#39;%20viewBox=&#39;0%200%20300%20300&#39;%3E%3C/svg%3E"
+      class="image lozad"
+      alt="【杂谈】吉他、孤独以及蓝色星球 thumbnail">
+  </div>
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      【杂谈】吉他、孤独以及蓝色星球
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-01-25T09:15:10.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-01-25</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/" 
+          class="post-meta-link">
+          社团推送
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2.6k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>这是给漫社投的稿，本人觉得写的还行，就搬到博客来了。</p>
+<p>应该是不涉及剧透之类的，但如果真有地方透了，也在此先向各位谢罪了 <s>（话说日常番剧透也无所谓吧）</s>。</p>
+<span id="more"></span>
+<br>
+<h2 id="星尘划过我撩动琴弦"><a class="markdownIt-Anchor" href="#星尘划过我撩动琴弦"></a> 星尘划过，我撩动琴弦</h2>
+<p>12 月 24 日平安夜，本该喧闹的街巷也为《孤独摇滚》的最终话播出公允了一份寂静。</p>
+<p>笔者坐在昏暗的房间里，透过狭小的、泛着荧光的屏幕，幻想着一场与神回的邂逅，期盼着孤独的灵魂再次交融。</p>
+<p><img src="https://s2.loli.net/2023/01/25/26kCLKqWEjiHd9V.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2023/01/25/26kCLKqWEjiHd9V.png" class="lozad post-image"></p>
+<blockquote>
+<p>下一秒，孤独摇滚完结了</p>
+<p>——<em>“今天还得打工啊”</em> 小波奇说道，</p>
+<p>​    于是孤独摇滚完结了。</p>
+</blockquote>
+<p>它完结得毫无征兆，完结得仿佛是一场监督刻意安排的笑话，仿佛《孤独摇滚》在下周六的深夜仍然会继续连载，仿佛下一幕即在眼前。</p>
+<p>在反复确认过『孤独摇滚第一季确实已经在12月24日平安夜完结』这一事实后，笔者冲泡了一杯咖啡，打算用这 200ml 的空洞感，200ml 的 <em>『Déjà vu』</em> （既视感），以及剩下 100ml 混乱的思绪去写点什么。</p>
+<br>
+<hr />
+<br>
+<div style="display: flex; flex-wrap: wrap;">
+  <div style="flex: 1;">
+        <blockquote style="text-align:left; 
+                           font-size: 1.2em; 
+                           font-style:oblique;
+                           color: black;
+                           background-color: rgb(0,0,0,0.1)">
+        喜欢黑暗狭窄的地方<br>
+        在深深遮盖的兜帽之下<br>
+        憎恨无情的世界的这双眼<br>
+        曾经却是多么地渴望得到爱啊<br>
+        <p style="text-align:right; padding:0px 20px 0px 0px">——《青春症候群》</p>
+    </blockquote>
+  </div>
+  <div style="flex: 1; display: flex; align-items: flex-start; justify-content: center;">
+      <img style="border-radius: 0.6125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    max-height: 70%; max-width: 70%; object-fit: contain;            
+    " 
+    src="https://s2.loli.net/2023/01/25/RsxHyQztmSYCaOl.jpg">
+   <br>
+  </div>
+</div>
+<br>
+<p><strong>《孤独摇滚》</strong> 讲述的是 <strong>“波奇酱”</strong> （又称“小孤独”）后藤一里幻想着通过演奏吉他，成为万人仰赖的带明星，却因为社恐而一直没能踏出第一步。正当无奈之时，一位名叫 <strong>伊地知虹夏</strong> 的鼓手邀请她加入自己所在的 <strong>“结束乐队”</strong> ，并邂逅了贝斯手 <strong>山田凉</strong> 以及主唱吉他手 <strong>喜多喜多</strong>，从而发生的一系列轻松日常喜剧的故事。</p>
+<p>作为芳文社狂热废萌豚，笔者开播前便关注了这部作品，并且十分期待着《孤独摇滚》能延续十年前《轻音少女》所带来的悸动；而如今，笔者却极其认可某位B站用户的评价：<em>“对孤独摇滚最大的赞赏是，我本以为它是我久等了的轻音第三季，但看完我才发现：它是孤独摇滚，它就是它自己，无可替代。”</em></p>
+<p>事实确实如此。与《轻音少女》傻乎乎的治愈系风格不同， <strong>《孤独摇滚》侧重的是真实感与代入感，诉求的是摇滚与躁动内心的调和。</strong> 为了突出这种日常的真实感，动漫中插入了大量波奇酱的内心独白以及颇有表现张力的演出，如同信号通过放大器一般去夸大孤独的渲染能力。</p>
+<p>甚至在第五集和第八集的live环节中，动漫也毫不忌讳地用波奇酱的心声去包裹明明应该身为主角的摇滚，颇有喧宾夺主之意。由此可见，《BOCHI THE ROCK》或许不该翻译成 <strong>《孤独摇滚》</strong> （强调摇滚），而是 <strong>《孤独酱的摇滚》</strong> （强调孤独）更为贴切 [1]。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/NH6nTF79w3BoVSD.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">社恐特有、极具想象力的颅内世界</div>
+</center>
+<br>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/srNca9L3XjE8tKn.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">十分逼真的 3D 演出（）</div>
+</center>
+<br>
+<p>谈及孤独，我们或许会联想到日本 <strong>“丧文化”</strong> 或者 <strong>“物哀文化”</strong> — — 它是《源氏物语》中的*“生命如蝶，翩翩起舞，却又散如烟”*，它是太宰治那句经典的 <em>“生而为人，我很抱歉”</em> ；它是二战后日本民众 <em>“为世界添了麻烦”</em> 的战败者心理，它是经济泡沫破碎所标志的黄金时代的没落。名为“丧”的日本妖怪将他们视作养分，吞噬着日本社会具有分量的恐慌。</p>
+<p>在动漫领域，“丧”常常通过喜剧的形式进行演出，<strong>而论其内核则是一如既往的悲剧</strong>，比如《我的朋友很少》《我不受欢迎，怎么想都是你们的错》（简称《丧女》）、以及职场番《阴晴不定大哥哥》。它们折射出的倒影愈为黑暗，观众愈能与其共鸣，从而发掘出孤独感与无力感，陷入无端的精神内耗之中。</p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/IO4YsjXShedagHu.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">丧女 OP 这个镜头不比小波奇摇滚？（bushi</div>
+</center>
+<br>
+<p>然而论其《孤独摇滚》，情况却有了些许不同。</p>
+<p><strong>阴角的波奇酱“丧”吗？</strong> 答案是显然的。</p>
+<p><strong>但《孤独摇滚》“丧”吗？</strong> 我觉得大部分的观众都不会这样想。作为芳文社Kirara刊的漫画作品，《孤独摇滚》仍旧承载了那些 <em><strong>“少女们所特有的东西”</strong></em> ——友谊，梦想以及成长。借助波奇酱的视角，我们明晰地见证了那位坐在公园秋千上咒念自我的阴角少女，是如何受乐队的大家影响，从而成为独当一面的“吉他英雄”。</p>
+<p>波奇的成长同荧幕面前“我们”产生着强烈的共鸣。而与其他“丧”系作品不同，这份共鸣不仅是因其社交能力为零的失落，是在众人面前失态的窘相；更是面对店长审核时的忐忑，是第一次演出失败的不甘，是学园祭上挥洒汗水的青春。<strong>“丧”与“成长”相互交融，汇聚成《孤独摇滚》，也筑就了我们观影时跌宕起伏的心路历程。</strong></p>
+<br>
+<hr />
+<br>
+<div style="display: flex; flex-wrap: wrap;">
+  <div style="flex: 1;">
+        <blockquote style="text-align:left; 
+                           font-size: 1.2em; 
+                           font-style:oblique;
+                           background-color: rgb(0,0,255,0.1);
+                           color: black;">
+            那个乐队 所唱的歌曲<br>
+            对我来说 如同尖锐回荡的笑声<br>
+            将双眼紧闭 射入黑暗的后光<br>
+            将双耳塞住 切实鸣响的心跳<br>
+            在胸口深处 随身摇曳的心脏<br>
+            除了我自己的声音<br>
+            我什么都不想听
+            <p style="text-align:right; padding:0px 20px 0px 0px">——《那个乐队》</p>
+          </blockquote>
+    </div>
+  <div style="flex: 1; display: flex; align-items: flex-start; justify-content: center;">
+      <img style="border-radius: 0.6125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    max-height: 80%; max-width: 80%; object-fit: contain;            
+    " 
+    src="https://s2.loli.net/2023/01/25/kz2GuSvKWVPMhcl.png">
+  </div>
+</div>
+<br>
+<p>但倘若分析只是如此，那么读者很难不会抛出一个早已苦心积虑的问题： <strong>既然波奇酱已经有“结束乐队”相伴，那“孤独摇滚”还能被称作是“孤独”的吗？</strong></p>
+<p>诚然，纵使制作组煞费苦心地去勾勒波奇酱丰富且阴角特有的内心独白，依然无法掩饰与“结束乐队”相伴的快乐日常是我们所不曾拥有的甚至在开后宫的道路上越走越远。但即便如此，笔者依然认为： <strong>不仅是波奇酱，“结束乐队”的所有成员都患有名为孤独的病症。</strong></p>
+<p>第八集后半段的庆功宴，虹夏妈妈向波奇酱袒露真正的梦想时曾说道： <em>“凉想在这个乐队追寻喜欢的音乐，喜多向往和朋友一起做些什么。大家都将自己最珍贵的梦想托付于乐队了。”</em></p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/LfD7MhmT1eNgbOQ.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">圣虹夏！虹门！虹夏妈妈！！（bushi</div>
+</center>
+<br>
+<p>从这简短的独白中，我们可以窥见每位乐队成员孤独的时刻：虹夏珍藏着比“目标武道馆”更为宝贵的梦想，却因不愿施于其他乐队成员过多压力而将其埋藏于心；凉桑偏爱着充满个性的音乐，却因前乐队成员日益趋于大众的审美而深感遗憾与无奈；喜多酱看似被朋友拥簇，却因没有参加过任何社团，而神往着共同实现梦想的四人旅途。</p>
+<p>“结束乐队”的四人在相遇前的 <strong>种种缺陷与遗憾</strong> ，正如同 <strong>一块块拼图的凹陷与凸起</strong>；随着剧情的展开，拼图的碎片也不断被拼接成型，最终构建成独一无二的少女摇滚乐队。每个人孤独的病症也伴随着乐队的成长而逐渐治愈，无形的伤口也得以愈合。</p>
+<p><strong>似乎不仅是“结束乐队”的各位，我们每个人也都是孤独症候群的一员。</strong> 不论是 “将互联网视为归宿” 的阴角式做派，还是 “明天大家一起唱K” 的阳角式风格，亦或是笔者这样 <em>“敲下一行行文字，期盼着寥寥无几的读者”</em> 毫无理性的纯纯发电，都是身为社会性动物的我们，为了逃避孤独所带来的压抑感所寻求的不同方式罢了。</p>
+<p><strong>因此，身为阴角的各位不必感到孤独了，因为孤独的应该是整个世界吧。（确信）</strong><br />
+<br></p>
+<a href="#">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/7KD8Etd4Qs2YCyG.png">
+</a>
+<p><br><br></p>
+<hr />
+<br>
+<div style="display: flex; flex-wrap: wrap;">
+  <div style="flex: 1;">
+        <blockquote style="text-align:left; 
+                           font-size: 1.2em; 
+                           font-style:oblique;
+                           background-color: rgb(255,0,0,0.1);
+                           color: black;">
+            蓝色星球 孑然一身<br>
+            它曾领略各种各样的声音<br>
+            在几亿年间 不停自转<br>
+            所以一瞬也好……<br>
+            请聆听 我的声音啊
+            <p style="text-align:right; padding:0px 20px 0px 0px">——《吉他、孤独与蓝色星球》</p>
+          </blockquote>
+    </div>
+  <div style="flex: 1; display: flex; align-items: flex-start; justify-content: center;">
+      <img style="border-radius: 0.6125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    max-height: 80%; max-width: 80%; object-fit: contain;            
+    " 
+    src="https://s2.loli.net/2023/01/25/6qFO8skGIXrb13p.png">
+     <br>
+  </div>
+</div>
+<br>
+<p>但不论如何，孤独摇滚的第一季还是完结了。一边等待着第二季制作决定的消息，一边二刷着孤独摇滚，我回味着波奇酱最后的那一句 <em>“今天还得打工啊”</em> ，一遍重复着单刷第十二集的循环。</p>
+<p>看到这里，我都恨不得给监督两拳： <strong>要是能把学园祭作为压轴的演出放在第十二集的最后，用最完美的live为孤独摇滚画上最圆满的句号</strong>，多少孤寂的灵魂将会在平安夜得到救赎！</p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/AVxCNfnocpOzjyY.png">
+    <br>
+</center>
+<p>可转念一想，这种设计却是十分不合理的，<strong>因为这既不摇滚、也不孤独。</strong> 将挥洒青春的校园祭放在开头、以平凡的、单调的、重复的日常收束，通过这种情节的落差感，<strong>《孤独摇滚》成功塑就了一种非王道的、极具个性化的结尾。</strong></p>
+<p><em>“失去了个性的摇滚，和死去没什么两样。”</em> 即使在全剧的终点，制作组也并没有为了迎合大众去制作所谓的“神回”，而是贯彻自我、向观众揭示了“孤独摇滚”真正的内涵。</p>
+<p>波奇酱和结束乐队的故事将告一段落了，但它的足迹将不断延伸。荧幕前的你我或都将接过波奇肩上摔坏或而没有摔坏的量子态吉他，将我们的生活演奏下去。</p>
+<p>因此，就算是 <em><strong>“无法在他人面前露出笑容”</strong></em> ，就算是 <em><strong>“被思绪缠绕得翻来覆去”</strong></em> ，也满怀希望、努力地去做吧。 <em><strong>“在那座山丘的前方的耀眼光芒 / 那是能让你的孤独无处遁形的晨曦”</strong></em> 。</p>
+<br>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="https://s2.loli.net/2023/01/25/fTWDmsFVG1PX3xh.png">
+    <br>
+</center>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2023/01/25/bocchi-the-rock-talking/">
+            http://example.com/2023/01/25/bocchi-the-rock-talking/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/05/08/Transformer-learning/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Transformer 学习笔记（上 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/09/17/solution-in-2022-summer/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">2022 暑期集训补题题解【简版】 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%9F%E5%B0%98%E5%88%92%E8%BF%87%E6%88%91%E6%92%A9%E5%8A%A8%E7%90%B4%E5%BC%A6"><span class="toc-text"> 星尘划过，我撩动琴弦</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%9F%E5%B0%98%E5%88%92%E8%BF%87%E6%88%91%E6%92%A9%E5%8A%A8%E7%90%B4%E5%BC%A6"><span class="toc-text"> 星尘划过，我撩动琴弦</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%9F%E5%B0%98%E5%88%92%E8%BF%87%E6%88%91%E6%92%A9%E5%8A%A8%E7%90%B4%E5%BC%A6"><span class="toc-text"> 星尘划过，我撩动琴弦</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

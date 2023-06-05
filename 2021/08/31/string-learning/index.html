@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>字符串学习笔记</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="字符串学习笔记">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2021/08/31/string-learning/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;涉及了 Trie树，KMP算法 ，AC自动机，SA 等字符串全家桶的内容。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2021-08-31">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-07-29">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="字符串">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      字符串学习笔记
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-08-31T13:29:27.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2021-08-31</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/" 
+          class="post-meta-link">
+          算法竞赛
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+            class="post-meta-link">
+            字符串
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>涉及了 Trie树，KMP算法 ，AC自动机，SA 等字符串全家桶的内容。</p>
+<span id="more"></span>
+<h2 id="〇-字符串哈希"><a class="markdownIt-Anchor" href="#〇-字符串哈希"></a> 〇. 字符串哈希</h2>
+<p>在任何场面中都十分有用的 hash 值，如果想利用其表示某个串的前缀，可以类比秦九昭算法弄成多项式的形式：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><msub><mi>s</mi><mn>1</mn></msub><mo separator="true">,</mo><mtext> </mtext><mi>H</mi><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mo>∗</mo><mi>s</mi><mi>e</mi><mi>e</mi><mi>d</mi><mo>+</mo><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">H(1) = s_1,~H(i) = H(i-1)*seed+s_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">e</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>那么对于任意一个子串 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo stretchy="false">[</mo><mi>l</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">S[l,r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span>，我们可以在这样表示：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>l</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">)</mo><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">)</mo><mo>−</mo><mi>H</mi><mo stretchy="false">(</mo><mi>l</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mo>∗</mo><mi>s</mi><mi>e</mi><mi>e</mi><msup><mi>d</mi><mrow><mtext> </mtext><mi>r</mi><mo>−</mo><mi>l</mi><mo>+</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">H(l,r) = H(r)-H(l-1)*seed^{~r-l+1}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8991079999999999em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mspace nobreak mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mbin mtight">−</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>比方说求 i 和 j 的 LCP，只需要二分枚举长度 len，判断 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>i</mi><mo separator="true">,</mo><mi>l</mi><mi>e</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(i,len)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 是否和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>j</mi><mo separator="true">,</mo><mi>l</mi><mi>e</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(j,len)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 相同就行了。</p>
+<h2 id="壹-trie树"><a class="markdownIt-Anchor" href="#壹-trie树"></a> 壹. Trie树</h2>
+<h3 id="1-普通-trie-树"><a class="markdownIt-Anchor" href="#1-普通-trie-树"></a> 1. 普通 Trie 树</h3>
+<p>大家都会。</p>
+<h3 id="2-可持久化-trie-树"><a class="markdownIt-Anchor" href="#2-可持久化-trie-树"></a> 2. 可持久化 Trie 树</h3>
+<p>会持久化线段树了就会。</p>
+<h2 id="贰-前缀函数及-kmp-算法"><a class="markdownIt-Anchor" href="#贰-前缀函数及-kmp-算法"></a> 贰. 前缀函数及 KMP 算法</h2>
+<h3 id="1-解决对象"><a class="markdownIt-Anchor" href="#1-解决对象"></a> 1. 解决对象</h3>
+<p>在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 时间内快速解决<strong>单模式串的匹配问题</strong>。</p>
+<h3 id="2-前缀函数"><a class="markdownIt-Anchor" href="#2-前缀函数"></a> 2. 前缀函数</h3>
+<p>定义 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">nex_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 数组为 子串 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mrow><mn>0</mn><mo>→</mo><mi>i</mi></mrow></msub></mrow><annotation encoding="application/x-tex">s_{0\to i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0</span><span class="mrel mtight">→</span><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 最长的相等的真前缀与真后缀的长度。</p>
+<p>知道了各前缀函数值，我们在进行模式串失配的时候就可迅速回到上一个匹配点，对总匹配过程进行加速。</p>
+<p>求前缀函数的过程与 KMP 本质上没有区别，其核心是两个性质（默认数组下标从 0 开始）：</p>
+<ul>
+<li>
+<p>已知 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">nex_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，则对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><msub><mi>x</mi><mrow><mtext> </mtext><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">nex_{~i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mspace nobreak mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>，其贡献不会超过 1.</p>
+</li>
+<li>
+<p>若第 k 长相同前缀长度为 j ，则第 k+1 长相同前缀长度为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><msub><mi>x</mi><mrow><mtext> </mtext><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">nex_{~j-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mspace nobreak mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>.</p>
+</li>
+</ul>
+<p>第一条性质推导出的引理就是，在匹配过程中只需判断下一位是否相同，若否则直接进行失配处理即可；而第二条性质保证了失配过程中我们可以通过回溯的方式快速找到满足相同前缀的 k 的最小值。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">check</span><span class="hljs-params">(string a)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">int</span> n=a.<span class="hljs-built_in">size</span>(),p=<span class="hljs-number">0</span>; <br>    <span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">pr</span><span class="hljs-params">(n)</span></span>;  pr[<span class="hljs-number">0</span>]=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++) &#123;<br>		<span class="hljs-keyword">while</span> (p &amp;&amp; a[p]!=a[i]) p=pr[p<span class="hljs-number">-1</span>];<br>		<span class="hljs-keyword">if</span> (a[p] == a[i]) ++p; pr[i]=p; <br>	&#125;<br>	<span class="hljs-keyword">return</span> pr;<br>&#125;<br></code></pre>
+<h3 id="3-算法流程"><a class="markdownIt-Anchor" href="#3-算法流程"></a> 3. 算法流程</h3>
+<p>和上面如出一辙，只不过不再是前后缀的匹配，而是文本串和模式串的匹配。若失配，则模式串立刻利用 nex 数组，跳回其最长前缀重新匹配。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">kmp</span><span class="hljs-params">(string a,string s)</span></span><br><span class="hljs-function"></span>&#123;<br>	nex = <span class="hljs-built_in">check</span>(a);	<span class="hljs-keyword">int</span> n=a.<span class="hljs-built_in">size</span>(),p=<span class="hljs-number">0</span>;<br>	vector&lt;<span class="hljs-keyword">int</span>&gt; pr;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;s.<span class="hljs-built_in">size</span>();i++) &#123;<br>		<span class="hljs-keyword">while</span> (p &amp;&amp; a[p]!=s[i]) p=nex[p<span class="hljs-number">-1</span>];<br>		<span class="hljs-keyword">if</span> (a[p] == s[i]) ++p; <br>		<span class="hljs-keyword">if</span> ( p==n ) pr.<span class="hljs-built_in">push_back</span>(i-n+<span class="hljs-number">1</span>);<br>	&#125;<br>	<span class="hljs-keyword">return</span> pr;<br>&#125;<br></code></pre>
+<h3 id="4-扩展-kmpz-函数"><a class="markdownIt-Anchor" href="#4-扩展-kmpz-函数"></a> 4. 扩展 KMP（Z 函数）</h3>
+<p>摸。</p>
+<h2 id="叁-ac-自动机"><a class="markdownIt-Anchor" href="#叁-ac-自动机"></a> 叁. AC 自动机</h2>
+<h3 id="1-解决对象-2"><a class="markdownIt-Anchor" href="#1-解决对象-2"></a> 1. 解决对象</h3>
+<p>在线性时间内快速解决<strong>多模式串的匹配问题</strong>。</p>
+<p>本质上确实就是 Trie 树 + KMP，但在细节上对这两个算法进行了多角度融合。</p>
+<h3 id="2-fail-指针与-fail-边"><a class="markdownIt-Anchor" href="#2-fail-指针与-fail-边"></a> 2. fail 指针与 fail 边</h3>
+<p>定义 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><msub><mi>r</mi><mrow><mo stretchy="false">(</mo><mi>i</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">tr_{(i,c)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9702799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight">i</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">c</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span> ： 对编号为 i 的节点，以 c 为下一字符的<strong>子节点编号</strong>。 亦或是对于编号为 i 所映射的字符串 S，以 s 为下一字符所形成字符串的<strong>映射函数</strong>。第二种定义更有利于我们去理解字典图的意义。</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi>r</mi><mo stretchy="false">(</mo><mi>i</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">tr(i,c)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span></span> 本质上便是<strong>Trie 树</strong>的搭建过程，我们令编号 0 为该树的根节点。</p>
+<p>定义 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>a</mi><mi>i</mi><msub><mi>l</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">fail_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">a</span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.01968em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> ：对于编号为 u 的节点，匹配该字符串的<strong>最长后缀</strong>所对应的节点编号。 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">nex_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 不同的是，该指针可以指向任意模式串，且仅仅包涵最长后缀的信息而非前后缀。</p>
+<p>fail 指针的构建同样利用 KMP 中 “回溯” 的思想，对于节点 u 及其 子节点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>v</mi><mo>=</mo><mi>t</mi><msub><mi>r</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">v=tr_{(u,c)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.9702799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight">u</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">c</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span>，我们令 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>a</mi><mi>i</mi><msub><mi>l</mi><mi>v</mi></msub><mo>=</mo><mi>t</mi><msub><mi>r</mi><mrow><mo stretchy="false">(</mo><mi>f</mi><mi>a</mi><mi>i</mi><msub><mi>l</mi><mi>u</mi></msub><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">fail_v=tr_{(fail_u,c)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">a</span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.01968em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.9702799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">i</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.01968em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">c</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span>；如果该点不存在，我们就向上回溯，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>u</mi><mn>1</mn></msub><mo>=</mo><mi>f</mi><mi>a</mi><mi>i</mi><msub><mi>l</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">u_1=fail_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">a</span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.01968em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，匹配 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><msub><mi>r</mi><mrow><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">tr_{(u_1,c)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9702799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord mathdefault">t</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathdefault mtight">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">c</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span>…如此下去。直至回到根节点。</p>
+<p>但我们的代码异常简单：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">build</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	queue&lt;<span class="hljs-keyword">int</span>&gt; q; <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++)<br>		<span class="hljs-keyword">if</span> (tr[<span class="hljs-number">0</span>][i]) q.<span class="hljs-built_in">push</span>(tr[<span class="hljs-number">0</span>][i]),fail[tr[<span class="hljs-number">0</span>][i]]=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>		<span class="hljs-keyword">int</span> k=q.<span class="hljs-built_in">front</span>(); q.<span class="hljs-built_in">pop</span>();<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++) <br>		<span class="hljs-keyword">if</span> (tr[k][i]) fail[tr[k][i]]=tr[fail[k]][i],q.<span class="hljs-built_in">push</span>(tr[k][i]);<br>		<span class="hljs-keyword">else</span> tr[k][i]=tr[fail[k]][i];<br>	&#125;<br>&#125;<br></code></pre>
+<p>我们可以注意到，里面并没有出现回溯的过程，而且 <code>else</code> 后面跟着的还有一个奇怪的东西。但其实短短的一行代码，却已经完成了 <strong>字典图</strong> 的搭建，并且极大提升了算法的效率。</p>
+<p>我们在任何AC自动机博客中总能看到很恐怖的字典图：<br />
+<img src="https://oi-wiki.org/string/images/ac-automaton3.png" alt="" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://oi-wiki.org/string/images/ac-automaton3.png" class="lozad post-image"></p>
+<p>但其中的黑边本质上只是一个 “搭桥”的过程 ，这就是<code>else</code> 语句所起的作用。</p>
+<p>我们对于 Trie 树进行广搜，保证了我们总能将深度较小的节点优先处理，即假设对于 dep=3 的节点，我们的桥总是往 dep=1,2,3 上搭。</p>
+<p>而对于一个节点，若要抹去回溯过程，最简单的方式便是 <strong>在回溯路径上就提前把边连好，等到你要回溯了就可以走刚搭好的小路</strong>。具体来说就是如果当前节点 u 没有某种字符的子节点，我们就引一条边到其 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>a</mi><mi>i</mi><msub><mi>l</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">fail_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">a</span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.01968em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 对应字符的子节点。这个可类比并查集的路径压缩来理解，我们管这个叫 <strong>fail 边</strong>。</p>
+<h3 id="3-查询操作"><a class="markdownIt-Anchor" href="#3-查询操作"></a> 3. 查询操作</h3>
+<p>基本上没啥问题了，直接在 Trie 图上跑，同时利用 fail 指针找出所有相同后缀的字符串映射的编号。</p>
+<p>关于统计模板题答案啥的，标记一下所有叶子节点，搜到了就 ans++ 即可。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> FO(x) freopen(#x<span class="hljs-meta-string">&quot;.in&quot;</span>,<span class="hljs-meta-string">&quot;r&quot;</span>,stdin),freopen(#x<span class="hljs-meta-string">&quot;.out&quot;</span>,<span class="hljs-meta-string">&quot;w&quot;</span>,stdout)</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cle(x) memset(x,0,sizeof(x))</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> maxn=<span class="hljs-number">2000100</span>;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> str s[i]-<span class="hljs-meta-string">&#x27;a&#x27;</span></span><br>string s[maxn];<br><span class="hljs-keyword">int</span> n,st,mp[maxn],vis[maxn],sum[maxn],fail[maxn],tr[maxn][<span class="hljs-number">30</span>];<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">insert</span><span class="hljs-params">(string s,<span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;s.<span class="hljs-built_in">size</span>(); now = tr[now][str], i++) <br>	<span class="hljs-keyword">if</span> ( !tr[now][str] ) tr[now][str] = ++st;<br>	<span class="hljs-keyword">if</span> ( !vis[now] ) vis[now] = x; mp[x] = vis[now];<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">build</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	queue&lt;<span class="hljs-keyword">int</span>&gt; q; fail[<span class="hljs-number">0</span>]=<span class="hljs-number">0</span>; <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++) <br>		<span class="hljs-keyword">if</span> (tr[<span class="hljs-number">0</span>][i]) fail[ tr[<span class="hljs-number">0</span>][i] ]=<span class="hljs-number">0</span>, q.<span class="hljs-built_in">push</span>(tr[<span class="hljs-number">0</span>][i]);<br>	<span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>		<span class="hljs-keyword">int</span> k=q.<span class="hljs-built_in">front</span>(); q.<span class="hljs-built_in">pop</span>();<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++) &#123;<br>			<span class="hljs-keyword">if</span> (tr[k][i]) <br>				fail[tr[k][i]] = tr[fail[k]][i], <br>				q.<span class="hljs-built_in">push</span>(tr[k][i]);<br>			<span class="hljs-keyword">else</span> tr[k][i]=tr[fail[k]][i];<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">query</span><span class="hljs-params">(string s)</span></span><br><span class="hljs-function"></span>&#123;	<span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>,p=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;s.<span class="hljs-built_in">size</span>();i++)<br>	&#123;<br>		now = tr[now][str];  p = now;<br>		<span class="hljs-keyword">while</span> (p) sum[ vis[p] ]++ , p = fail[p];<br>		<span class="hljs-comment">//只有模式串结尾才会有贡献。 </span><br>	&#125; <br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	cin&gt;&gt;n;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cin&gt;&gt;s[i],<span class="hljs-built_in">insert</span>(s[i],i);<br>	<span class="hljs-built_in">build</span>(); cin&gt;&gt;s[<span class="hljs-number">0</span>]; <span class="hljs-built_in">query</span>(s[<span class="hljs-number">0</span>]);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cout&lt;&lt;sum[ mp[i] ]&lt;&lt;endl;<br>&#125;<br></code></pre>
+<h3 id="4-时间复杂度分析"><a class="markdownIt-Anchor" href="#4-时间复杂度分析"></a> 4. 时间复杂度分析</h3>
+<p>很多题解骗我说这种裸的 AC 自动机的时间复杂度是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msub><mi>S</mi><mn>0</mn></msub><mo>+</mo><mo>∑</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(S_0+\sum s_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.00001em;vertical-align:-0.25001em;"></span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>S</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">S_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是文本串的长度，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">s_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是模式串的长度。既然如此，为啥我过不了<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P5357">AC自动机的二次加强版</a>呢！！</p>
+<p>我们先考虑对于模式串，其构造 Trie 图的时间。主要由 <strong>“插入” 及 “连 fail 边”</strong> 两部分组成。插入显然 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mo>∑</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(\sum s_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.00001em;vertical-align:-0.25001em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，连 fail 边时候每个节点都会入队列，把每个字母都询问一遍，也显然是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>26</mn><mo>∗</mo><mo>∑</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(26*\sum s_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">2</span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.00001em;vertical-align:-0.25001em;"></span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<p>而对于文本串匹配，时间复杂度也可能由两个部分导致：沿着 Trie 图转移；沿着 fail 指针找出所有可匹配模式串。</p>
+<p>沿着 Trie 图显然<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(S)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span></span></span></span>，貌似很正常。<br />
+但沿着 fail 指针很明显就有问题：</p>
+<ul>
+<li>一. 大量的点肯定都不是模式串的终点，由此进行了许多无效操作；</li>
+<li>二. 对于<code>a,aa,aaa...</code> 匹配 <code>aaaa...</code> 的情况便可能卡到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>S</mi><mo>∗</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(S*s_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</li>
+</ul>
+<h3 id="5-fail-树优化"><a class="markdownIt-Anchor" href="#5-fail-树优化"></a> 5. fail 树优化</h3>
+<p>最大的阻碍在于问题二，其中每个节点都经过了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(S)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span></span></span></span> 次，最终导致 TLE。而造成问题二的原因又隐藏在问题一里：咱们跳 fail 指针的姿势有问题。</p>
+<p>接下来引用自知乎专栏：</p>
+<p>一个结点<strong>只有一个 fail 指针指出，可能被多个 fail 指针指向</strong>；因此，fail 指针构成了一个以 0 为根的<strong>fail 树</strong>，一个结点的 fail 指针指向它在 fail树 中的父亲。</p>
+<p>先给出如下两个定义：</p>
+<ul>
+<li>
+<p>某结点在AC自动机的匹配过程中作为一个被转移的状态，称此结点为 <strong>直接匹配</strong>；</p>
+</li>
+<li>
+<p>被访问的结点沿着fail指针遍历到的结点，称为<strong>可被匹配</strong>。</p>
+</li>
+</ul>
+<p>那么这个模式串被匹配到的次数，就是它的终点 <strong>直接匹配次数+可被匹配次数</strong>。</p>
+<p>而对于 fail 树任意一个节点 u，若其子树内某个节点 v 被<strong>直接匹配</strong>，那显然的是该节点可以顺着 fail 指针一直爬，爬到节点 u 从而将其<strong>间接匹配</strong> 。</p>
+<p>换句话说，fail树中某结点 <strong>直接匹配次数+可被匹配次数</strong>，也就等于 <strong>以它为根的子树中所有结点直接被匹配的次数</strong>。</p>
+<p>这样，我们先不沿着fail指针寻找，而是在每个结点保存一个计数器，计算被匹配到的次数，等到文本串匹配完毕再一并从fail树的叶子结点向上传递，那么就可以把多次沿着fail的遍历合并为一次，复杂度就大大降低。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> FO(x) freopen(#x<span class="hljs-meta-string">&quot;.in&quot;</span>,<span class="hljs-meta-string">&quot;r&quot;</span>,stdin),freopen(#x<span class="hljs-meta-string">&quot;.out&quot;</span>,<span class="hljs-meta-string">&quot;w&quot;</span>,stdout)</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cle(x) memset(x,0,sizeof(x))</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> maxn=<span class="hljs-number">2000100</span>;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> str s[i]-<span class="hljs-meta-string">&#x27;a&#x27;</span></span><br>string s[maxn];<br><span class="hljs-keyword">int</span> n,st,mp[maxn],vis[maxn],siz[maxn],fail[maxn],tr[maxn][<span class="hljs-number">30</span>];<br>vector&lt;<span class="hljs-keyword">int</span>&gt; g[maxn];<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">insert</span><span class="hljs-params">(string s,<span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;s.<span class="hljs-built_in">size</span>(); now = tr[now][str], i++) <br>	<span class="hljs-keyword">if</span> ( !tr[now][str] ) tr[now][str] = ++st;<br>	mp[x] = now;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">build</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	queue&lt;<span class="hljs-keyword">int</span>&gt; q; fail[<span class="hljs-number">0</span>]=<span class="hljs-number">0</span>; <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++) <span class="hljs-keyword">if</span> (tr[<span class="hljs-number">0</span>][i]) fail[ tr[<span class="hljs-number">0</span>][i] ]=<span class="hljs-number">0</span>, q.<span class="hljs-built_in">push</span>(tr[<span class="hljs-number">0</span>][i]);<br>	<span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>		<span class="hljs-keyword">int</span> k=q.<span class="hljs-built_in">front</span>(); q.<span class="hljs-built_in">pop</span>();<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">26</span>;i++) &#123;<br>			<span class="hljs-keyword">if</span> (tr[k][i]) fail[tr[k][i]] = tr[fail[k]][i], q.<span class="hljs-built_in">push</span>(tr[k][i]);<br>			<span class="hljs-keyword">else</span> tr[k][i]=tr[fail[k]][i];<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">query</span><span class="hljs-params">(string s)</span></span><br><span class="hljs-function"></span>&#123;	<span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>,p=<span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;s.<span class="hljs-built_in">size</span>();i++)<br>		now = tr[now][str],++siz[now]; <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=st;i++) g[ fail[i] ].<span class="hljs-built_in">push_back</span>(i);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-keyword">int</span> u)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> v:g[u]) <span class="hljs-built_in">dfs</span>(v),siz[u]+=siz[v];<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	cin&gt;&gt;n;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cin&gt;&gt;s[i],<span class="hljs-built_in">insert</span>(s[i],i);<br>	<span class="hljs-built_in">build</span>(); cin&gt;&gt;s[<span class="hljs-number">0</span>]; <span class="hljs-built_in">query</span>(s[<span class="hljs-number">0</span>]);  <span class="hljs-built_in">dfs</span>(<span class="hljs-number">0</span>);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cout&lt;&lt;siz[ mp[i] ]&lt;&lt;endl;<br>    <span class="hljs-comment">//这里的 mp_i 已从点到点的映射转换为点到边的映射</span><br>&#125;<br><br></code></pre>
+<h3 id="6-例题"><a class="markdownIt-Anchor" href="#6-例题"></a> 6. 例题</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P2444">【POI2000】病毒</a></li>
+</ul>
+<p><strong>题意：</strong></p>
+<p>给定一系列模式串，判断是否存在一个无限长的字符串使不含任何模式串为子串。</p>
+<p><strong>分析：</strong></p>
+<p>关于我们建好的AC自动机里那些 fail 边与 fail 指针，都是帮助我们<strong>在失配的时候能快速切换模式串后缀</strong>，从而加快找到匹配效率；</p>
+<p>而在这里我们要利用 fail 边与 fail 指针，<strong>无限制地在 Trie 图里面绕，直至走过的路成了环</strong>，这样我们只要按照该路线就可以构造出满足要求的字符串。这可以通过 dfs 打标记的方式实现。</p>
+<p>同时，我们为了避免匹配成功，要避开一切模式串终点；同时，<strong>我们也要避开有 fail 指针指向这些终点的节点</strong>，因为这意味着该节点所映射的字符串的后缀就是其中的一个模式串，那自然是不允许的。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> FO(x) freopen(#x<span class="hljs-meta-string">&quot;.in&quot;</span>,<span class="hljs-meta-string">&quot;r&quot;</span>,stdin),freopen(#x<span class="hljs-meta-string">&quot;.out&quot;</span>,<span class="hljs-meta-string">&quot;w&quot;</span>,stdout)</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cle(x) memset(x,0,sizeof(x))</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> maxn=<span class="hljs-number">300010</span>;<br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> str s[i]-<span class="hljs-meta-string">&#x27;0&#x27;</span></span><br><span class="hljs-keyword">int</span> n, st, tr[maxn][<span class="hljs-number">3</span>], fail[maxn], sum[maxn], vis[maxn];<br>string s[<span class="hljs-number">3000</span>];  <span class="hljs-keyword">bool</span> v[maxn], ans=<span class="hljs-number">0</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">insert</span><span class="hljs-params">(string s,<span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;	<span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>, l=s.<span class="hljs-built_in">size</span>();<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;l;now = tr[now][str], i++) <br>		<span class="hljs-keyword">if</span> (!tr[now][str]) tr[now][str] = ++st;<br>	vis[now] = x;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">build</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	queue&lt;<span class="hljs-keyword">int</span>&gt; q; <span class="hljs-keyword">int</span> now = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">2</span>;i++) <span class="hljs-keyword">if</span> (tr[<span class="hljs-number">0</span>][i]) q.<span class="hljs-built_in">push</span>(tr[<span class="hljs-number">0</span>][i]);<br>	<span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>		<span class="hljs-keyword">int</span> k=q.<span class="hljs-built_in">front</span>(); q.<span class="hljs-built_in">pop</span>();<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">2</span>;i++)  <br>		<span class="hljs-keyword">if</span> (tr[k][i]) <br>			q.<span class="hljs-built_in">push</span>(tr[k][i]), fail[tr[k][i]] = tr[ fail[k] ][i]; <br>			vis[ tr[fail[k]][i] ] &amp;&amp; ( vis[ tr[k][i] ] = vis[ tr[fail[k]][i] ] );	<br>			<span class="hljs-keyword">else</span> tr[k][i] = tr[ fail[k] ][i];<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (ans) <span class="hljs-keyword">return</span>; <span class="hljs-keyword">if</span> (v[x]) &#123;ans=<span class="hljs-number">1</span>;<span class="hljs-keyword">return</span>;&#125; v[x] = <span class="hljs-number">1</span>;  <br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">2</span>;i++) <br>		<span class="hljs-keyword">if</span> (!vis[tr[x][i]]) <span class="hljs-built_in">dfs</span>( tr[x][i] );  v[x] = <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	cin&gt;&gt;n; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) cin&gt;&gt;s[i], <span class="hljs-built_in">insert</span>(s[i],i);<br>	<span class="hljs-built_in">build</span>();  <span class="hljs-built_in">dfs</span>(<span class="hljs-number">0</span>); <br>	cout&lt;&lt; (ans?<span class="hljs-string">&quot;TAK&quot;</span>:<span class="hljs-string">&quot;NIE&quot;</span>) &lt;&lt;endl;<br>&#125;<br><br></code></pre>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P2414">【NOI2011】阿狸的打字机</a></li>
+</ul>
+<p><strong>题意：</strong> 给定一系列操作和查询，问当前第 x 个字符串在第 y 个中出现多少次。</p>
+<p><strong>分析：</strong> 先把所有询问离线并按照 y 排序，按输入要求建 Trie 图。在路径上打上 “加一” 标记（因为此时为目标匹配串），当搜索到该串结尾时一并处理所有的 x 子树即可。</p>
+<p>啥，你告诉我搜索子树要 O(n)，那就直接利用 dfs 序，放到树状数组上即可。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P3041">Viedo Game G</a><br />
+<strong>题意：</strong> 给定 n 个字符串，让你构造一个长为 k 的文本串，使得这些字符串在该文本串出现的次数最多。<br />
+<strong>分析：</strong><br />
+首先是一个多模式字符串匹配，那应该往 AC 自动机上靠；考虑往一个已知串内加入一个字符使其增加的出现次数更多，这应该是一个 DP 的过程。</li>
+</ul>
+<p>那就设 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">f[i][k]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">]</span></span></span></span> 是 “长度为 i，此时在节点 k 上的最优得分”，考虑转移到下一个节点所能增加的次数， 那么以该字符为结尾所产生的贡献是可以算出来的。</p>
+<p>但要注意的是，一个节点对应字符串能够造成的贡献，要包含其后缀所能造成的贡献（即 fail[i] 的贡献）。</p>
+<p>注意一下初始化， 这样能保证仅能从源点开始走：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-built_in">memset</span>(f,<span class="hljs-number">-63</span>,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(f)), f[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<br></code></pre>
+<h2 id="肆-后缀数组"><a class="markdownIt-Anchor" href="#肆-后缀数组"></a> 肆. 后缀数组</h2>
+<p>学习后缀数组要首先明确两个概念：<strong>子串</strong> 和 <strong>后缀</strong>。具体来说，<strong>子串</strong> 指的是字符串中从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">s_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">s_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> 连续组成的字符串（其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>≤</mo><mi>i</mi><mo>≤</mo><mi>j</mi><mo>≤</mo><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">1 \leq i \le j \leq size)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.78041em;vertical-align:-0.13597em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.79549em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault">e</span><span class="mclose">)</span></span></span></span>；<strong>后缀 i</strong> 指的是从第 i 个字符开始一直到字符串末尾所形成的的子串。</p>
+<p>后缀数组由两部分组成： <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">sa_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><msub><mi>k</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">rk_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03148em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">sa_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示所有后缀按字典序排序后，排名第 i 小的后缀编号；<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><msub><mi>k</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">rk_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03148em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 指的是后缀 i 在 sa 数组里的排名。由上可知，sa 与 rk 数组其实是互逆的。</p>
+<p>不论后缀数组有什么功能，我们先考虑如何求解 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>a</mi></mrow><annotation encoding="application/x-tex">sa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">a</span></span></span></span> 数组。</p>
+<h3 id="1-on-log2-n-算法"><a class="markdownIt-Anchor" href="#1-on-log2-n-算法"></a> 1. O(n* log^2 n) 算法</h3>
+<p>利用 <strong>倍增</strong> 思想，假设我们已知长度为 w 的所有 <strong>子串</strong> 的排名，那么我们以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><msub><mi>k</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">rk_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03148em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><msub><mi>k</mi><mrow><mi>i</mi><mo>+</mo><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">rk_{i+w}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.902771em;vertical-align:-0.208331em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.03148em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">+</span><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span> 为第一、第二关键字排序，就可以求出长度为 2w 的所有子串的排序。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> N = <span class="hljs-number">1000010</span>;<br>string s;<br><span class="hljs-keyword">int</span> n, w, sa[N], rk[N &lt;&lt; <span class="hljs-number">1</span>], ork[N &lt;&lt; <span class="hljs-number">1</span>];<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    cin &gt;&gt; s;<br>    <span class="hljs-keyword">int</span> n = s.<span class="hljs-built_in">size</span>();<br>    s = <span class="hljs-string">&#x27;!&#x27;</span> + s;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; i++) sa[i] = i, rk[i] = s[i];<br>	<span class="hljs-comment">//处理出所有长度为 1 的子串的排名</span><br><br>    <span class="hljs-keyword">for</span> (w = <span class="hljs-number">1</span>; w &lt; n; w &lt;&lt;= <span class="hljs-number">1</span>) &#123;<br>        <span class="hljs-built_in">sort</span>(sa + <span class="hljs-number">1</span>, sa + n + <span class="hljs-number">1</span>, [](<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y) &#123;<br>            <span class="hljs-built_in"><span class="hljs-keyword">return</span></span> (rk[x] == rk[y] ? rk[x + w] &lt; rk[y + w] : rk[x] &lt; rk[y]);<br>        &#125;); <span class="hljs-comment">//利用快排实现对长度为 2w 子串的排序</span><br>        <span class="hljs-built_in">memcpy</span>(ork, rk, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rk));<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> p = <span class="hljs-number">0</span>, i = <span class="hljs-number">1</span>; i &lt;= n; i++) &#123;<br>            <span class="hljs-keyword">if</span> (ork[sa[i]] == ork[sa[i - <span class="hljs-number">1</span>]] &amp;&amp;<br>                ork[sa[i] + w] == ork[sa[i - <span class="hljs-number">1</span>] + w]) rk[sa[i]] = p;<br>            <span class="hljs-keyword">else</span> rk[sa[i]] = ++p;  <span class="hljs-comment">//若两子串完全相同，排名也应该相同。</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; i++) cout &lt;&lt; sa[i] &lt;&lt; <span class="hljs-string">&quot; &quot;</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre>
+<h3 id="2-基数排序"><a class="markdownIt-Anchor" href="#2-基数排序"></a> 2. 基数排序</h3>
+<p>突兀的插入一个基数排序，它是一种以关键字排序为核心的稳定排序算法。</p>
+<pre><code>基数将待排序的元素拆分为 k 个关键字，
+先对第 k 关键字进行稳定排序，再对第 k-1 关键字进行稳定排序，再对第 k-2 关键字进行稳定排序……
+最后对第一关键字进行稳定排序，这样就完成了对整个待排序序列的稳定排序。
+</code></pre>
+<p><img src="https://www.runoob.com/wp-content/uploads/2019/03/radixSort.gif" alt="" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://www.runoob.com/wp-content/uploads/2019/03/radixSort.gif" class="lozad post-image"><br />
+对于一般的排序，我们只需要以每一位作为关键字排序即可。具体代码如下：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">radix_sort</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> base = <span class="hljs-number">10</span>;<br>    <span class="hljs-keyword">int</span> exp=<span class="hljs-number">1</span>, mx=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) mx = <span class="hljs-built_in">max</span>(mx,a[i]);<br>    <span class="hljs-keyword">while</span> (mx/exp) &#123;<br>        <span class="hljs-keyword">int</span> t[base] = &#123;<span class="hljs-number">0</span>&#125;;  <span class="hljs-comment">//对每一个关键字建桶</span><br>        <span class="hljs-built_in">memcpy</span>(a, b, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(b));<br>		<span class="hljs-comment">//备份后便于更新。</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) t[(b[i]/exp)%base] ++;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;base;i++) t[i] += t[i<span class="hljs-number">-1</span>];<br>		<span class="hljs-comment">//累加得出排名</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=n;i&gt;=<span class="hljs-number">1</span>;i--) a[t[(b[i]/exp)%base]--] = b[i];<br>        <span class="hljs-comment">//为保证原来在后面的仍在后面（维持稳定性），需要倒着搜索。</span><br>        exp *= base;<br>    &#125;<br>&#125;<br></code></pre>
+<h3 id="3-onlogn-算法"><a class="markdownIt-Anchor" href="#3-onlogn-算法"></a> 3. O(n*logn) 算法</h3>
+<p>发现瓶颈在排序，我们需要一个 O(n) 的排序算法。看到关键字排序就想到了 <strong>基数排序</strong>：对于任一长度 2w 的所有子串，先对第二关键字（后半段 w 的子串）排序，排完后再按第一关键字（前半段 w 的子串）排。</p>
+<p>我们能发现第一、二关键字本质上并无区别，不过是进行了一个平移的操作。平移超出 n-w 的部分第二关键字就是个 0，放在首部即可。<br />
+这样我们只需要进行一次关键字排序即可完成对于 2w 长度的排序了。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cle(x) memset(x, 0, sizeof(x))</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ok cout &lt;&lt; <span class="hljs-meta-string">&#x27;!&#x27;</span> &lt;&lt; endl</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> N = <span class="hljs-number">1000010</span>;<br>string s;<br><span class="hljs-keyword">int</span> n, w, p, i, sa[N], id[N], bu[N], t[N], rk[N &lt;&lt; <span class="hljs-number">1</span>], ork[N &lt;&lt; <span class="hljs-number">1</span>];<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> m = <span class="hljs-number">300</span>;  <span class="hljs-comment">// 值域边界</span><br>    cin &gt;&gt; s, n = s.<span class="hljs-built_in">size</span>(), s = <span class="hljs-string">&#x27;!&#x27;</span> + s;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= n; i++) ++t[rk[i] = s[i]];<br>    <span class="hljs-comment">// rk -&gt; 第一关键字时子串i的排名</span><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= m; i++) t[i] += t[i - <span class="hljs-number">1</span>];<br>    <span class="hljs-keyword">for</span> (i = n; i &gt;= <span class="hljs-number">1</span>; i--) sa[t[rk[i]]--] = i;<br>    <span class="hljs-comment">// sa -&gt; 按第一关键字排序后排名i的编号</span><br><br>    <span class="hljs-keyword">for</span> (w = <span class="hljs-number">1</span>; p &lt; n; w &lt;&lt;= <span class="hljs-number">1</span>, m = p) &#123;  <span class="hljs-comment">// m = p , 缩小值域</span><br>        <span class="hljs-keyword">for</span> (p = <span class="hljs-number">0</span>, i = n; i &gt; n - w; i--) id[++p] = i;<br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= n; i++)<br>            <span class="hljs-keyword">if</span> (sa[i] &gt; w) id[++p] = sa[i] - w;<br>        <span class="hljs-comment">// id -&gt; 按第二关键词排序后排名i的编号</span><br><br>        <span class="hljs-built_in">memset</span>(t, <span class="hljs-number">0</span>, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(t));<br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= n; i++) ++t[rk[id[i]]];<br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= m; i++) t[i] += t[i - <span class="hljs-number">1</span>];<br>        <span class="hljs-keyword">for</span> (i = n; i &gt;= <span class="hljs-number">1</span>; i--) sa[t[rk[id[i]]]--] = id[i];<br>        <span class="hljs-comment">//基数排序；此时应以第二关键字排序后的顺序进行</span><br><br>        <span class="hljs-built_in">memcpy</span>(ork, rk, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rk));<br>        <span class="hljs-keyword">for</span> (p = <span class="hljs-number">0</span>, i = <span class="hljs-number">1</span>; i &lt;= n; i++) &#123;<br>            rk[sa[i]] = (ork[sa[i]] == ork[sa[i - <span class="hljs-number">1</span>]] &amp;&amp;<br>            ork[sa[i] + w] == ork[sa[i<span class="hljs-number">-1</span>] + w]) ?p :++p;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt;= n; i++) cout &lt;&lt; sa[i] &lt;&lt; <span class="hljs-string">&quot; &quot;</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre>
+<h3 id="4-重要应用height-数组"><a class="markdownIt-Anchor" href="#4-重要应用height-数组"></a> 4. 重要应用：Height 数组</h3>
+<p>给出以下定义：</p>
+<ul>
+<li>
+<p>LCP（最长公共前缀）：两个字符串 S 和 T 的 LCP 是最大的 x 使得 <code>Si = Ti (for any 1&lt;=i&lt;=x)</code>。</p>
+</li>
+<li>
+<p><code>lcp(i,j)</code> 函数：后缀 i 与 后缀 j 的 LCP.</p>
+</li>
+<li>
+<p><code>height[i] = lcp(rk[i], rk[i-1])</code>，即第 i 名后缀与前一名后缀的LCP；<code>h[i] = height[rk[i]]</code>，即 <strong>后缀i</strong> 与 <strong>排名 rk[i]-1 后缀</strong> 的LCP。</p>
+</li>
+</ul>
+<p><strong>根据一下引理可求出 height 数组：</strong>  <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>≥</mo><mi>h</mi><mo stretchy="false">[</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy="false">]</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">h[i] \geq h[i-1]-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">[</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>（感性理解，假设 i-1 的后缀有 height = t，那么 i 的后缀少了一位，至多减小 1 的长度）</p>
+<p>利用该引理，我们每次从 h[i]-1 重新匹配 LCP，可以将时间复杂度控制在 O(n).</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">getH</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>,k=<span class="hljs-number">0</span>,j=<span class="hljs-number">0</span>;i&lt;=n;i++) &#123;<br>		<span class="hljs-keyword">if</span> (k) k--; <br>		j = sa[rk[i]<span class="hljs-number">-1</span>];<br>		<span class="hljs-keyword">while</span> (s[i+k]==s[j+k]) k++; <br>		height[rk[i]] = k;<br>	&#125;<br>&#125;<br></code></pre>
+<p>而利用 SA 解决的字符串匹配题，通常是要先将其后缀排序，在根据相邻的 Height 数组整一堆性质（待补充）：</p>
+<ol>
+<li><strong>两子串的 LCP</strong> 可由 height 数组求出：</li>
+</ol>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>L</mi><mi>C</mi><mi>P</mi><mo stretchy="false">(</mo><mi>s</mi><msub><mi>a</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>s</mi><msub><mi>a</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo>=</mo><munder><mo><mi>min</mi><mo>⁡</mo></mo><mrow><mi>i</mi><mo>+</mo><mn>1</mn><mo>≤</mo><mi>k</mi><mo>≤</mo><mi>j</mi></mrow></munder><mi>h</mi><mi>e</mi><mi>i</mi><mi>g</mi><mi>h</mi><msub><mi>t</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">LCP(sa_i, sa_j) = \min_{i+1\le k \leq j} height_k
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.5826559999999998em;vertical-align:-0.8882159999999999em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.66786em;"><span style="top:-2.0478920000000005em;margin-left:0em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mrel mtight">≤</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">≤</span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span><span class="mop">min</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8882159999999999em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">h</span><span class="mord mathdefault">e</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">h</span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>该性质利用了一个引理：对于某个后缀，其最大的 LCP 必为与其 <strong>排名差一</strong> 的后缀，那么这个性质就可以感性理解了。对于 <strong>两个字符串的最长公共子串</strong>，也可以通过用非法字符<code>#</code>合并的方式转化为这种模型。</p>
+<p>可以利用数据结构将问题优化至 log，如 “喵星球上的点名”。</p>
+<ol>
+<li>求字符串内 <strong>不同子串</strong> 的数目 / 对不同子串进行处理：</li>
+</ol>
+<p>这里 <code>不同子串</code> 的含义是长度不同或其中至少一个字符不同；<br />
+已知后缀排序后， Height 数组表示的是当前和上一个后缀的最长公共前缀，那么我们完全可以跳过其 LCP，从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><msub><mi>a</mi><mi>i</mi></msub><mo>+</mo><mi>h</mi><mi>e</mi><mi>i</mi><mi>g</mi><mi>h</mi><msub><mi>t</mi><mi>i</mi></msub><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">sa_i+height_i+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord mathdefault">s</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">h</span><span class="mord mathdefault">e</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">h</span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 的部分开始往后处理，如 Good Substrings.</p>
+<h2 id="几道例题"><a class="markdownIt-Anchor" href="#几道例题"></a> 几道例题：</h2>
+<p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P2336">一。喵星球的点名</a><br />
+<strong>题意：</strong> 给定一系列文本串和询问串，对于每一个询问串回答它在多少个文本串中出现过（即子串）；对于每一个文本串回答它被多少个询问串所询问。</p>
+<p><strong>分析：</strong> 字符串匹配问题用 SA 解通常就是先连接成大字符串，再后缀排序用 Height 数组求 LCP 的方法来做。显然在后缀排序中，<strong>后缀有相同前缀的子串会连续出现</strong>，那么对于每一个询问串，我们只需要在 sa 数组上找到对应的询问区间即可。</p>
+<p>那么对于一段询问区间，我们可以先打好标记确定每一个后缀属于哪个文本串，然后求出询问 <strong>区间内有多少个不同的编号</strong> 即可。很久以前貌似做过区间求不同种类数的题，直接套上板子（HH的项链）。</p>
+<p>对于第二个问，等价于 <strong>每个编号被多少个询问区间覆盖</strong>，把询问区间差分处理。但直接累加每一个编号会重复，所以还得套用上一问的思想，保证 <strong>只有最靠近左区间端点的编号会产生贡献</strong>，我们每次更新一个编号 x 时，加上 <code>sm[i] - sm[pos[x]]</code> 的贡献，若 i 和 pos_x 处于同一询问区间，那么相减后便不产生贡献。</p>
+<p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/CF271D">二。Good substrings</a><br />
+<strong>题意：</strong> 定义一些字母是 “不好的”，若一个字符串中 <strong>包含不超过 k 个不好的字母</strong>，则这个字符串是 “好的”。给定一个字符串，求其不同的好子串数。</p>
+<p><strong>分析：</strong> S 长度数量级是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">10^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span>，可以在 O(n^2) 内枚举所有子串处理。对于不好的字母数，可以通过前缀和直接求出；而对于 <strong>不同的子串</strong>，可以利用 SA 数组跳过其 height 前缀直接处理。这个还是很典型的，下次要会写。</p>
+<h2 id="伍-后缀自动机sam"><a class="markdownIt-Anchor" href="#伍-后缀自动机sam"></a> 伍. 后缀自动机（SAM）</h2>
+<h2 id="1-定义"><a class="markdownIt-Anchor" href="#1-定义"></a> 1. 定义</h2>
+<p>学习后缀自动机，我们首先需要知道什么是 <strong>确定有限状态自动机（DFA）</strong>。</p>
+<p>一个 DFA 由五部分构成：</p>
+<ol>
+<li><strong>字符集</strong>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>∑</mo></mrow><annotation encoding="application/x-tex">\sum</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.00001em;vertical-align:-0.25001em;"></span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span></span></span></span>），该自动机只能输入这些字符。</li>
+<li><strong>状态集合</strong>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span></span></span></span>），如果把一个 DFA 看成一张有向图，那么 DFA 中的状态就相当于图上的顶点。</li>
+<li><strong>起始状态</strong>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">st</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span></span></span></span>），字面意思。</li>
+<li><strong>接受状态集合</strong>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>），是一组特殊的状态，也可视作 <strong>终止状态</strong>。</li>
+<li><strong>转移函数</strong>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>δ</mi></mrow><annotation encoding="application/x-tex">\delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span></span></span></span>）， 记作 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mi>δ</mi><mo stretchy="false">(</mo><msub><mi>v</mi><mn>2</mn></msub><mo separator="true">,</mo><mi>c</mi><mi>h</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">v_1 = \delta (v_2, ch)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">c</span><span class="mord mathdefault">h</span><span class="mclose">)</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">v_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>v</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">v_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示两个状态，体现字符串在 DFA 上的转移。 若把一个 DFA 看成一张有向图，那么 DFA 中的转移函数就相当于连边，而每条边上都有一个字符。</li>
+</ol>
+<p>特别地， <code>ch</code> 可以扩展为一个字符串 s，表示 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>δ</mi><mo stretchy="false">(</mo><mi>δ</mi><mo stretchy="false">(</mo><mi>δ</mi><mo stretchy="false">(</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><mi>s</mi><mo stretchy="false">[</mo><mi>n</mi><mo stretchy="false">]</mo><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi>s</mi><mo stretchy="false">[</mo><mn>1</mn><mo stretchy="false">]</mo><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>s</mi><mo stretchy="false">[</mo><mn>0</mn><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\delta(\delta(\delta(...,s[n])...s[1]),s[0])</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">s</span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mclose">]</span><span class="mclose">)</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord mathdefault">s</span><span class="mopen">[</span><span class="mord">1</span><span class="mclose">]</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">s</span><span class="mopen">[</span><span class="mord">0</span><span class="mclose">]</span><span class="mclose">)</span></span></span></span>。</p>
+<p>更特别地，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>A</mi><mi>M</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>=</mo><mi>δ</mi><mo stretchy="false">(</mo><mi>s</mi><mi>t</mi><mo separator="true">,</mo><mi>s</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">SAM(s) = \delta(st, s)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">s</span><span class="mclose">)</span></span></span></span>。</p>
+<p>简单地可以把 DFA 视作一个有向图，它实现的是<strong>对字符串的识别</strong>。DFA 从起始状态 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">st</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span></span></span></span> 与目标串 A 进行匹配，如果 A 可以完全匹配则称 <strong>DFA 接受了 A</strong>，记作 DFA(s).</p>
+<p>而对于一个称作 SAM 的 DFA，我们有：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>A</mi><mi>M</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mtext>  </mtext><mo>⟺</mo><mtext>  </mtext><mi>s</mi><mi mathvariant="normal">是</mi><mi>A</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">缀</mi></mrow><annotation encoding="application/x-tex">SAM(s) \iff s 是 A 的后缀
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⟺</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">是</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">缀</span></span></span></span></span></p>
+<p>最显然的一条性质是： s 是子串当且仅当 s 对应了 SAM 上的路径。SAM 不唯一，因此我们得构造一个跑的最快的， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 的最好。</p>
+<h2 id="2-endpos-等价类"><a class="markdownIt-Anchor" href="#2-endpos-等价类"></a> 2. <code>Endpos</code> 等价类</h2>
+<ul>
+<li>
+<p>我们定义一个子串 s 的 <code>endpos</code> 集合定义为：<strong>所有 s 出现位置的右端点</strong> 的集合。</p>
+</li>
+<li>
+<p>同理，<strong><code>endpos</code>等价类</strong> 表示<strong>具有相同 <code>endpos</code> 集合的字符串</strong>所组成的集合。</p>
+</li>
+</ul>
+<p>特别地，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>n</mi><mi>d</mi><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">(</mo><mi>s</mi><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">{</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><mi mathvariant="normal">∣</mi><mi>S</mi><mi mathvariant="normal">∣</mi><mo>−</mo><mn>1</mn><mo fence="true">}</mo></mrow></mrow><annotation encoding="application/x-tex">endpos(st) = \left \{  -1, 0,..., |S|-1 \right \}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">{</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mclose delimcenter" style="top:0em;">}</span></span></span></span></span> .</p>
+<p>显然的是，如果 u,w (u &lt;= w) 两个字符串的 <code>endpos</code> 相同，u 一定是 w 的一个后缀。更进一步，若 <code>endpos(u)</code> 和 <code>endpos(w)</code> 有交集，则下面两个命题之一成立：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>n</mi><mi>d</mi><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>⊆</mo><mi>e</mi><mi>n</mi><mi>d</mi><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mspace linebreak="newline"></mspace><mi>e</mi><mi>n</mi><mi>d</mi><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>∩</mo><mi>e</mi><mi>n</mi><mi>d</mi><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">endpos(u) \subseteq  endpos(w)
+\\
+endpos(u) \cap  endpos(w) = \varnothing
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mclose">)</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∩</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.66334em;vertical-align:-0.08167em;"></span><span class="mord amsrm">∅</span></span></span></span></span></p>
+<p>为了描述一个 <code>endpos</code> 等价类在 SAM 中的状态，我们定义 <code>max/min(v)</code> 表示状态 v 所对应所有的字符串中最长和最短的那个。那么，<strong>v 对应的任意一个字符串都是 max(v) 的后缀，且不是 min(v) 的真后缀。并且，v 包含了所有这样的字符串。</strong></p>
+<h2 id="3-parent-树"><a class="markdownIt-Anchor" href="#3-parent-树"></a> 3.  <code>Parent</code> 树</h2>
+<p>根据上面的芝士，我们知道对于任意两个串的 <code>endpos</code> 集合，要么属于包含关系，要么交集为空。根据这个性质可以构造出一个<strong>由包含关系所构成的 Parent 树</strong>。</p>
+<p>对于 w 所有的后缀按长度降序，那么一定存在前几个后缀包含于w的 <code>endpos</code> 等价类中，而且是后面的等价类的真子集。</p>
+<p>因此，定义 <code>link(v)</code> 表示 <strong>v 的后缀中属于另一等价类的最长的</strong> 那个状态。用集合的语言来说，即：<strong>找到最长的后缀 t，使得 <code>endpos(v)</code> 是 <code>endpos(t)</code> 的真子集。</strong></p>
+<p>当然找法也很简单，确定 <code>endpos(v)</code> 等价类的 <code>min(v)</code>，那么有：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi><mo>=</mo><mi mathvariant="normal">∣</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>l</mi><mi>i</mi><mi>n</mi><mi>k</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">|min(v)| = |max(link(v))| + 1
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mclose">)</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span></p>
+<p>特别地，起始点 <code>st</code> 是 Parent 树的根。Parent 树也反映了 <code>endpos</code> 集合的包含关系。</p>
+<h2 id="4-sam-构造算法"><a class="markdownIt-Anchor" href="#4-sam-构造算法"></a> 4. SAM 构造算法</h2>
+<p>SAM 的构造是在线的，可以在均摊 O(1) 时间内向 SAM 中添加一个字符。</p>
+<p>先证明一个引理：<strong>若状态 v 有字符 c 的转移，则它在 parent 树上的祖先都有。</strong> 证明可由 <code>endpos</code> 集合的定义出发，自证不难。</p>
+<p>因此有如下构造：</p>
+<ol>
+<li>加入一个字符 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 时，我们先创建一个新状态 <code>cnt</code>，这个状态刚插入时代表 right 集合 {i}， 同时维护上一个加入的状态 p；</li>
+<li>根据上述引理，当 p 没有字符 c 转移时向上跳 link，并对于每一个祖先节点向 <code>cnt</code> 连边。</li>
+<li>若不存在 p，说明这个字符之前没出现过，直接向 <code>st</code> 连边即可；否则执行下一步。</li>
+<li>令 p 存在字符 c 转移且转移的节点为 q（形式化地，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>=</mo><mi>δ</mi><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q=\delta (p,c)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span></span> ）。若 <code>len[q] = len[p]+1</code>，说明当前的转移是 <strong>连续的</strong>，此时将 <code>par[cnt]=q</code> 即可；否则执行下一步。</li>
+<li>创建一个新状态 <code>clone</code>，将 <code>q</code> 的 <strong>后缀链接与转移</strong> 信息复制给 <code>clone</code>，且 <code>len[clone] = len[p]+1</code>；将 <code>cnt</code> 和 <code>q</code> 的 link 指向 <code>clone</code>；将 <code>p</code> 及 <code>q</code> 的祖先所有连向 q 的出边改成 <code>clone</code>。</li>
+</ol>
+<h2 id="5-一系列证明"><a class="markdownIt-Anchor" href="#5-一系列证明"></a> 5. 一系列证明</h2>
+<h3 id="正确性证明"><a class="markdownIt-Anchor" href="#正确性证明"></a> 正确性证明：</h3>
+<ul>
+<li>前三步的正确性显然，我们考虑已经存在转移时的情况。</li>
+<li>由 <code>link(v)</code> 的性质可知，我们应该链接的对象应满足 <code>len[q] = len[p]+1</code>，若不满足则将其拆成两个节点，p 和 q 通过 clone 进行一次迭代，可以证明迭代总数量不超过 n。</li>
+</ul>
+<h3 id="状态数线性证明"><a class="markdownIt-Anchor" href="#状态数线性证明"></a> 状态数线性证明：</h3>
+<blockquote>
+<p>对于一个长度为 n 的字符串 ，它的 SAM 中的状态数 <strong>不会超过 2n-1</strong> （假设 n&gt;2）。</p>
+</blockquote>
+<p>算法本身即可证明该结论。一开始，自动机含有一个状态，第一次和第二次迭代中只会创建一个节点，剩余的 步中每步会创建至多 个状态。</p>
+<blockquote>
+<p>对于一个长度为 n 的字符串 ，它的 SAM 中的转移数<strong>不会超过 3n-4</strong>（假设 n&gt;3 ）。</p>
+</blockquote>
+<p>考虑SAM的任意一个生成树，那么SAM上的边就会被分成树边和非树边。</p>
+<ul>
+<li>
+<p>树边最多只有 2n−2 条。</p>
+</li>
+<li>
+<p>每条非树边 (u,v) 可以找到起始状态到 u 的树上路径，也能找到 v 到接收状态的路径，则 非树边对于后缀形成一个单射。 而后缀数量为 n-1。（形如 <code>abb..bb</code>）</p>
+</li>
+</ul>
+<h2 id="6-代码"><a class="markdownIt-Anchor" href="#6-代码"></a> 6. 代码</h2>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">insert</span><span class="hljs-params">(<span class="hljs-keyword">char</span> c)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> now = ++sz, p = lst;<br>    tr[now].len = tr[p].len+<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (p!=<span class="hljs-number">-1</span> &amp;&amp; !tr[p].nex.<span class="hljs-built_in">count</span>(c))<br>        tr[p].nex[c] = now, p = tr[p].lk;<br>    <span class="hljs-keyword">if</span> (p == <span class="hljs-number">-1</span>) tr[now].lk = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">int</span> q = tr[p].nex[c];<br>        <span class="hljs-keyword">if</span> (tr[q].len==tr[p].len+<span class="hljs-number">1</span>) tr[now].lk=q;<br>        <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">int</span> clo = ++sz;<br>            tr[clo].len=tr[p].len+<span class="hljs-number">1</span>;<br>            tr[clo].lk =tr[q].lk;<br>            tr[clo].nex=tr[q].nex;<br>            <span class="hljs-keyword">while</span> (p!=<span class="hljs-number">-1</span> &amp;&amp; tr[p].nex[c] == q)<br>                tr[p].nex[c] = clo, p = tr[p].lk; <br>            tr[now].lk = tr[q].lk = clo;<br>        &#125;<br>    &#125;<br>    lst = now;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">SAM</span><span class="hljs-params">(string a)</span></span><br><span class="hljs-function"></span>&#123;<br>    tr[<span class="hljs-number">0</span>].len=<span class="hljs-number">0</span>, tr[<span class="hljs-number">0</span>].lk=<span class="hljs-number">-1</span>;<br>    sz = lst = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++) <span class="hljs-built_in">insert</span>(a[i]);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">find</span><span class="hljs-params">(string s)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> now=<span class="hljs-number">0</span>, num=<span class="hljs-number">0</span>, ans=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;m;i++) &#123;<br>        <span class="hljs-keyword">if</span> (tr[now].nex.<span class="hljs-built_in">count</span>(s[i])) <br>            now = tr[now].nex[s[i]], num++;<br>        <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">while</span> (now!=<span class="hljs-number">-1</span> &amp;&amp; !tr[now].nex.<span class="hljs-built_in">count</span>(s[i])) <br>                now = tr[now].lk;<br>            <span class="hljs-keyword">if</span> (now == <span class="hljs-number">-1</span>) now=<span class="hljs-number">0</span>, num=<span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">else</span> &#123;<br>                num = tr[now].len+<span class="hljs-number">1</span>, <br>                now = tr[now].nex[s[i]];<br>            &#125;<br>        &#125;<br>        ans = <span class="hljs-built_in">max</span>(ans, num);<br>    &#125;<br>    <span class="hljs-keyword">return</span> ans;<br>&#125;<br></code></pre>
+<h2 id="7-应用"><a class="markdownIt-Anchor" href="#7-应用"></a> 7. 应用</h2>
+<ul>
+<li>
+<p>查找两串的<strong>最长子串长度（LCS）</strong>，就是上面的板子；</p>
+</li>
+<li>
+<p>查找<strong>不同子串个数</strong>，对于每个新增状态 v，增加的不同字串个数即为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo>−</mo><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">max(v)-min(v)+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>，而又等价于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo>−</mo><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>l</mi><mi>i</mi><mi>n</mi><mi>k</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">max(v)-max(link(v))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span>，递推地求即可。</p>
+</li>
+<li>
+<p>查询<strong>模式串出现次数</strong>，根据 link 的性质，在 parent 树上找对应节点子树的出现次数总和即可。</p>
+</li>
+<li>
+<p>其他可详见 <a target="_blank" rel="noopener" href="https://oi-wiki.org/string/sam/#_13">OIWKI</a> .</p>
+</li>
+</ul>
+<h2 id="六-完结撒花"><a class="markdownIt-Anchor" href="#六-完结撒花"></a> 六。完结撒花？</h2>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2021/08/31/string-learning/">
+            http://example.com/2021/08/31/string-learning/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2021/09/18/is-this-a-trick/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">关于某 Trick 的一般分析 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2021/08/31/CSAPP-chapter2/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">CSAPP 前二章小结：编码 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%87-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C"><span class="toc-text"> 〇. 字符串哈希</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B9-trie%E6%A0%91"><span class="toc-text"> 壹. Trie树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%99%AE%E9%80%9A-trie-%E6%A0%91"><span class="toc-text"> 1. 普通 Trie 树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%AF%E6%8C%81%E4%B9%85%E5%8C%96-trie-%E6%A0%91"><span class="toc-text"> 2. 可持久化 Trie 树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%B0-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0%E5%8F%8A-kmp-%E7%AE%97%E6%B3%95"><span class="toc-text"> 贰. 前缀函数及 KMP 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 前缀函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-text"> 3. 算法流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%89%A9%E5%B1%95-kmpz-%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 扩展 KMP（Z 函数）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%81-ac-%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="toc-text"> 叁. AC 自动机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1-2"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-fail-%E6%8C%87%E9%92%88%E4%B8%8E-fail-%E8%BE%B9"><span class="toc-text"> 2. fail 指针与 fail 边</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="toc-text"> 3. 查询操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-text"> 4. 时间复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-fail-%E6%A0%91%E4%BC%98%E5%8C%96"><span class="toc-text"> 5. fail 树优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BE%8B%E9%A2%98"><span class="toc-text"> 6. 例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%82%86-%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84"><span class="toc-text"> 肆. 后缀数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-on-log2-n-%E7%AE%97%E6%B3%95"><span class="toc-text"> 1. O(n* log^2 n) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="toc-text"> 2. 基数排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-onlogn-%E7%AE%97%E6%B3%95"><span class="toc-text"> 3. O(n*logn) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%87%8D%E8%A6%81%E5%BA%94%E7%94%A8height-%E6%95%B0%E7%BB%84"><span class="toc-text"> 4. 重要应用：Height 数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E9%81%93%E4%BE%8B%E9%A2%98"><span class="toc-text"> 几道例题：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%8D-%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BAsam"><span class="toc-text"> 伍. 后缀自动机（SAM）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%9A%E4%B9%89"><span class="toc-text"> 1. 定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-endpos-%E7%AD%89%E4%BB%B7%E7%B1%BB"><span class="toc-text"> 2. Endpos 等价类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-parent-%E6%A0%91"><span class="toc-text"> 3.  Parent 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-sam-%E6%9E%84%E9%80%A0%E7%AE%97%E6%B3%95"><span class="toc-text"> 4. SAM 构造算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%80%E7%B3%BB%E5%88%97%E8%AF%81%E6%98%8E"><span class="toc-text"> 5. 一系列证明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 正确性证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%95%B0%E7%BA%BF%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 状态数线性证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6. 代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%BA%94%E7%94%A8"><span class="toc-text"> 7. 应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1"><span class="toc-text"> 六。完结撒花？</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%87-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C"><span class="toc-text"> 〇. 字符串哈希</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B9-trie%E6%A0%91"><span class="toc-text"> 壹. Trie树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%99%AE%E9%80%9A-trie-%E6%A0%91"><span class="toc-text"> 1. 普通 Trie 树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%AF%E6%8C%81%E4%B9%85%E5%8C%96-trie-%E6%A0%91"><span class="toc-text"> 2. 可持久化 Trie 树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%B0-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0%E5%8F%8A-kmp-%E7%AE%97%E6%B3%95"><span class="toc-text"> 贰. 前缀函数及 KMP 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 前缀函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-text"> 3. 算法流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%89%A9%E5%B1%95-kmpz-%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 扩展 KMP（Z 函数）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%81-ac-%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="toc-text"> 叁. AC 自动机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1-2"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-fail-%E6%8C%87%E9%92%88%E4%B8%8E-fail-%E8%BE%B9"><span class="toc-text"> 2. fail 指针与 fail 边</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="toc-text"> 3. 查询操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-text"> 4. 时间复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-fail-%E6%A0%91%E4%BC%98%E5%8C%96"><span class="toc-text"> 5. fail 树优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BE%8B%E9%A2%98"><span class="toc-text"> 6. 例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%82%86-%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84"><span class="toc-text"> 肆. 后缀数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-on-log2-n-%E7%AE%97%E6%B3%95"><span class="toc-text"> 1. O(n* log^2 n) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="toc-text"> 2. 基数排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-onlogn-%E7%AE%97%E6%B3%95"><span class="toc-text"> 3. O(n*logn) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%87%8D%E8%A6%81%E5%BA%94%E7%94%A8height-%E6%95%B0%E7%BB%84"><span class="toc-text"> 4. 重要应用：Height 数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E9%81%93%E4%BE%8B%E9%A2%98"><span class="toc-text"> 几道例题：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%8D-%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BAsam"><span class="toc-text"> 伍. 后缀自动机（SAM）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%9A%E4%B9%89"><span class="toc-text"> 1. 定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-endpos-%E7%AD%89%E4%BB%B7%E7%B1%BB"><span class="toc-text"> 2. Endpos 等价类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-parent-%E6%A0%91"><span class="toc-text"> 3.  Parent 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-sam-%E6%9E%84%E9%80%A0%E7%AE%97%E6%B3%95"><span class="toc-text"> 4. SAM 构造算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%80%E7%B3%BB%E5%88%97%E8%AF%81%E6%98%8E"><span class="toc-text"> 5. 一系列证明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 正确性证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%95%B0%E7%BA%BF%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 状态数线性证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6. 代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%BA%94%E7%94%A8"><span class="toc-text"> 7. 应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1"><span class="toc-text"> 六。完结撒花？</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%87-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C"><span class="toc-text"> 〇. 字符串哈希</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B9-trie%E6%A0%91"><span class="toc-text"> 壹. Trie树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%99%AE%E9%80%9A-trie-%E6%A0%91"><span class="toc-text"> 1. 普通 Trie 树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%AF%E6%8C%81%E4%B9%85%E5%8C%96-trie-%E6%A0%91"><span class="toc-text"> 2. 可持久化 Trie 树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%B0-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0%E5%8F%8A-kmp-%E7%AE%97%E6%B3%95"><span class="toc-text"> 贰. 前缀函数及 KMP 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%89%8D%E7%BC%80%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 前缀函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-text"> 3. 算法流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%89%A9%E5%B1%95-kmpz-%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 扩展 KMP（Z 函数）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%81-ac-%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="toc-text"> 叁. AC 自动机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A7%A3%E5%86%B3%E5%AF%B9%E8%B1%A1-2"><span class="toc-text"> 1. 解决对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-fail-%E6%8C%87%E9%92%88%E4%B8%8E-fail-%E8%BE%B9"><span class="toc-text"> 2. fail 指针与 fail 边</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="toc-text"> 3. 查询操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-text"> 4. 时间复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-fail-%E6%A0%91%E4%BC%98%E5%8C%96"><span class="toc-text"> 5. fail 树优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BE%8B%E9%A2%98"><span class="toc-text"> 6. 例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%82%86-%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84"><span class="toc-text"> 肆. 后缀数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-on-log2-n-%E7%AE%97%E6%B3%95"><span class="toc-text"> 1. O(n* log^2 n) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="toc-text"> 2. 基数排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-onlogn-%E7%AE%97%E6%B3%95"><span class="toc-text"> 3. O(n*logn) 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%87%8D%E8%A6%81%E5%BA%94%E7%94%A8height-%E6%95%B0%E7%BB%84"><span class="toc-text"> 4. 重要应用：Height 数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E9%81%93%E4%BE%8B%E9%A2%98"><span class="toc-text"> 几道例题：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%8D-%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BAsam"><span class="toc-text"> 伍. 后缀自动机（SAM）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%9A%E4%B9%89"><span class="toc-text"> 1. 定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-endpos-%E7%AD%89%E4%BB%B7%E7%B1%BB"><span class="toc-text"> 2. Endpos 等价类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-parent-%E6%A0%91"><span class="toc-text"> 3.  Parent 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-sam-%E6%9E%84%E9%80%A0%E7%AE%97%E6%B3%95"><span class="toc-text"> 4. SAM 构造算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%80%E7%B3%BB%E5%88%97%E8%AF%81%E6%98%8E"><span class="toc-text"> 5. 一系列证明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 正确性证明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%95%B0%E7%BA%BF%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-text"> 状态数线性证明：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6. 代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%BA%94%E7%94%A8"><span class="toc-text"> 7. 应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1"><span class="toc-text"> 六。完结撒花？</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

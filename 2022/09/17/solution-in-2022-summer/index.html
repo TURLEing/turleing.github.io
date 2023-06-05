@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>2022 暑期集训补题题解【简版】</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="2022 暑期集训补题题解【简版】">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/09/17/solution-in-2022-summer/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;又是无休止的坐牢和自我批判。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-09-17">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-09-17">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      2022 暑期集训补题题解【简版】
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-09-17T08:02:40.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-09-17</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/" 
+          class="post-meta-link">
+          算法竞赛
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>6.5k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>又是无休止的坐牢和自我批判。</p>
+<span id="more"></span>
+<h2 id="training-1"><a class="markdownIt-Anchor" href="#training-1"></a> Training 1</h2>
+<h3 id="b"><a class="markdownIt-Anchor" href="#b"></a> B</h3>
+<h4 id="题意"><a class="markdownIt-Anchor" href="#题意"></a> 题意：</h4>
+<p>选一个点染色，然后自动把所有跳了一格子的点染色，问能否把整个图染色完。</p>
+<h4 id="思路"><a class="markdownIt-Anchor" href="#思路"></a> 思路：</h4>
+<p>对于<strong>一个连通图</strong>，只要<strong>有两个点之前存在一条偶数长路径和一条奇数长路径</strong>，即可把整个图染色。<br />
+这个可以用<strong>黑白染色法</strong>进行判断，如果一个点即是0又是1即可。</p>
+<p>然后无向图求一下连通块个数，把他们之间加一条边即可。</p>
+<h3 id="d"><a class="markdownIt-Anchor" href="#d"></a> D</h3>
+<h4 id="题意-2"><a class="markdownIt-Anchor" href="#题意-2"></a> 题意：</h4>
+<p>将一个环分为若干区域，区域内进行或运算，区域外与运算，求结果最大值。</p>
+<h4 id="思路-2"><a class="markdownIt-Anchor" href="#思路-2"></a> 思路：</h4>
+<p>提到位运算优先考虑<strong>按位贪心</strong>，异或考虑线性基啥的。<br />
+破环成链，<strong>贪心地</strong>找最小的、使当前位凑出1的区域，看划分出这些区域的数量能否 &gt;=2k-1<br />
+（切多了没事，可以合并，反正是或运算）<br />
+之所以2k-1，是你想，环的话你要凑k段，双倍环你要凑2k段，破环成链了你至少要切2k-1刀.</p>
+<h3 id="f"><a class="markdownIt-Anchor" href="#f"></a> F</h3>
+<h4 id="题意-3"><a class="markdownIt-Anchor" href="#题意-3"></a> 题意：</h4>
+<p>找一对最小的（A,B），使存在{A,B,A,B}的子序列</p>
+<h4 id="思路-3"><a class="markdownIt-Anchor" href="#思路-3"></a> 思路：</h4>
+<p>应该先固定一个元素，再找另一个元素，时间复杂度O(nlogn)<br />
+我们预处理出每一位的下一个元素出现的位置nex，然后就这样<strong>枚举B…B的区间。</strong><br />
+然后就是求区间最小值，把它当成A更新答案就行。</p>
+<p>重要的是维护这棵线段树时，<strong>每经过一个点，就把这个点的nex处插到线段树里，</strong><br />
+这样可以保证在线段树搜到点，前面肯定也出现了。</p>
+<h3 id="k"><a class="markdownIt-Anchor" href="#k"></a> K</h3>
+<h4 id="题意-4"><a class="markdownIt-Anchor" href="#题意-4"></a> 题意：</h4>
+<p>太长了不写。</p>
+<h4 id="思路-4"><a class="markdownIt-Anchor" href="#思路-4"></a> 思路：</h4>
+<p>就是你<strong>看到了一个周期啥的，应该想想分层图。</strong></p>
+<p>然后主要就是建图，按时间节点建k层，每层有n个节点，<strong>连边的话你就往下一时间点连边，如果是第n层就循环往第一层连边。</strong></p>
+<p>超源连所有的起始点，超汇连所有时间节点的n号节点。跑dinic就行。</p>
+<h2 id="training-2"><a class="markdownIt-Anchor" href="#training-2"></a> Training 2</h2>
+<h3 id="a"><a class="markdownIt-Anchor" href="#a"></a> A</h3>
+<h4 id="题意-5"><a class="markdownIt-Anchor" href="#题意-5"></a> 题意：</h4>
+<p>两条线从上往下扫，看两者一共能截取多少给定区间。</p>
+<h4 id="思路-5"><a class="markdownIt-Anchor" href="#思路-5"></a> 思路：</h4>
+<p>典中典之控制变量，先O(n)枚举一条线在不同点上能截多少区间，<strong>再想个方法在O(logn)中找到另一条线应该的位置。</strong></p>
+<p><strong>暴力的想法</strong>就是枚举的时候被截到的区间就扔了，离开之后再加回来，可以用线段树维护，维护区间最大值，支持区间+/-1。</p>
+<p>离散化之后可以开个桶，在每个区间的端点处丢入区间的编号，起始点区间-1，终点+1；</p>
+<h3 id="k-2"><a class="markdownIt-Anchor" href="#k-2"></a> K</h3>
+<h4 id="题意-6"><a class="markdownIt-Anchor" href="#题意-6"></a> 题意：</h4>
+<p>给你若干个猜灯组合，让你调整n个灯的0/1状态使得每个组合至多错一个。</p>
+<h4 id="思路-6"><a class="markdownIt-Anchor" href="#思路-6"></a> 思路：</h4>
+<p>每个灯就两状态，妥妥 2-sat。<br />
+<strong>一个组合若某个猜测是错误的，可推得其他两个必然是对的</strong>。就这样建个图跑缩点即可。</p>
+<h2 id="training-3"><a class="markdownIt-Anchor" href="#training-3"></a> Training 3</h2>
+<p>是之前打过的比赛，笑啦。</p>
+<h2 id="training-4"><a class="markdownIt-Anchor" href="#training-4"></a> Training 4</h2>
+<p>在长沙摸鱼。</p>
+<h2 id="training-5"><a class="markdownIt-Anchor" href="#training-5"></a> Training 5</h2>
+<h3 id="b-2"><a class="markdownIt-Anchor" href="#b-2"></a> B</h3>
+<h4 id="题意-7"><a class="markdownIt-Anchor" href="#题意-7"></a> 题意</h4>
+<p>该公司有n名员工和k个团队。该公司雇佣了一辆班车，这辆班车将会往返多次承载员工去参加宴会，<strong>每一次可以承载1个团队或者2个团队。</strong> 这辆车可以承载s个员工，<strong>s可以为任意选定值</strong>，假设通过r次运输所有的员工都到达宴会，计算 r∗s 的最小值。</p>
+<h4 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析</h4>
+<p>根据贪心策略，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">a_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 配 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">a_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 比较优秀，这样枚举 S ；</p>
+<p>给定 S，问如何安排使得 r 最小。本来想着对于 a_r 用二分找另一个队来匹配，<strong>但后来发现尺取法就行了。给定 S 对于两边都是单调的。</strong></p>
+<h3 id="c"><a class="markdownIt-Anchor" href="#c"></a> C</h3>
+<h4 id="题意-8"><a class="markdownIt-Anchor" href="#题意-8"></a> 题意</h4>
+<p>您估计了一下自己每天必然要花费 k 元食宿费。共有 n 份工作，每份工作从 L_i 工作到 r_i 天，可获得报酬 p_i 元。 选定 L, R 区间使得 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><msub><mo>∑</mo><mrow><mi>s</mi><mo>∈</mo><mi>S</mi></mrow></msub><msub><mi>p</mi><mi>s</mi></msub><mo>−</mo><mi>k</mi><mo>∗</mo><mo stretchy="false">(</mo><mi>R</mi><mo>−</mo><mi>L</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p=\sum_{s \in S}p_s - k*(R-L+1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.07708em;vertical-align:-0.32708000000000004em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.17862099999999992em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="mrel mtight">∈</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.32708000000000004em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">L</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 最大。</p>
+<h4 id="分析-2"><a class="markdownIt-Anchor" href="#分析-2"></a> 分析：</h4>
+<p><strong>典中典之控制变量。</strong> 枚举结束节点 R，考虑一个最优的 L 使得 p 最大。</p>
+<p>维护一个线段树，食宿费每天在 <code>[1,i]</code> 区间加 <code>-k</code> ; 如果某个工作 <code>r_i &lt; i</code>，则在 <code>[1,l_i]</code> 区间加上 <code>p_i</code><strong>（因为当 L 选在这上面时候工作才会产生贡献）</strong>。</p>
+<p>然后跑就行了，线段树还得多维护一个取到最小值的位置信息，但也还挺好写。</p>
+<h3 id="e"><a class="markdownIt-Anchor" href="#e"></a> E</h3>
+<h4 id="题意-9"><a class="markdownIt-Anchor" href="#题意-9"></a> 题意</h4>
+<p>对于每一组测试样例，会给你 n 个长为 m 的 01 组成的字符串，和一个整数 k。</p>
+<p>我们规定<strong>两个字符串是相似的，当且仅当两者有 k 个或以上的位置值对应相同</strong>。你可以将一些字符串翻转，使得所有字符串两两相似。请求出最少的翻转字符串的数量，并输出翻转的字符串的编号。</p>
+<h4 id="分析-3"><a class="markdownIt-Anchor" href="#分析-3"></a> 分析</h4>
+<p>将 <code>当前串是否翻转</code> 作为图上节点，套 <code>2-sat</code> 连边跑就完事了。</p>
+<p>连边依据以下策略：</p>
+<ul>
+<li>两个本来就能匹配，反转后不能匹配了，则 i -&gt; j</li>
+<li>两个本来不能匹配，翻转后能匹配，则 i -&gt; j+n</li>
+<li>两个本来不能匹配，反转后也不能匹配，则 i -&gt; n+i（无解）</li>
+</ul>
+<p>建的是双向边。最后求的是最少翻转字符串数量，首先你建的图里边肯定有若干个支，每个支表示一套操作策略。即如果 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mo>∈</mo><msub><mi>V</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A\in V_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">A</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.22222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 反转了，那 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo>∈</mo><msub><mi>V</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">B\in V_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.22222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 也要反转。</p>
+<p>为了让反转次数最小，我们在缩点的时候就维护一个支里边反转节点（即 <code>i+n</code>）的数量 size，在最后判断答案时，如果反转 A 所在支的 size 小于不反转支的 size，那么就把 A 反了并把这个支打上标记，之后把同一个支里面的反转节点也都反了。就是这么一个贪心，感觉有问题但还是过了居然。</p>
+<h2 id="training-6"><a class="markdownIt-Anchor" href="#training-6"></a> Training 6</h2>
+<p>这场摆烂。</p>
+<h2 id="training-7nowcoder"><a class="markdownIt-Anchor" href="#training-7nowcoder"></a> Training 7（Nowcoder）</h2>
+<h3 id="j"><a class="markdownIt-Anchor" href="#j"></a> J</h3>
+<h4 id="题意-10"><a class="markdownIt-Anchor" href="#题意-10"></a> 题意</h4>
+<p>有一张 n 个点 m 条边的无重边无自环的有向图，初始时可以选择一个点染黑；若某个点所有入边的起点均为黑点，则该点可以被染黑，最大化图中黑点数量。</p>
+<h4 id="分析-4"><a class="markdownIt-Anchor" href="#分析-4"></a> 分析</h4>
+<p>开始想着上拓扑，但是拓扑肯定得在 DAG 上啊于是还套了缩点。无端把问题变复杂。</p>
+<p>马同学说的好，你就直接对每一个没搜到的点 BFS 就行了，题解里证明了<strong>每个点最后得到的染色点集合是一个树，且树两两不想交。</strong></p>
+<p>怕的是他构造数据来卡你。但我们把所有点打乱（<strong>随机化</strong>），时间复杂度是 <code>O(nlgn)</code> 的就可以直接过了。这个想法很简单，代码也很好写。</p>
+<h2 id="training-8hdu"><a class="markdownIt-Anchor" href="#training-8hdu"></a> Training 8（HDU）</h2>
+<h3 id="c-2"><a class="markdownIt-Anchor" href="#c-2"></a> C.</h3>
+<h4 id="题意-11"><a class="markdownIt-Anchor" href="#题意-11"></a> 题意</h4>
+<p>有一个容量为 m 的背包。有 n 个物品，第 i 个物品的体积为 vi，价值为 wi。</p>
+<p>找到一种方案，恰好装满大小为 m 的背包，且价值的 异或和 最大。若找不到恰好装满大小为 m 的背包，则输出 -1。</p>
+<h4 id="分析-5"><a class="markdownIt-Anchor" href="#分析-5"></a> 分析</h4>
+<p>猜到了 DP 两维分别是异或和与背包容量，但是明显 N^3 会寄就扔了这个 idea.</p>
+<p>结果最后把背包容量那维度压到 <code>bitset</code> 里面就过了。。<code>bitset[i]</code> 对应的是背包容量为 i 是否能够达到。</p>
+<p>那么，<code>j-v[i]</code> 在 bitset 里面就代表了 <code>j&lt;&lt;v[i]</code>。</p>
+<h2 id="training-9hdu"><a class="markdownIt-Anchor" href="#training-9hdu"></a> Training 9（HDU）</h2>
+<h3 id="a-2"><a class="markdownIt-Anchor" href="#a-2"></a> A</h3>
+<h4 id="题意-12"><a class="markdownIt-Anchor" href="#题意-12"></a> 题意</h4>
+<p>一棵树给你三个点集A,B,C，问点集D使得存在点 x,y 属于 A,B ，可以到达C中某个点。</p>
+<h4 id="分析-6"><a class="markdownIt-Anchor" href="#分析-6"></a> 分析</h4>
+<p>找出 A,B 向上可到达的所有点（链），C 向下可到达的所有点，求一个并即可。</p>
+<p>最恶心人的居然是每次询问后的初始化，一开始想的把所有加进去的边在删掉，但可能有pushdown的没删；后来还得在求答案时候顺手删了才不会超时。。。</p>
+<h3 id="h"><a class="markdownIt-Anchor" href="#h"></a> H</h3>
+<h4 id="题意-13"><a class="markdownIt-Anchor" href="#题意-13"></a> 题意</h4>
+<p>给你一个字符串 s 和若干次操作 <code>(ch, x)</code> 得到的字符串 t，表示 ch 连续打 x 次，若 <code>ch='-'</code> 则连续删 x 次，问能否有某一时刻 t 中包含 s 的子串。</p>
+<h4 id="分析-7"><a class="markdownIt-Anchor" href="#分析-7"></a> 分析</h4>
+<p>字符串匹配优先还是可以考虑 hash 的，这题骚操作挺多但是字符串哈希还是 yyds.</p>
+<p>以相同字符为一个块，加一连串字符可以视作一个<strong>等比数列</strong>，直接加到块儿的贡献里。</p>
+<p>删除字符和匹配可以通过二分找到对应的起始块儿，然后把三个部分（起始块儿，中间那段和最后部分块儿）加起来，算算 hash 值（得动动脑子</p>
+<h2 id="training-10nowcoder"><a class="markdownIt-Anchor" href="#training-10nowcoder"></a> Training 10（Nowcoder）</h2>
+<p>SPFA 判环坐大牢，请认准如下代码：</p>
+<p>还得注意精度问题。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">spfa</span><span class="hljs-params">(<span class="hljs-keyword">long</span> <span class="hljs-keyword">double</span> wei)</span></span><br><span class="hljs-function"></span>&#123;<br>    queue&lt;<span class="hljs-keyword">int</span>&gt; q;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++) q.<span class="hljs-built_in">push</span>(i), v[i]=<span class="hljs-number">1</span>, d[i]=<span class="hljs-number">1</span>, cnt[i] = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">int</span> k = q.<span class="hljs-built_in">front</span>();<br>        q.<span class="hljs-built_in">pop</span>(), v[k] = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> u: g[k]) &#123;<br>            <span class="hljs-keyword">if</span> (eps &lt; d[k]*wei*w[k][u] - d[u]) &#123;<br>                d[u] = d[k]*wei*w[k][u];<br>                cnt[u] = cnt[k]+<span class="hljs-number">1</span>;<br>                <span class="hljs-keyword">if</span>(cnt[u] &gt;= n) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>                <span class="hljs-keyword">if</span> (!v[u]) &#123;<br>                    q.<span class="hljs-built_in">push</span>(u), v[u]=<span class="hljs-number">1</span>;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre>
+<h2 id="training-11nowcoder"><a class="markdownIt-Anchor" href="#training-11nowcoder"></a> Training 11（Nowcoder）</h2>
+<h3 id="f-2"><a class="markdownIt-Anchor" href="#f-2"></a> F</h3>
+<h4 id="题意-14"><a class="markdownIt-Anchor" href="#题意-14"></a> 题意：</h4>
+<p>给你一个无向图并在上面选 2 个点 x 和 y，让你构造一个数组，第一个元素是 x、最后一个是 y。中间插入其他所有的点；使得这个构造的数组对于任意 k &lt;=n，前 k 个 x 连通，后 n-k 个也连通。</p>
+<h4 id="分析-8"><a class="markdownIt-Anchor" href="#分析-8"></a> 分析：</h4>
+<p>易知点双是两两互达的，怎么划分都没事；点双缩点之后会形成一个树，任何度为 1 超过 3 个节点的树都是不行的。大概思路就是先缩个点双，然后判断是不是链。</p>
+<p>但也有一个割点属于两个点双的情况，<strong>这种要特判 x, y 不是割点才行。</strong></p>
+<h3 id="h-2"><a class="markdownIt-Anchor" href="#h-2"></a> H：</h3>
+<h4 id="题意-15"><a class="markdownIt-Anchor" href="#题意-15"></a> 题意：</h4>
+<p>给出长度为n的小写字符串 A 和k个长度为m的小写字符串 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">B_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>  ，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">B_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的每个位置拥有统一的权值 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>v</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">v_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，对于每个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">B_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 求<strong>最大和区间</strong>满足该区<strong>间构成的字符串是 A 的子串</strong>（空区间合法）</p>
+<p>分析：</p>
+<p>先给 A 建一个 SAM，对于每个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">B_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 从左往右地固定右端点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，找出以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 结束的最长子串（这个可以直接在 SAM 上 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 的跑出来，SAM 你好强大！）。对于该最长子串的每一个后缀也是 A 的子串，于是维护一个 ST 表求最大子段和即可（即 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>u</mi><msub><mi>m</mi><msub><mi>r</mi><mi>i</mi></msub></msub><mo>−</mo><msub><mo><mi>min</mi><mo>⁡</mo></mo><mrow><mi>i</mi><mo>∈</mo><mo stretchy="false">(</mo><mi>l</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">)</mo></mrow></msub><mrow><mo fence="true">{</mo><mi>s</mi><mi>u</mi><msub><mi>m</mi><mi>i</mi></msub><mo fence="true">}</mo></mrow></mrow><annotation encoding="application/x-tex">sum_{r_i} - \min_{i\in(l,r)}\left \{sum_i\right\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83343em;vertical-align:-0.2501em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">u</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:-0.02778em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3551999999999999em;"></span><span class="mop"><span class="mop">min</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">∈</span><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">{</span><span class="mord mathdefault">s</span><span class="mord mathdefault">u</span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">}</span></span></span></span></span>。)</p>
+<h2 id="training-12hdu"><a class="markdownIt-Anchor" href="#training-12hdu"></a> Training 12（HDU）</h2>
+<p>这场坐牢，签到没过。</p>
+<h2 id="training-13hdu"><a class="markdownIt-Anchor" href="#training-13hdu"></a> Training 13（HDU）</h2>
+<h3 id="b-题分析"><a class="markdownIt-Anchor" href="#b-题分析"></a> B 题分析：</h3>
+<p>先 dij 求出最短路上的边集，建好图后在上面跑最长路。</p>
+<p>注意到边权可以为 0，于是可能有 0 环，缩个点就是 DAG，跑个拓扑 DP 就行了。</p>
+<p>一直 MLE，可能是 <code>kosaraju</code> 炸空间了。</p>
+<h2 id="training-14nowcoder"><a class="markdownIt-Anchor" href="#training-14nowcoder"></a> Training 14（Nowcoder）</h2>
+<h3 id="a-3"><a class="markdownIt-Anchor" href="#a-3"></a> A</h3>
+<h4 id="题意-16"><a class="markdownIt-Anchor" href="#题意-16"></a> 题意：</h4>
+<p>从 n 个任务中选 m 个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><msub><mi>a</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>a</mi><mn>2</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>a</mi><mi>m</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(a_1,a_2,......,a_m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 并任意排列，收益是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></msubsup><msub><mi>w</mi><msub><mi>a</mi><mi>i</mi></msub></msub><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msubsup><msub><mi>p</mi><msub><mi>a</mi><mi>j</mi></msub></msub></mrow><annotation encoding="application/x-tex">\sum_{i=1}^m w_{a_i} \prod _{j=0}^{i-1} p_{a_j}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.400382em;vertical-align:-0.43581800000000004em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.804292em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∏</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.964564em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.43581800000000004em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span></span></span></span>，求最大收益。</p>
+<h4 id="分析-9"><a class="markdownIt-Anchor" href="#分析-9"></a> 分析：</h4>
+<p>考试都没时间想，调签到题去了，应该把签到扔了来想想这题。这题之前做过的，甚至还写过题解。</p>
+<p>他说你选 m 个数后任意排列，那我们先找一种排列方式，使得任意取一个子序列，他都是满足最大收益。假设交换其中任意两位置的元素（下标 x, y）导致的收益变化是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>R</mi><mi>x</mi></msub><mo>−</mo><msub><mi>R</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">R_x-R_y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>，算一算可知：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>R</mi><mi>x</mi></msub><mo>−</mo><msub><mi>R</mi><mi>y</mi></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>w</mi><msub><mi>a</mi><mi>x</mi></msub></msub><mo>−</mo><msub><mi>w</mi><msub><mi>a</mi><mi>x</mi></msub></msub><mo>∗</mo><msub><mi>p</mi><msub><mi>a</mi><mi>y</mi></msub></msub><mo stretchy="false">)</mo><mo>−</mo><mo stretchy="false">(</mo><msub><mi>w</mi><msub><mi>a</mi><mi>y</mi></msub></msub><mo>−</mo><msub><mi>w</mi><msub><mi>a</mi><mi>y</mi></msub></msub><mo>∗</mo><msub><mi>p</mi><msub><mi>a</mi><mi>y</mi></msub></msub><mo stretchy="false">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">R_x-R_y = (w_{a_x}-w_{a_x}*p_{a_y}) - (w_{a_y}-w_{a_y}*p_{a_y}) \ge 0
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0001em;vertical-align:-0.2501em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.71538em;vertical-align:-0.2501em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8126em;vertical-align:-0.34731999999999996em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span></span></p>
+<p>此时满足最优解，我们把这个当做排序的 <code>cmp</code> 即可，然后上 DP 求一个最大子序列和。<s>我超，这么简单的题我居然没去想。</s></p>
+<p>哦，貌似不是严格的最大子序列和，<strong>由于之前的元素会产生贡献，还得倒着求。</strong></p>
+<h2 id="training-15nowcoder"><a class="markdownIt-Anchor" href="#training-15nowcoder"></a> Training 15（Nowcoder）</h2>
+<p>考试出大锅，摆了。<br />
+其实 A 题也能写，但还是摆了。</p>
+<h2 id="training-16hdu"><a class="markdownIt-Anchor" href="#training-16hdu"></a> Training 16（HDU）</h2>
+<p>好像没啥能补的，还得学 NTT 摆了。</p>
+<h2 id="training-17hdu"><a class="markdownIt-Anchor" href="#training-17hdu"></a> Training 17（HDU）</h2>
+<p>王炸，以后在写 hash 我是狗。<br />
+<strong>费马小定理求逆元的常数很大，不可忽略！！</strong></p>
+<p>另一个签到题是按编号从大到小排序后求生成树，没想到，我是个寄吧。</p>
+<h2 id="training-18nowcoder"><a class="markdownIt-Anchor" href="#training-18nowcoder"></a> Training 18（Nowcoder）</h2>
+<p>这次比赛居然没坐牢。</p>
+<h3 id="c-3"><a class="markdownIt-Anchor" href="#c-3"></a> C</h3>
+<h4 id="题意-17"><a class="markdownIt-Anchor" href="#题意-17"></a> 题意：</h4>
+<p>求给定图<strong>边集的所有子集</strong>的最小生成森林边权和之和。</p>
+<h4 id="分析-10"><a class="markdownIt-Anchor" href="#分析-10"></a> 分析：</h4>
+<p>注意是边集而非点集，虽然都不会写。</p>
+<p><strong>考虑每一条边在多少个边子集中产生贡献。</strong> 根据 Kruskal 算法的思想按大小把边排序，这样一条边 (u,v) 在某个边子集产生贡献当且仅当 <strong>u 和 v 不能通过较小边连通</strong>。令 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">S_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 为所有边集的集合，那么为了计算这条边造成的贡献，我们先只需考虑在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mi mathvariant="normal">/</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">S_1 / T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 边集的集合中所造成贡献即可，T 是包含了较小边使 u, v 连通的边集集合。</p>
+<p>其中，边分为比它小和比它大两种，比它大的边可以任取而不影响 u, v 的连通性；而对于比他小的边外加上 (u,v) 可形成一个连通块 S，我们将 (u1, v1) 分成三类：</p>
+<ul>
+<li>
+<p>u1, v1 都在 S 之外的边：可以任取，贡献是 2 的幂；</p>
+</li>
+<li>
+<p>u1 或 v1 中一个点在 S 的边：必须不取（否则是至少包含一个其他顶点的连通块），贡献 1；</p>
+</li>
+<li>
+<p>对于u1, v1都在 S 内的边：需要取出一些边满足能让 S 连通即可，贡献设为 <code>f[S]</code>；</p>
+</li>
+</ul>
+<p>可以维护一个状压 DP ，枚举其中的所有点集 T 合并转移即可。</p>
+<h2 id="training-19nowcoder"><a class="markdownIt-Anchor" href="#training-19nowcoder"></a> Training 19（Nowcoder）</h2>
+<h3 id="k-3"><a class="markdownIt-Anchor" href="#k-3"></a> K</h3>
+<h4 id="题意-18"><a class="markdownIt-Anchor" href="#题意-18"></a> 题意：</h4>
+<p>给 n 堆石子，两人轮流进行以下操作：</p>
+<ul>
+<li>从非空石子堆中取出若干石子</li>
+<li>要么保持不变，要么将两堆非空石子堆合并</li>
+</ul>
+<p>给定若干询问区间，问该区间内使得先手必胜的子区间个数？</p>
+<h4 id="分析-11"><a class="markdownIt-Anchor" href="#分析-11"></a> 分析：</h4>
+<p><strong>博弈论如果推不出来可以打表。</strong> 结论就是奇数堆石子先手必胜，偶数堆的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">a_i-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 异或和不为 0 先手必胜。可以归纳假设证明，但感觉不如打表》》》</p>
+<p>等价于询问是否存在偶数段子区间，使得异或和为0（或两端点的前缀异或和相同）。问题很古怪又看到询问可以离线，考虑用莫队做。分奇偶维护各端点的前缀异或和，把他们丢进桶里，套一个莫队就行。</p>
+<h2 id="training-20hdu"><a class="markdownIt-Anchor" href="#training-20hdu"></a> Training 20（HDU）</h2>
+<p>笑死了，博弈论打表打出来了。</p>
+<h3 id="b-3"><a class="markdownIt-Anchor" href="#b-3"></a> B</h3>
+<h4 id="题意-19"><a class="markdownIt-Anchor" href="#题意-19"></a> 题意：</h4>
+<p>给一个图有n个点，每个点都有权值，图初始是由三个顶点组成1 , 2 , 3 和三个边( 1 , 2 ) , ( 2 , 3 ) , ( 3 , 1 ) 组成的一个三元环，之后会再给出 n − 3 行，每行给出两个点u ， v 表示连接<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>i</mi><mo>+</mo><mn>3</mn><mo separator="true">,</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">( i + 3 , u )</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">u</span><span class="mclose">)</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>i</mi><mo>+</mo><mn>3</mn><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">( i + 3 , v )</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> 的两条边。<strong>让你将这个图分成一个独立集，其他点构成森林，且独立集中顶点的权值之后最大。</strong></p>
+<h4 id="分析-12"><a class="markdownIt-Anchor" href="#分析-12"></a> 分析：</h4>
+<p>考试时候被唬住了，概念啥的都知道但就是被唬住了。事后分析，可能是对这些名字有一种无名的敬畏感，导致分析时候大闹宕机，挺sb的。</p>
+<p>图中每个点都形成至少一个三元组，那么显然在独立集中选择一个点后，其链接的省下若干点对都是不能选的，否则不构成独立集；若存在一个三元组，其中一个点都不选，那就成环了、破坏树形结构。<strong>综上，每个三元组都必须选出一个点放进独立集中。</strong></p>
+<p>其实这个图进行三染色后，染色方案是确定的，找个权值最大的就行了。</p>
+<h2 id="training-21hdu"><a class="markdownIt-Anchor" href="#training-21hdu"></a> Training 21（HDU）</h2>
+<p>签到题小细节没注意，导致罚时爆炸从而在手速场垫底的我真是千古罪人。</p>
+<h3 id="e-2"><a class="markdownIt-Anchor" href="#e-2"></a> E</h3>
+<h4 id="题意-20"><a class="markdownIt-Anchor" href="#题意-20"></a> 题意：</h4>
+<p>给出n个城市，这些城市排成一条长链，相邻两城市间有边权bi，每个城市有一个点权ai，当处在一个城市时可以将ai的质因子装入背包，当要经过具有边权bi的边时必须背包中存在bi，背包中的质因子不会被消耗，之后有q组询问，每次询问给出起点和终点，问能否从起点走到终点。</p>
+<h4 id="分析-13"><a class="markdownIt-Anchor" href="#分析-13"></a> 分析：</h4>
+<p>考场想了能不能把询问离线处理之类的做法，想过一秒的预处理全部但没有深入。</p>
+<p>我们设 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>l</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">l_i,r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.01968em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 为 i 号城市左右可扩展的最大范围。先倒着搜一遍初，始化出从 i 走向 i+1 的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 。</p>
+<p>再正着搜，如果 i+1 和 i 可互达，那么两点有共同范围；否则就用数组维护第 i 条边的质数出现的范围，二分判定是否合法，暴力的跳就完事儿了。。。</p>
+<p>暴力跳的代码如下，以后大模拟可供参考：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">check</span><span class="hljs-params">(<span class="hljs-keyword">int</span> _p, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> r)</span> <span class="hljs-comment">// 当前检测 _p 是否出现，范围 [l,r]</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">auto</span> pos = <span class="hljs-built_in">lower_bound</span>(pri[_p].<span class="hljs-built_in">begin</span>(), pri[_p].<span class="hljs-built_in">end</span>(), l);<br>    <span class="hljs-keyword">if</span> (pos == pri[_p].<span class="hljs-built_in">end</span>()) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-built_in"><span class="hljs-keyword">return</span></span> (*pos &lt;= r);<br>&#125;<br><br><span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) &#123;  <span class="hljs-comment">// 暴力的向左右扩展，但均摊O(n)</span><br>    <span class="hljs-keyword">bool</span> flag = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j=l[i]<span class="hljs-number">-1</span>;j&gt;=<span class="hljs-number">1</span>;j--) <br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">check</span>(b[j],l[i],r[i])) &#123; j=l[j], l[i]=j, flag=<span class="hljs-number">0</span>; &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j=r[i]+<span class="hljs-number">1</span>;j&lt;=n;j++) <br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">check</span>(b[j<span class="hljs-number">-1</span>],l[i],r[i])) &#123; j=r[j], r[i]=j, flag=<span class="hljs-number">0</span>; &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">if</span> (flag) <span class="hljs-keyword">break</span>;  <span class="hljs-comment">// 无法扩展时退出</span><br>&#125;<br></code></pre>
+<h3 id="g"><a class="markdownIt-Anchor" href="#g"></a> G</h3>
+<h4 id="题意-21"><a class="markdownIt-Anchor" href="#题意-21"></a> 题意：</h4>
+<p>给定若干个点，每个点的点权是 n 排列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的值。连接 i,j 点的代价是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><mi>j</mi><mo>−</mo><mi>i</mi><mi mathvariant="normal">∣</mi><mo>∗</mo><mi mathvariant="normal">∣</mi><msub><mi>p</mi><mi>j</mi></msub><mo>−</mo><msub><mi>p</mi><mi>i</mi></msub><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|j-i|*|p_j-p_i|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">i</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span></span></span></span> ，问这些点的最小生成树。</p>
+<h4 id="分析-14"><a class="markdownIt-Anchor" href="#分析-14"></a> 分析：</h4>
+<p>如果把所有边列出来排序，那数量级是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的，因此考虑<strong>通过压缩生成树的边权上限来对边进行筛选</strong>。注意到边权 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是一个n排列，如果我们顺着连成一条链的话，那这棵树的最大边权是小于 n 的，<strong>因此只需要保证 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><mi>j</mi><mo>−</mo><mi>i</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|j-i|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">i</span><span class="mord">∣</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><msub><mi>p</mi><mi>j</mi></msub><mo>−</mo><msub><mi>p</mi><mi>i</mi></msub><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|p_j-p_i|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span></span></span></span> 小于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msqrt><mi>n</mi></msqrt></mrow><annotation encoding="application/x-tex">\sqrt n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.23972em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8002800000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault" style="padding-left:0.833em;">n</span></span><span style="top:-2.76028em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.23972em;"><span></span></span></span></span></span></span></span></span> 就行了。</strong></p>
+<p>对于 Kruskal 算法也有一个限制，如果用快排的话会多一个 log，又注意到数组范围不大，<strong>因此直接用桶排即可</strong>，恁强啊。</p>
+<h2 id="training-22nowcoder"><a class="markdownIt-Anchor" href="#training-22nowcoder"></a> Training 22（Nowcoder）</h2>
+<p>签到题坐牢，我真™是个铸币。</p>
+<p>没啥意思了。</p>
+<h2 id="training-23nowcoder"><a class="markdownIt-Anchor" href="#training-23nowcoder"></a> Training 23（Nowcoder）</h2>
+<h3 id="e-3"><a class="markdownIt-Anchor" href="#e-3"></a> E</h3>
+<h4 id="题意-22"><a class="markdownIt-Anchor" href="#题意-22"></a> 题意：</h4>
+<p>构造一个 n 的排列，使其恰好有 m 个不同的最长上升子序列。</p>
+<h4 id="分析-15"><a class="markdownIt-Anchor" href="#分析-15"></a> 分析：</h4>
+<p>考场想到了做二进制拆分，但拆的方向好像不太对。</p>
+<p>考试的想法是通过 <code>2 1 , 4 3 ...</code> 的方式构造 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><msub><mi>p</mi><mi>i</mi></msub></msup></mrow><annotation encoding="application/x-tex">2^{p_i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> ，再通过 <strong>将高进制位向前放</strong> 来运用加法原理。但为了维持 LIS 的长度相同，还得使得不同进制位构造出来的子序列长度一致。</p>
+<p>比如对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mo>=</mo><mn>5</mn><mo>=</mo><mo stretchy="false">(</mo><mn>101</mn><msub><mo stretchy="false">)</mo><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">m=5=(101)_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mord">0</span><span class="mord">1</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，就是 <code>(5, 6) , (2 1, 4 3) , 7</code> ： 前面是那个 001，后头是 100.</p>
+<p>但这样构造，如果 1 的数量很多的话长度就会炸。题解给的想法如下：</p>
+<ul>
+<li>
+<p>先确定最高位 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>，构造 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>4</mn><mo separator="true">,</mo><mn>3...</mn><mo separator="true">,</mo><mn>2</mn><mi>k</mi><mo separator="true">,</mo><mn>2</mn><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2,1,4,3...,2k,2k-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>.</p>
+</li>
+<li>
+<p>对于每一个二进制位是 1 的地方，往后插一个大于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi>k</mi></mrow><annotation encoding="application/x-tex">2k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> 的序列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，从而实现加法原理；</p>
+</li>
+<li>
+<p>同时，为了保证 LIS 长度是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>， 在每一个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 后边插入 <strong>m 的二进制表示下第 i 位往上连续0的个数</strong>。重新调整 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的大小即可。</p>
+</li>
+</ul>
+<p>比如对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mo>=</mo><mn>101</mn><mo>=</mo><mo stretchy="false">(</mo><mn>01100101</mn><msub><mo stretchy="false">)</mo><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">m=101=(0110 0101)_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mord">1</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">1</span><span class="mord">0</span><span class="mord">1</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，只需构造（保证 LIS 长度为 k+1）</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>13</mn><mo separator="true">,</mo><mn>14</mn><mo separator="true">,</mo><mo stretchy="false">(</mo><mn>2</mn><mtext> </mtext><mn>1</mn><mo separator="true">,</mo><mn>4</mn><mtext> </mtext><mn>3</mn><mo stretchy="false">)</mo><mtext> </mtext><mn>15</mn><mo separator="true">,</mo><mn>16</mn><mo separator="true">,</mo><mn>17</mn><mo separator="true">,</mo><mo stretchy="false">(</mo><mn>6</mn><mtext> </mtext><mn>5</mn><mo separator="true">,</mo><mn>8</mn><mtext> </mtext><mn>7</mn><mo separator="true">,</mo><mn>10</mn><mtext> </mtext><mn>9</mn><mo stretchy="false">)</mo><mo separator="true">,</mo><mn>18</mn><mo separator="true">,</mo><mo stretchy="false">(</mo><mn>12</mn><mtext> </mtext><mn>11</mn><mo stretchy="false">)</mo><mo separator="true">,</mo><mn>19</mn></mrow><annotation encoding="application/x-tex">13, 14,(2~1, 4~3) ~15, 16, 17, (6~5, 8~7, 10~9),18, (12~11), 19
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">4</span><span class="mspace nobreak"> </span><span class="mord">3</span><span class="mclose">)</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">6</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">7</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mopen">(</span><span class="mord">6</span><span class="mspace nobreak"> </span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">8</span><span class="mspace nobreak"> </span><span class="mord">7</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mspace nobreak"> </span><span class="mord">9</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mord">2</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">9</span></span></span></span></span></p>
+<p>这样构造就很短了。</p>
+<h2 id="training-24hdu"><a class="markdownIt-Anchor" href="#training-24hdu"></a> Training 24（HDU）</h2>
+<h3 id="g-07"><a class="markdownIt-Anchor" href="#g-07"></a> G (07)</h3>
+<p>今日比赛我开的两题被畅联杀疯了，睿宁最后攻速提交流过了 03，只有我最后摸了一手鱼。</p>
+<h4 id="题意-23"><a class="markdownIt-Anchor" href="#题意-23"></a> 题意：</h4>
+<p>题目描述. 有𝑛个套娃，大小为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>a</mi><mn>2</mn></msub><mo>≤</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo>≤</mo><msub><mi>𝑎</mi><mi>𝑛</mi></msub></mrow><annotation encoding="application/x-tex">a_1 ≤ a_2 ≤ ... ≤ 𝑎_𝑛</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7859700000000001em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.7859700000000001em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，现在要将这些套娃分成 𝑘 组，每组套娃按 照大小排序后相邻两个套娃之间的大小差距要求大于 r，求方案数。</p>
+<h4 id="分析-16"><a class="markdownIt-Anchor" href="#分析-16"></a> 分析：</h4>
+<p>开头就想到 DP，设 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">[</mo><mi>n</mi><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">f[n][k]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">]</span></span></span></span> 为前 n 个分成 k 份的方案数，转移方程即为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">[</mo><mi>n</mi><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo><mo>=</mo><mi>f</mi><mo stretchy="false">[</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="false">]</mo><mo>+</mo><mi>f</mi><mo stretchy="false">[</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo><mo>∗</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f[n][k] = f[n-1][k-1] + f[n-1][k]*\phi(n,k)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span></span></p>
+<p>前者指第 n 个数单独分成一组，后者指放在已有的 k 队里，<strong><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\phi(n,k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span> 表示第 n 个可以放的堆数。</strong></p>
+<p>考试自己想的时候在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\phi(n,k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span> 这里卡了半天，畅联是这样构造的：考虑对于有多少个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">a_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> 是和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 套不起来的，那他们互相肯定也套不起来（因为间隔肯定也是小于 r）<strong>，因此他们的划分肯定是相互独立的</strong>。于是维护可以套进去的边界 pos，则 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo><mo>=</mo><mi>k</mi><mo>−</mo><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>p</mi><mi>o</mi><mi>s</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\phi(n,k) = k - (n-pos).</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mord">.</span></span></span></span></p>
+<h3 id="h-3"><a class="markdownIt-Anchor" href="#h-3"></a> H</h3>
+<h4 id="题意-24"><a class="markdownIt-Anchor" href="#题意-24"></a> 题意：</h4>
+<p>给定 𝑛 个点的完全图，两个点之间距离为它们的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mi>c</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">gcd</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">c</span><span class="mord mathdefault">d</span></span></span></span>，𝑞 次询问两个点之间的最短路以及方案数。</p>
+<h4 id="分析-17"><a class="markdownIt-Anchor" href="#分析-17"></a> 分析：</h4>
+<p>首先题目显然可以转化成：对于给定的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u,v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span></span></span></span> 求 1~n 范围内与二者都互质的个数。</p>
+<p>一开始还以为是欧拉函数，但欧拉函数是求<strong>小于自身</strong>与其互质的个数，因此得用质因数分解+容斥。特别地，对于两个数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u,v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span></span></span></span> 只需把他们质因数的并集丢进去就行了。</p>
+<p>在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>≤</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">n\leq 10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span> 范围内，质因数的数量是不超过 12 个的 ？因此可以用状压这类的方法进行一个容斥过程：奇数个就加 n/cur，偶数个就减 n/cur. 如果是按位枚举常数会很大，用 <code>lowbit</code> 加速一下就可以了。</p>
+<h3 id="有机会可以补一下加赛的字符串"><a class="markdownIt-Anchor" href="#有机会可以补一下加赛的字符串"></a> 有机会可以补一下加赛的字符串</h3>
+<h2 id="training-24hdu-2"><a class="markdownIt-Anchor" href="#training-24hdu-2"></a> Training 24（HDU）</h2>
+<p>没印象了，好像也是坐牢场。</p>
+<h3 id="a-4"><a class="markdownIt-Anchor" href="#a-4"></a> A</h3>
+<h4 id="题意-25"><a class="markdownIt-Anchor" href="#题意-25"></a> 题意：</h4>
+<p>n 个队打比赛，分最高的共同获胜。问一号队伍有无赢的可能性？</p>
+<h4 id="分析-18"><a class="markdownIt-Anchor" href="#分析-18"></a> 分析：</h4>
+<p>首先一号的比赛都得赢，只需要其他队伍使得均摊胜负最大化就有机会赢。感觉像是一个最大流/最大匹配问题，一开始还不敢写，结果畅联翻到原题了））</p>
+<p>扔掉一号队伍及其比赛，把其他所有队伍向各自的比赛连流量为 <code>两队比赛场次</code> 的边，超源向队伍连流量为 <code>一号队伍胜利场次 - 各队伍已胜利场次</code> 的边，比赛向超汇连流量为 <code>比赛场次</code> 的边。如果最大流量等于所有比赛数量之和，则存在一个方案，输出 <code>YES</code>。</p>
+<h2 id="training-25nowcoder"><a class="markdownIt-Anchor" href="#training-25nowcoder"></a> Training 25（Nowcoder）</h2>
+<p>**最后一次是校内第四。**再见了，所有的多校比赛。</p>
+<h3 id="a-5"><a class="markdownIt-Anchor" href="#a-5"></a> A</h3>
+<h4 id="题意-26"><a class="markdownIt-Anchor" href="#题意-26"></a> 题意：</h4>
+<p>定义 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(s)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span></span></span></span> 表示 s 所有的循环周期之和。求 s 所有子串的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(s)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span></span></span></span> 之和。</p>
+<p>考虑所有的循环区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>，并把整个字符串分割成长度为 i 的段落。可以想象得到，中间一定有若干段是一模一样的，比如（k=3）：<code>xxa | bca | bca | bcx</code> . 但也注意到前后会有多余的段落会拼接上去，组成一个大的循环节。</p>
+<p>如此，我们考虑对于<strong>每一个段落可以向前后扩展的范围</strong>：这个可以利用后缀数组求得 LCP（最长公共前缀）以及 LCS（最长公共后缀）。这至多可以扩出来一个循环两次的，把这个向前连接看能接多远，可以用线段树维护。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结：</h2>
+<p>暑假结束了，比赛也结束了。过程中想了很多事，每每比赛时坐牢亦或是考完试看到垫底的排名总会自我怀疑：打这么多比赛也没啥进步的感觉，看样子估计铁进不了前十，那做这些的事情的意义是什么？</p>
+<p>有一个我高中安慰到现在的借口：我所做的事情都是人生之动态规划转移的必要，短期的失利在长期一定会转化成更高的利益，所以不必担心——我如是安慰自己。</p>
+<p>如今我也不得不开始反思：我的回报是否值得我在上面花费的时间？我的努力是否能弥补天赋的缺失？我是否能用这些时间做更有意思的事？</p>
+<p>虽然但是，在想明白这些问题之前，我打算再犯一会儿蠢 — — 应该至少还能允许我犯一个学期吧。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/09/17/solution-in-2022-summer/">
+            http://example.com/2022/09/17/solution-in-2022-summer/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/01/25/bocchi-the-rock-talking/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">【杂谈】吉他、孤独以及蓝色星球 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/07/25/Java-OnlineChat/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">【大作业】Java 多人聊天室报告 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#training-1"><span class="toc-text"> Training 1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d"><span class="toc-text"> D</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-2"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#f"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-3"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-4"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-4"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-2"><span class="toc-text"> Training 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-5"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-5"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k-2"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-6"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-6"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-3"><span class="toc-text"> Training 3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-4"><span class="toc-text"> Training 4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-5"><span class="toc-text"> Training 5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-2"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-7"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-8"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#e"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-9"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-6"><span class="toc-text"> Training 6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-7nowcoder"><span class="toc-text"> Training 7（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#j"><span class="toc-text"> J</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-10"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-8hdu"><span class="toc-text"> Training 8（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-2"><span class="toc-text"> C.</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-11"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-9hdu"><span class="toc-text"> Training 9（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-2"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-12"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-13"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-10nowcoder"><span class="toc-text"> Training 10（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-11nowcoder"><span class="toc-text"> Training 11（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#f-2"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-14"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-8"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-2"><span class="toc-text"> H：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-15"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-12hdu"><span class="toc-text"> Training 12（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-13hdu"><span class="toc-text"> Training 13（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-text"> B 题分析：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-14nowcoder"><span class="toc-text"> Training 14（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-3"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-16"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-9"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-15nowcoder"><span class="toc-text"> Training 15（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-16hdu"><span class="toc-text"> Training 16（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-17hdu"><span class="toc-text"> Training 17（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-18nowcoder"><span class="toc-text"> Training 18（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-3"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-17"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-10"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-19nowcoder"><span class="toc-text"> Training 19（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#k-3"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-18"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-11"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-20hdu"><span class="toc-text"> Training 20（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-3"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-19"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-12"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-21hdu"><span class="toc-text"> Training 21（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-2"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-20"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-13"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#g"><span class="toc-text"> G</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-21"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-14"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-22nowcoder"><span class="toc-text"> Training 22（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-23nowcoder"><span class="toc-text"> Training 23（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-3"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-22"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-15"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#g-07"><span class="toc-text"> G (07)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-23"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-16"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-3"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-24"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-17"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E6%9C%BA%E4%BC%9A%E5%8F%AF%E4%BB%A5%E8%A1%A5%E4%B8%80%E4%B8%8B%E5%8A%A0%E8%B5%9B%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text"> 有机会可以补一下加赛的字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu-2"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-4"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-25"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-18"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-25nowcoder"><span class="toc-text"> Training 25（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-5"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-26"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结：</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#training-1"><span class="toc-text"> Training 1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d"><span class="toc-text"> D</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-2"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#f"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-3"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-4"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-4"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-2"><span class="toc-text"> Training 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-5"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-5"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k-2"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-6"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-6"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-3"><span class="toc-text"> Training 3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-4"><span class="toc-text"> Training 4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-5"><span class="toc-text"> Training 5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-2"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-7"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-8"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#e"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-9"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-6"><span class="toc-text"> Training 6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-7nowcoder"><span class="toc-text"> Training 7（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#j"><span class="toc-text"> J</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-10"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-8hdu"><span class="toc-text"> Training 8（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-2"><span class="toc-text"> C.</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-11"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-9hdu"><span class="toc-text"> Training 9（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-2"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-12"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-13"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-10nowcoder"><span class="toc-text"> Training 10（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-11nowcoder"><span class="toc-text"> Training 11（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#f-2"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-14"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-8"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-2"><span class="toc-text"> H：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-15"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-12hdu"><span class="toc-text"> Training 12（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-13hdu"><span class="toc-text"> Training 13（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-text"> B 题分析：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-14nowcoder"><span class="toc-text"> Training 14（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-3"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-16"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-9"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-15nowcoder"><span class="toc-text"> Training 15（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-16hdu"><span class="toc-text"> Training 16（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-17hdu"><span class="toc-text"> Training 17（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-18nowcoder"><span class="toc-text"> Training 18（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-3"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-17"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-10"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-19nowcoder"><span class="toc-text"> Training 19（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#k-3"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-18"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-11"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-20hdu"><span class="toc-text"> Training 20（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-3"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-19"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-12"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-21hdu"><span class="toc-text"> Training 21（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-2"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-20"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-13"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#g"><span class="toc-text"> G</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-21"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-14"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-22nowcoder"><span class="toc-text"> Training 22（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-23nowcoder"><span class="toc-text"> Training 23（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-3"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-22"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-15"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#g-07"><span class="toc-text"> G (07)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-23"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-16"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-3"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-24"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-17"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E6%9C%BA%E4%BC%9A%E5%8F%AF%E4%BB%A5%E8%A1%A5%E4%B8%80%E4%B8%8B%E5%8A%A0%E8%B5%9B%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text"> 有机会可以补一下加赛的字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu-2"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-4"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-25"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-18"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-25nowcoder"><span class="toc-text"> Training 25（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-5"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-26"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结：</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#training-1"><span class="toc-text"> Training 1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d"><span class="toc-text"> D</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-2"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-2"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#f"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-3"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-3"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-4"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-4"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-2"><span class="toc-text"> Training 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-5"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-5"><span class="toc-text"> 思路：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k-2"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-6"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF-6"><span class="toc-text"> 思路：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-3"><span class="toc-text"> Training 3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-4"><span class="toc-text"> Training 4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-5"><span class="toc-text"> Training 5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-2"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-7"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-8"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#e"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-9"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-6"><span class="toc-text"> Training 6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-7nowcoder"><span class="toc-text"> Training 7（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#j"><span class="toc-text"> J</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-10"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-8hdu"><span class="toc-text"> Training 8（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-2"><span class="toc-text"> C.</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-11"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-9hdu"><span class="toc-text"> Training 9（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-2"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-12"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-13"><span class="toc-text"> 题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-10nowcoder"><span class="toc-text"> Training 10（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-11nowcoder"><span class="toc-text"> Training 11（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#f-2"><span class="toc-text"> F</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-14"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-8"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-2"><span class="toc-text"> H：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-15"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-12hdu"><span class="toc-text"> Training 12（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-13hdu"><span class="toc-text"> Training 13（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-text"> B 题分析：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-14nowcoder"><span class="toc-text"> Training 14（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-3"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-16"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-9"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-15nowcoder"><span class="toc-text"> Training 15（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-16hdu"><span class="toc-text"> Training 16（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-17hdu"><span class="toc-text"> Training 17（HDU）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-18nowcoder"><span class="toc-text"> Training 18（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#c-3"><span class="toc-text"> C</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-17"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-10"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-19nowcoder"><span class="toc-text"> Training 19（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#k-3"><span class="toc-text"> K</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-18"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-11"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-20hdu"><span class="toc-text"> Training 20（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#b-3"><span class="toc-text"> B</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-19"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-12"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-21hdu"><span class="toc-text"> Training 21（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-2"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-20"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-13"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#g"><span class="toc-text"> G</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-21"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-14"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-22nowcoder"><span class="toc-text"> Training 22（Nowcoder）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-23nowcoder"><span class="toc-text"> Training 23（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#e-3"><span class="toc-text"> E</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-22"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-15"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#g-07"><span class="toc-text"> G (07)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-23"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-16"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h-3"><span class="toc-text"> H</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-24"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-17"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E6%9C%BA%E4%BC%9A%E5%8F%AF%E4%BB%A5%E8%A1%A5%E4%B8%80%E4%B8%8B%E5%8A%A0%E8%B5%9B%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text"> 有机会可以补一下加赛的字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-24hdu-2"><span class="toc-text"> Training 24（HDU）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-4"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-25"><span class="toc-text"> 题意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-18"><span class="toc-text"> 分析：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-25nowcoder"><span class="toc-text"> Training 25（Nowcoder）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-5"><span class="toc-text"> A</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F-26"><span class="toc-text"> 题意：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结：</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

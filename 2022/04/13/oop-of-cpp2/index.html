@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>Cpp 面向对象入门（其二</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Cpp 面向对象入门（其二">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/04/13/oop-of-cpp2/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;it’s class Nothing {}&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-04-13">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-09-17">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Cpp 面向对象入门（其二
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-04-13T08:51:02.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-04-13</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业课学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2.8k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>it’s class Nothing {}</p>
+<span id="more"></span>
+<h1 id="一-继承与派生"><a class="markdownIt-Anchor" href="#一-继承与派生"></a> 一、继承与派生</h1>
+<h2 id="1概念"><a class="markdownIt-Anchor" href="#1概念"></a> 1.概念</h2>
+<p>令A为<strong>基类</strong>，B作为A的 <strong>派生类</strong> 拥有（继承）A的全部特点并对其进行修改和扩充，称<strong>B 继承 A</strong>。</p>
+<h3 id="实例学生基类及其派生"><a class="markdownIt-Anchor" href="#实例学生基类及其派生"></a> 实例：学生基类及其派生</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">student</span> &#123;</span><br>    <span class="hljs-keyword">private</span> :<br>        string name;<br>        <span class="hljs-keyword">int</span> age, grade;  <span class="hljs-comment">// 会包含</span><br>    ...<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">SetInfo</span><span class="hljs-params">()</span></span>;  <span class="hljs-comment">// 会包含</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">CheckGood</span><span class="hljs-params">()</span></span>;<br>&#125;<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Senior_student</span> :</span> <span class="hljs-keyword">public</span> student &#123;  <span class="hljs-comment">// 派生类</span><br>    <span class="hljs-keyword">private</span> :<br>        <span class="hljs-keyword">int</span> School;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-built_in">Senior_student</span>( ... ) : <span class="hljs-built_in">student</span>(...) &#123; School = school; &#125;<br>        <span class="hljs-comment">// 写派生类的构造函数时不能访问到基类的Private，</span><br>        <span class="hljs-comment">// 需要调用基类的构造函数.</span><br>            School = school;<br>        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">SetInfo</span><span class="hljs-params">()</span> </span>&#123;<br>            student::<span class="hljs-built_in">SetInfo</span>();<br>        <span class="hljs-comment">// 在派生类访问基类定义的同名成员时，应使用作用域符号 `::`。</span><br>        &#125;<br>        <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">CheckGood</span><span class="hljs-params">()</span></span>; <span class="hljs-comment">//覆盖 </span><br>        <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">JIngSai</span><span class="hljs-params">()</span></span>;  <span class="hljs-comment">//扩充</span><br>&#125;<br></code></pre>
+<p>其中，对于封闭派生类对象的构造函数，其执行顺序应为：</p>
+<ul>
+<li>先执行<strong>基类的构造函数</strong>，初始化派生类对象中继承的成员；</li>
+<li>再执行<strong>成员对象的构造函数</strong>，初始化自己派生的成员对象；</li>
+<li>执行派生类自己的构造函数。</li>
+</ul>
+<p>析构函数反之；</p>
+<h2 id="2-复合关系"><a class="markdownIt-Anchor" href="#2-复合关系"></a> 2. 复合关系</h2>
+<p>在设计两个有关系的类时要注意，并非两个类有共同点，就可以让它们成为继承关系。</p>
+<p>让类 B 继承类 A，必须满足 <strong>类 B 所代表的事物也是类 A 所代表的事物</strong> 这个命题从逻辑上是成立的。 例如，写一个平面上的点类 CPoint:</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CPoint</span>&#123;</span><br>    <span class="hljs-keyword">double</span> x, y;  <span class="hljs-comment">//点的坐标</span><br>&#125;;<br></code></pre>
+<p>又要写一个圆类 CCircle。CCircle 类有圆心，因而 CCircle 类和 CPoint 类似乎有相同的成员变量。如果因此就让 CCircle 类从 CPoint 类派生而来，即采用如下写法：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CCircle</span>:</span> <span class="hljs-keyword">public</span> CPoint&#123;<br>    <span class="hljs-keyword">double</span> radius;  <span class="hljs-comment">//半径</span><br>&#125;;<br></code></pre>
+<p>这是不正确的。因为<strong>圆也是点</strong>这个命题是不成立的。 正确的做法是利用类的复合关系，即<strong>在 CCircle 类中引入 CPoint 成员变量，代表圆心</strong>：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CCircle</span> &#123;</span><br>    Cpoint center;<br>    <span class="hljs-keyword">double</span> radius;<br>&#125;<br></code></pre>
+<h3 id="同时仍需要注意复合关系的循环定义这是应该极力避免的"><a class="markdownIt-Anchor" href="#同时仍需要注意复合关系的循环定义这是应该极力避免的"></a> 同时仍需要注意复合关系的<strong>循环定义</strong>，这是应该极力避免的。</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CMaster</span>;</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CDog</span> &#123;</span><br>    CMaster* pm;  <span class="hljs-comment">// 狗只有一个主人，指向一个对象</span><br>&#125;;<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CMaster</span></span><br><span class="hljs-class">&#123;</span><br>    CDog *dogs[<span class="hljs-number">10</span>]; <span class="hljs-comment">// 主人有多条狗，同样用指针指向</span><br>    <span class="hljs-keyword">int</span> dogNum;<br>&#125;;<br></code></pre>
+<h2 id="3-类的保护成员"><a class="markdownIt-Anchor" href="#3-类的保护成员"></a> 3. 类的保护成员</h2>
+<p><code>protected</code> 成员：可以被基类的成员/友元函数，以及<strong>派生类的成员函数</strong>访问。</p>
+<h2 id="4-赋值兼容"><a class="markdownIt-Anchor" href="#4-赋值兼容"></a> 4. 赋值兼容</h2>
+<ul>
+<li>派生类对象可以赋值给基类对象，亦可初始化基类的引用。</li>
+<li>由于派生类的起始地址即为其中基类对象的起始地址，因此可以直接将派生对象的地址赋值给基类指针。</li>
+</ul>
+<h1 id="二-多态"><a class="markdownIt-Anchor" href="#二-多态"></a> 二、多态</h1>
+<h2 id="1-虚函数"><a class="markdownIt-Anchor" href="#1-虚函数"></a> 1. 虚函数</h2>
+<p>虚函数可以参与多态，构造函数和静态成员函数不能是虚函数。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">base</span> &#123;</span><br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">int</span> <span class="hljs-title">get</span><span class="hljs-params">()</span></span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">base::get</span><span class="hljs-params">()</span> </span>&#123;&#125;<br></code></pre>
+<h2 id="2-概念"><a class="markdownIt-Anchor" href="#2-概念"></a> 2. 概念</h2>
+<p>由于派生类的<strong>指针/引用</strong>可以赋给基类指针/引用，通过基类指针/引用调用<strong>同名虚函数</strong>时：</p>
+<ul>
+<li>若指针指向/引用的是基类对象，则被调用的是基类虚函数；</li>
+<li>若指向/引用的是派生类对象，则被调用的是派生类虚函数。</li>
+</ul>
+<p>我们称这种机制为<strong>多态</strong>。</p>
+<h3 id="实例英雄无敌中的小怪类"><a class="markdownIt-Anchor" href="#实例英雄无敌中的小怪类"></a> 实例：《英雄无敌》中的小怪类</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Creature</span> &#123;</span><br>    <span class="hljs-keyword">protected</span>:<br>        <span class="hljs-keyword">int</span> hp, at;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">attack</span><span class="hljs-params">(Creature *pC)</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">hurted</span><span class="hljs-params">(<span class="hljs-keyword">int</span> power)</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">FightBack</span><span class="hljs-params">(Creature *pC)</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Charact</span><span class="hljs-params">()</span> </span>= <span class="hljs-number">0</span>; <br>        <span class="hljs-comment">// 纯虚函数，即对于基类不存在这种定义。</span><br>&#125;;<br><br><span class="hljs-comment">// 派生类</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Dragon</span> :</span> <span class="hljs-keyword">public</span> Creature &#123;<br>    <span class="hljs-keyword">public</span> :<br>        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">double_attack</span><span class="hljs-params">(Creature *pC)</span> </span>&#123; <span class="hljs-built_in">attack</span>(pC), <span class="hljs-built_in">attack</span>(pC); &#125;<br>        <span class="hljs-comment">// （2）</span><br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">attack</span><span class="hljs-params">(Creature *pC)</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">hurted</span><span class="hljs-params">(<span class="hljs-keyword">int</span> npower)</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">FightBack</span><span class="hljs-params">(Creature *pC)</span> </span>&#123;&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Dragon::attack</span><span class="hljs-params">(Creature *p)</span> </span>&#123;<br>    p-&gt;<span class="hljs-built_in">Hurted</span>(at); <span class="hljs-comment">// 多态</span><br>    p-&gt;<span class="hljs-built_in">FightBack</span>(<span class="hljs-keyword">this</span>); <span class="hljs-comment">// 多态</span><br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Dragon::hurted</span><span class="hljs-params">(<span class="hljs-keyword">int</span> pw)</span> </span>&#123; hp-=pw; &#125;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Dragon::FightBack</span><span class="hljs-params">(Creature *p)</span> </span><br><span class="hljs-function"></span>&#123;<br>    p-&gt;<span class="hljs-built_in">hurted</span>(at/<span class="hljs-number">2</span>);  <span class="hljs-comment">// 多态</span><br>&#125;<br><br>... <span class="hljs-comment">// 省略其他功能</span><br><br>Dragon dragon;  Wolf wolf;<br>dragon.<span class="hljs-built_in">attack</span>( &amp;wolf );<br><br>Creature* enemy[maxn];  <span class="hljs-comment">// 一个敌对生物大军的所有信息</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++) &#123;<br>    pr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Dragon</span>(); cin &gt;&gt; pr.hp &gt;&gt; pr.at;<br>    enemy[i] = pr;  ...<br>&#125;<br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++) <br>    enemy[i] -&gt; <span class="hljs-built_in">print</span>(); <span class="hljs-comment">// （1） 打印不同怪物的所有属性，属于多态。</span><br></code></pre>
+<p>各个行为函数会调用其对应对象的成员函数，提高了程序的 <strong>可扩充性</strong>。</p>
+<p>（1）让<strong>基类指针数组</strong>存放<strong>指向各种派生类对象的指针</strong>，遍历数组就能对各派生类对象做各种操作。若要访问某个派生类对象的成员变量，由于指针数组指向的是指向对象的指针，所以应使用 <code>Creatrue**</code> 类型。</p>
+<p>（2）在非构造函数中调用虚函数，等价于 <code>this-&gt;func</code>， 也属于多态。</p>
+<p>（3）多态只存在于虚函数中，<strong>构造函数和析构函数</strong>调用虚函数不属于多态。编译时即可确定调用的虚函数是自己的类或基类中定义的函数R，不会等到运行时才决定。</p>
+<h2 id="3-原理"><a class="markdownIt-Anchor" href="#3-原理"></a> 3. 原理</h2>
+<p>多态实现的原理在于通过基类指针或引用一个虚函数时，编译不确定调用函数而直到运行时才确定 — — 我们称其为 <code>动态联编</code>。</p>
+<p>而实现的关键在于，每一个有虚函数的类都有一个<strong>虚函数表</strong>，而该类任何对象中都存放着<strong>虚函数表的指针</strong>，指向对应虚函数的地址。</p>
+<p>多态函数调用语句首先被编译成基类指针所指向的、虚函数表的地址。之后在虚函数表中查找虚函数地址，调用对应的指令。</p>
+<h2 id="4-抽象类-及-纯虚函数"><a class="markdownIt-Anchor" href="#4-抽象类-及-纯虚函数"></a> 4. 抽象类 及 纯虚函数</h2>
+<p>没有函数体的函数称为纯虚函数；包含了纯虚函数的类即为<strong>抽象类</strong>，只能作为基类进行派生而不能创建独立的对象。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span> &#123;</span><br>    <span class="hljs-keyword">private</span> : <span class="hljs-keyword">int</span> a;<br>    <span class="hljs-keyword">public</span> : <br>        <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">print</span><span class="hljs-params">()</span> </span>= <span class="hljs-number">0</span>;<br>        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">func</span><span class="hljs-params">()</span> </span>&#123; cout&lt;&lt;<span class="hljs-string">&quot;Func&quot;</span>; &#125;<br>&#125;;<br><br>A a;  <span class="hljs-comment">// Error</span><br>A* a_point; <span class="hljs-comment">// OK</span><br></code></pre>
+<ul>
+<li>由于多态，抽象类的成员函数可以调用纯虚函数；</li>
+<li>如果一个类<strong>由抽象类派生而来</strong>，当且仅当它<strong>实现了基类所有的纯虚函数</strong>，它才能称为<strong>非抽象类</strong>；</li>
+</ul>
+<h1 id="三-c-中的-io-模板"><a class="markdownIt-Anchor" href="#三-c-中的-io-模板"></a> 三、C++ 中的 IO 模板</h1>
+<ol>
+<li>iostream 类函数</li>
+</ol>
+<p><code>1. istream &amp;getline(char *buf, int Size, char delim);</code></p>
+<p>从输入流中读取 Size-1 个字符到缓冲区，或碰到 <code>delim</code> 字符为止（缺省时为<code>\n</code>）。<br />
+之所以只能读 Size-1 个字符，因为会自动添加 <code>\0</code> 于最后一位参数。<br />
+也可用 <code>cin.getline()</code> 判断输入是否结束。</p>
+<p><code>2. bool eof();</code> 判断输入流是否结束。</p>
+<ol start="2">
+<li>流操纵算子：<code>#include &lt;iomanip&gt;</code> 所扩展的流操作函数：</li>
+</ol>
+<ul>
+<li>整数流的基数（进制）：<code>dec, oct, hex, serbase()</code></li>
+<li>浮点数精度：<code>cout.precision, setprecision()</code></li>
+<li>设置域宽：<code>cin.width(), setw()</code></li>
+</ul>
+<p>此外，我们还可自定义流操纵算子：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function">ostream &amp;<span class="hljs-title">tab</span><span class="hljs-params">(ostream &amp;o)</span> </span>&#123; <span class="hljs-keyword">return</span> o &lt;&lt; <span class="hljs-string">&#x27;\t&#x27;</span>; &#125;<br>cout &lt;&lt; <span class="hljs-number">1</span> &lt;&lt; tab &lt;&lt; <span class="hljs-number">2</span>;  <span class="hljs-comment">// 输出: 1  2</span><br></code></pre>
+<p>由于 iostream 对 <code>&lt;&lt;</code> 左移操作进行了重载：</p>
+<pre class="highlight"><code class="hljs cpp">ostream &amp; <span class="hljs-keyword">operator</span> &lt;&lt; ( ostream &amp;(*p)(ostream &amp;) );<br></code></pre>
+<p>因此对于形式符合 <code>参数是ostream引用且返回值也是ostream引用</code> 的函数，课直接调用 p 所指向的函数并以 *this 作为参数。</p>
+<h1 id="四-泛型程序设计-及-模板"><a class="markdownIt-Anchor" href="#四-泛型程序设计-及-模板"></a> 四、 泛型程序设计 及 模板</h1>
+<h2 id="1-函数模板"><a class="markdownIt-Anchor" href="#1-函数模板"></a> 1. 函数模板</h2>
+<p>所谓函数模板，实际上是建立一个 <strong>通用函数</strong>，它所用到的数据的类型（包括返回值类型、形参类型、局部变量类型）可以不具体指定，而是用一个 <strong>虚拟的类型</strong> 来代替（实际上是用一个标识符来占位），等发生函数调用时再根据传入的实参来逆推出真正的类型。编译器由模板生成函数的过程称为 <strong>模板实例化</strong>。</p>
+<p><code>template &lt; class 类型1, class 类型2, ... &gt;</code> 是定义函数模板的类型参数表。</p>
+<h3 id="以下是一个经典函数模板例子实现-swap-函数"><a class="markdownIt-Anchor" href="#以下是一个经典函数模板例子实现-swap-函数"></a> 以下是一个经典函数模板例子：实现 Swap 函数</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>&gt;</span>  <span class="hljs-comment">// T 是一个类型参数</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Swap</span><span class="hljs-params">(T &amp;a, T &amp;b)</span></span><br><span class="hljs-function"></span>&#123; <br>    T tmp = x; x = y; y = tmp; <br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> n = <span class="hljs-number">1</span>, m = <span class="hljs-number">2</span>;<br>    <span class="hljs-built_in">Swap</span>(n, m); <span class="hljs-comment">// 编译器生成了一个 void Swap(int &amp;a,int &amp;b)</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre>
+<h3 id="也可以不通过参数实例化函数模板"><a class="markdownIt-Anchor" href="#也可以不通过参数实例化函数模板"></a> 也可以不通过参数，实例化函数模板：</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>&gt;</span> <br><span class="hljs-function">T <span class="hljs-title">inc</span><span class="hljs-params">(T n)</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+n; &#125;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    cout &lt;&lt; inc&lt;<span class="hljs-keyword">double</span>&gt;(<span class="hljs-number">4</span>)/<span class="hljs-number">2</span>; <span class="hljs-comment">// 输出 2.5</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre>
+<h3 id="你甚至可以用函数模板实例化函数指针"><a class="markdownIt-Anchor" href="#你甚至可以用函数模板实例化函数指针"></a> 你甚至可以用函数模板，实例化函数指针：</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">int</span> a[<span class="hljs-number">3</span>]=&#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>&#125;, b[<span class="hljs-number">3</span>];<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">suqare</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>&#123; <span class="hljs-keyword">return</span> x*x; &#125;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cube</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>&#123; <span class="hljs-keyword">return</span> x*x*x; &#125;<br><br><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;class T, class pred&gt;</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Map</span><span class="hljs-params">(T s,T t, T x, pred op)</span>  </span><br><span class="hljs-function"></span>&#123; <span class="hljs-keyword">for</span> (; s!=t; ++s,++x) *x = <span class="hljs-built_in">op</span>(*s); &#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-built_in">Map</span>(a, a+<span class="hljs-number">5</span>, b, suqare);<br>    <span class="hljs-built_in">Map</span>(a, a+<span class="hljs-number">5</span>, b, cube);<br>    <span class="hljs-comment">// 此时前三个参数是 int*，最后一个参数是函数指针类型</span><br>    <span class="hljs-comment">// 即 pred = int (*op)(int)</span><br>&#125;<br></code></pre>
+<h3 id="函数模板可以重载只要它们的形参表或类型参数表不同"><a class="markdownIt-Anchor" href="#函数模板可以重载只要它们的形参表或类型参数表不同"></a> 函数模板可以重载，只要它们的形参表或类型参数表不同</h3>
+<p>需要注意的是，匹配模板函数不会进行类型自动转换。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;class T1, class T2&gt;</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print</span><span class="hljs-params">(T1 x1, T2 x2)</span> </span>&#123; cout&lt;&lt; x1 &lt;&lt; x2; &#125;<br><br><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;class T&gt;</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print</span><span class="hljs-params">(T x1, T x2)</span> </span>&#123; cout&lt;&lt; x1 &lt;&lt; x2; &#125;<br><br><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;class T1, class T2&gt;</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print</span><span class="hljs-params">(T1 x1, T1 x2)</span> </span>&#123; cout&lt;&lt; x1 &lt;&lt; x2; &#125;<br></code></pre>
+<h2 id="2-类模板"><a class="markdownIt-Anchor" href="#2-类模板"></a> 2. 类模板</h2>
+<p>对于一批操作相似的类，可以定义一个<strong>类模板</strong>然后由此生成不同的类。定义类模板时要求加上若干个类型参数，并在类的声明中给出各个参数替换的具体类型。</p>
+<p>编译器由模板类生成出类的过程叫做类模板的实例化，<strong>由类模板实例化的类叫做模板类</strong>。（什么绕口令）</p>
+<h3 id="类模板实例-pair类模板"><a class="markdownIt-Anchor" href="#类模板实例-pair类模板"></a> 类模板实例： pair类模板</h3>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>, <span class="hljs-keyword">class</span> <span class="hljs-title">U</span>&gt;</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pair</span> &#123;</span><br>	<span class="hljs-keyword">public</span> :<br>		T x;  U y;<br>		<span class="hljs-built_in">Pair</span>(T xx, U yy) : <span class="hljs-built_in">x</span>(xx), <span class="hljs-built_in">y</span>(yy) &#123;&#125;;<br>		Pair&lt;T, U&gt; <span class="hljs-keyword">operator</span>+(<span class="hljs-keyword">const</span> Pair&lt;T, U&gt; &amp;p) <br>		&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Pair</span>(x+p.x, y+p.y); &#125;<br>&#125;;<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>, <span class="hljs-keyword">class</span> <span class="hljs-title">U</span>&gt;</span><br>ostream&amp; <span class="hljs-keyword">operator</span>&lt;&lt;(ostream&amp; os, <span class="hljs-keyword">const</span> Pair&lt;T, U&gt;&amp; p) <br><span class="hljs-comment">// 相当于重载 ostream 类的函数，因此得写全局函数</span><br><span class="hljs-comment">// 也可以在 Pair 类搞个友元函数啥的</span><br>&#123;<br>	os &lt;&lt; <span class="hljs-string">&quot;(&quot;</span> &lt;&lt; p.x &lt;&lt; <span class="hljs-string">&quot;, &quot;</span> &lt;&lt; p.y &lt;&lt; <span class="hljs-string">&quot;)&quot;</span>;<br>  	<span class="hljs-keyword">return</span> os;<br>&#125;<br><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-function">Pair&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt; <span class="hljs-title">x</span><span class="hljs-params">(<span class="hljs-number">114</span>, <span class="hljs-number">514</span>)</span></span>;<br>	<span class="hljs-function">Pair&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt; <span class="hljs-title">y</span><span class="hljs-params">(<span class="hljs-number">1919</span>, <span class="hljs-number">810</span>)</span></span>; <br>	cout &lt;&lt; x+y &lt;&lt; <span class="hljs-string">&#x27;\n&#x27;</span>;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre>
+<h2 id="3-类模板的派生"><a class="markdownIt-Anchor" href="#3-类模板的派生"></a> 3. 类模板的派生</h2>
+<p>本质上就是参数类型的套娃。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>, <span class="hljs-keyword">class</span> <span class="hljs-title">U</span>&gt;</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span> &#123;</span>  <span class="hljs-comment">// 定义了一个_类模板_A</span><br>    T v1; U v2;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">T</span>, <span class="hljs-keyword">class</span> <span class="hljs-title">U</span>&gt;</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">B</span> :</span> <span class="hljs-keyword">public</span> A&lt;U, T&gt; &#123; <span class="hljs-comment">// 整蛊，_类模板_B 的基类是 A 但参数反过来</span><br>    T v3; U v4;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">C</span> :</span> <span class="hljs-keyword">public</span> B&lt;<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt; &#123;<br>    <span class="hljs-keyword">int</span> v5;  <span class="hljs-comment">// 一个由 _模板类_ 派生而来的普通类；</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span><br><span class="hljs-function"></span>&#123;<br>    B&lt;<span class="hljs-keyword">int</span>,<span class="hljs-keyword">double</span>&gt; ob1; <br>    <span class="hljs-comment">// 编译器产生两个类：A&lt;double,int&gt; , B&lt;int,double&gt;</span><br>    C ob2; <br>    <span class="hljs-comment">// 编译器产生两个类：A&lt;int,int&gt;, B&lt;int,int&gt;</span><br>&#125;<br></code></pre>
+<h3 id="4-类模板与友元"><a class="markdownIt-Anchor" href="#4-类模板与友元"></a> 4. 类模板与友元</h3>
+<p>首先，任何函数、类及其成员函数都可以作为类模板的友元；<br />
+其次，函数模板也可以做类模板的友元，比如pair进行重载流输出时候。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/04/13/oop-of-cpp2/">
+            http://example.com/2022/04/13/oop-of-cpp2/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/04/17/Gossip-in-night/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Gossip in night </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/04/13/oop-of-cpp1/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Cpp 面向对象入门（其一 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E7%BB%A7%E6%89%BF%E4%B8%8E%E6%B4%BE%E7%94%9F"><span class="toc-text"> 一、继承与派生</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1.概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%AD%A6%E7%94%9F%E5%9F%BA%E7%B1%BB%E5%8F%8A%E5%85%B6%E6%B4%BE%E7%94%9F"><span class="toc-text"> 实例：学生基类及其派生</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB"><span class="toc-text"> 2. 复合关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E4%BB%8D%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%AE%9A%E4%B9%89%E8%BF%99%E6%98%AF%E5%BA%94%E8%AF%A5%E6%9E%81%E5%8A%9B%E9%81%BF%E5%85%8D%E7%9A%84"><span class="toc-text"> 同时仍需要注意复合关系的循环定义，这是应该极力避免的。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%88%90%E5%91%98"><span class="toc-text"> 3. 类的保护成员</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%B5%8B%E5%80%BC%E5%85%BC%E5%AE%B9"><span class="toc-text"> 4. 赋值兼容</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E5%A4%9A%E6%80%81"><span class="toc-text"> 二、多态</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 1. 虚函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 2. 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E8%8B%B1%E9%9B%84%E6%97%A0%E6%95%8C%E4%B8%AD%E7%9A%84%E5%B0%8F%E6%80%AA%E7%B1%BB"><span class="toc-text"> 实例：《英雄无敌》中的小怪类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8E%9F%E7%90%86"><span class="toc-text"> 3. 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%8A%BD%E8%B1%A1%E7%B1%BB-%E5%8F%8A-%E7%BA%AF%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 抽象类 及 纯虚函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-c-%E4%B8%AD%E7%9A%84-io-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 三、C++ 中的 IO 模板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-%E5%8F%8A-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 四、 泛型程序设计 及 模板</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 1. 函数模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%98%AF%E4%B8%80%E4%B8%AA%E7%BB%8F%E5%85%B8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E4%BE%8B%E5%AD%90%E5%AE%9E%E7%8E%B0-swap-%E5%87%BD%E6%95%B0"><span class="toc-text"> 以下是一个经典函数模板例子：实现 Swap 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%B8%8D%E9%80%9A%E8%BF%87%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 也可以不通过参数，实例化函数模板：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%9A%E8%87%B3%E5%8F%AF%E4%BB%A5%E7%94%A8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="toc-text"> 你甚至可以用函数模板，实例化函数指针：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%8F%AF%E4%BB%A5%E9%87%8D%E8%BD%BD%E5%8F%AA%E8%A6%81%E5%AE%83%E4%BB%AC%E7%9A%84%E5%BD%A2%E5%8F%82%E8%A1%A8%E6%88%96%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E8%A1%A8%E4%B8%8D%E5%90%8C"><span class="toc-text"> 函数模板可以重载，只要它们的形参表或类型参数表不同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 2. 类模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B-pair%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 类模板实例： pair类模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E7%9A%84%E6%B4%BE%E7%94%9F"><span class="toc-text"> 3. 类模板的派生</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%8F%8B%E5%85%83"><span class="toc-text"> 4. 类模板与友元</span></a></li></ol></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E7%BB%A7%E6%89%BF%E4%B8%8E%E6%B4%BE%E7%94%9F"><span class="toc-text"> 一、继承与派生</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1.概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%AD%A6%E7%94%9F%E5%9F%BA%E7%B1%BB%E5%8F%8A%E5%85%B6%E6%B4%BE%E7%94%9F"><span class="toc-text"> 实例：学生基类及其派生</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB"><span class="toc-text"> 2. 复合关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E4%BB%8D%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%AE%9A%E4%B9%89%E8%BF%99%E6%98%AF%E5%BA%94%E8%AF%A5%E6%9E%81%E5%8A%9B%E9%81%BF%E5%85%8D%E7%9A%84"><span class="toc-text"> 同时仍需要注意复合关系的循环定义，这是应该极力避免的。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%88%90%E5%91%98"><span class="toc-text"> 3. 类的保护成员</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%B5%8B%E5%80%BC%E5%85%BC%E5%AE%B9"><span class="toc-text"> 4. 赋值兼容</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E5%A4%9A%E6%80%81"><span class="toc-text"> 二、多态</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 1. 虚函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 2. 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E8%8B%B1%E9%9B%84%E6%97%A0%E6%95%8C%E4%B8%AD%E7%9A%84%E5%B0%8F%E6%80%AA%E7%B1%BB"><span class="toc-text"> 实例：《英雄无敌》中的小怪类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8E%9F%E7%90%86"><span class="toc-text"> 3. 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%8A%BD%E8%B1%A1%E7%B1%BB-%E5%8F%8A-%E7%BA%AF%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 抽象类 及 纯虚函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-c-%E4%B8%AD%E7%9A%84-io-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 三、C++ 中的 IO 模板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-%E5%8F%8A-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 四、 泛型程序设计 及 模板</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 1. 函数模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%98%AF%E4%B8%80%E4%B8%AA%E7%BB%8F%E5%85%B8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E4%BE%8B%E5%AD%90%E5%AE%9E%E7%8E%B0-swap-%E5%87%BD%E6%95%B0"><span class="toc-text"> 以下是一个经典函数模板例子：实现 Swap 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%B8%8D%E9%80%9A%E8%BF%87%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 也可以不通过参数，实例化函数模板：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%9A%E8%87%B3%E5%8F%AF%E4%BB%A5%E7%94%A8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="toc-text"> 你甚至可以用函数模板，实例化函数指针：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%8F%AF%E4%BB%A5%E9%87%8D%E8%BD%BD%E5%8F%AA%E8%A6%81%E5%AE%83%E4%BB%AC%E7%9A%84%E5%BD%A2%E5%8F%82%E8%A1%A8%E6%88%96%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E8%A1%A8%E4%B8%8D%E5%90%8C"><span class="toc-text"> 函数模板可以重载，只要它们的形参表或类型参数表不同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 2. 类模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B-pair%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 类模板实例： pair类模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E7%9A%84%E6%B4%BE%E7%94%9F"><span class="toc-text"> 3. 类模板的派生</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%8F%8B%E5%85%83"><span class="toc-text"> 4. 类模板与友元</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E7%BB%A7%E6%89%BF%E4%B8%8E%E6%B4%BE%E7%94%9F"><span class="toc-text"> 一、继承与派生</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1.概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%AD%A6%E7%94%9F%E5%9F%BA%E7%B1%BB%E5%8F%8A%E5%85%B6%E6%B4%BE%E7%94%9F"><span class="toc-text"> 实例：学生基类及其派生</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB"><span class="toc-text"> 2. 复合关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E4%BB%8D%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E5%A4%8D%E5%90%88%E5%85%B3%E7%B3%BB%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%AE%9A%E4%B9%89%E8%BF%99%E6%98%AF%E5%BA%94%E8%AF%A5%E6%9E%81%E5%8A%9B%E9%81%BF%E5%85%8D%E7%9A%84"><span class="toc-text"> 同时仍需要注意复合关系的循环定义，这是应该极力避免的。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%88%90%E5%91%98"><span class="toc-text"> 3. 类的保护成员</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%B5%8B%E5%80%BC%E5%85%BC%E5%AE%B9"><span class="toc-text"> 4. 赋值兼容</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E5%A4%9A%E6%80%81"><span class="toc-text"> 二、多态</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 1. 虚函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 2. 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E8%8B%B1%E9%9B%84%E6%97%A0%E6%95%8C%E4%B8%AD%E7%9A%84%E5%B0%8F%E6%80%AA%E7%B1%BB"><span class="toc-text"> 实例：《英雄无敌》中的小怪类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8E%9F%E7%90%86"><span class="toc-text"> 3. 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%8A%BD%E8%B1%A1%E7%B1%BB-%E5%8F%8A-%E7%BA%AF%E8%99%9A%E5%87%BD%E6%95%B0"><span class="toc-text"> 4. 抽象类 及 纯虚函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-c-%E4%B8%AD%E7%9A%84-io-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 三、C++ 中的 IO 模板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-%E5%8F%8A-%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 四、 泛型程序设计 及 模板</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 1. 函数模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%98%AF%E4%B8%80%E4%B8%AA%E7%BB%8F%E5%85%B8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E4%BE%8B%E5%AD%90%E5%AE%9E%E7%8E%B0-swap-%E5%87%BD%E6%95%B0"><span class="toc-text"> 以下是一个经典函数模板例子：实现 Swap 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%B8%8D%E9%80%9A%E8%BF%87%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 也可以不通过参数，实例化函数模板：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%9A%E8%87%B3%E5%8F%AF%E4%BB%A5%E7%94%A8%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="toc-text"> 你甚至可以用函数模板，实例化函数指针：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%8F%AF%E4%BB%A5%E9%87%8D%E8%BD%BD%E5%8F%AA%E8%A6%81%E5%AE%83%E4%BB%AC%E7%9A%84%E5%BD%A2%E5%8F%82%E8%A1%A8%E6%88%96%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E8%A1%A8%E4%B8%8D%E5%90%8C"><span class="toc-text"> 函数模板可以重载，只要它们的形参表或类型参数表不同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 2. 类模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B-pair%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="toc-text"> 类模板实例： pair类模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E7%9A%84%E6%B4%BE%E7%94%9F"><span class="toc-text"> 3. 类模板的派生</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%B1%BB%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%8F%8B%E5%85%83"><span class="toc-text"> 4. 类模板与友元</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

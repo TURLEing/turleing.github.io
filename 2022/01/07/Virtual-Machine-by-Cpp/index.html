@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>【大作业】基于高级语言实现虚拟机</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="【大作业】基于高级语言实现虚拟机">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/01/07/Virtual-Machine-by-Cpp/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;就是你以为这玩意很厉害，真正做起来才会发现：就这就这就这。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-01-07">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-07-25">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      【大作业】基于高级语言实现虚拟机
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-01-07T06:09:09.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-01-07</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业课学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>就是你以为这玩意很厉害，真正做起来才会发现：就这就这就这。</p>
+<span id="more"></span>
+<h1 id="center-基于高级语言实现虚拟机"><a class="markdownIt-Anchor" href="#center-基于高级语言实现虚拟机"></a> <center> 基于高级语言实现虚拟机</h1>
+<h3 id="center-计算机原理-公选课期末作业"><a class="markdownIt-Anchor" href="#center-计算机原理-公选课期末作业"></a> <center> 计算机原理 公选课期末作业</h3>
+<h2 id="一-实验目的"><a class="markdownIt-Anchor" href="#一-实验目的"></a> 一。实验目的</h2>
+<p>   <br />
+通过高级语言以软件模拟仿真方式，实现冯诺依曼计算机系统，模拟计算机系统整机工作原理，直观展现硬件运行过程，将所学的软件基础知识与硬件基础是知识进行综合，锻炼同学的系统综合能力，加深同学对计算机组成原理的理解。</p>
+<p> </p>
+<h2 id="二-实验内容"><a class="markdownIt-Anchor" href="#二-实验内容"></a> 二。实验内容</h2>
+<p>    使用高级语言模拟计算机的存储器、寄存器等部件，并设计实现一个特定的指令集，并设计合适的测试样例（如 A+B 问题、打印乘法表）对该虚拟机进行检测。</p>
+<p> </p>
+<h2 id="三-实验环境"><a class="markdownIt-Anchor" href="#三-实验环境"></a> 三。实验环境</h2>
+<p>  选用 C++ 实现，基于 Windows 的 x86 系统。</p>
+<p> </p>
+<h2 id="四-实验核心"><a class="markdownIt-Anchor" href="#四-实验核心"></a> 四。实验核心</h2>
+<h3 id="1存储器"><a class="markdownIt-Anchor" href="#1存储器"></a> （1）存储器：</h3>
+<p> <br />
+该虚拟机利用长度为 256 的整型数组 mem 模拟存储器，并利用数组下标模拟内存地址；存储器不仅存储了用户的指令序列，还负责存储数组。</p>
+<h3 id="2寄存器"><a class="markdownIt-Anchor" href="#2寄存器"></a> （2）寄存器：</h3>
+<p> <br />
+该虚拟机利用长度为 8 的 x 数组模拟寄存器，其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 寄存器对应了数组中的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo stretchy="false">[</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">x[1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">x</span><span class="mopen">[</span><span class="mord">1</span><span class="mclose">]</span></span></span></span>， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">x_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 寄存器对应了数组中的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo stretchy="false">[</mo><mn>2</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">x[2]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">x</span><span class="mopen">[</span><span class="mord">2</span><span class="mclose">]</span></span></span></span>，以此类推。 <strong>此外，设置 pc 为指令序列的程序计数器。</strong></p>
+<h3 id="3条件码"><a class="markdownIt-Anchor" href="#3条件码"></a> （3）条件码</h3>
+<p> 作者设置了条件码 ZF 用来判断每次操作后所得的结果是否为 0，以及 SF 判断操作结果是否为负，条件码用一个整型变量来模拟。</p>
+<h3 id="4指令集与指令表示"><a class="markdownIt-Anchor" href="#4指令集与指令表示"></a> （4）指令集与指令表示：</h3>
+<p>作者设计了一系列指令，从而完成复杂的目标函数：</p>
+<table>
+<thead>
+<tr>
+<th>指令名称</th>
+<th>功能</th>
+<th>表示码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADD x1 x2</td>
+<td>将 x2 加上 x1 存储在 x2 中</td>
+<td>0001</td>
+</tr>
+<tr>
+<td>SUB x1 x2</td>
+<td>将 x2 减去 x1 存储在 x2 中</td>
+<td>0010</td>
+</tr>
+<tr>
+<td>MOV x1 x2</td>
+<td>将 x1 的值移动到 x2</td>
+<td>0011</td>
+</tr>
+<tr>
+<td>MUL x1 x2</td>
+<td>将 x2 乘上 x1 存储在 x2 中</td>
+<td>0100</td>
+</tr>
+<tr>
+<td>JMP x1</td>
+<td>无条件跳转到地址 x1</td>
+<td>0101</td>
+</tr>
+<tr>
+<td>JGT x1</td>
+<td>当 SF 为 1 时跳转到 x1</td>
+<td>0110</td>
+</tr>
+<tr>
+<td>JEQ x1</td>
+<td>但 ZF 为 1 时跳转到 x1</td>
+<td>1100</td>
+</tr>
+<tr>
+<td>CMP x1 x2</td>
+<td>将 x2 减去 x1，并设置条件码</td>
+<td>0111</td>
+</tr>
+<tr>
+<td>INP x2</td>
+<td>读取某一个数值并存入 x2</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>OTR x1</td>
+<td>输出一个寄存器 x1 所存储的值</td>
+<td>1001</td>
+</tr>
+<tr>
+<td>OTC c</td>
+<td>输出 ASCII 码为 c 的字符</td>
+<td>1010</td>
+</tr>
+<tr>
+<td>RET</td>
+<td>程序结束标志</td>
+<td>1011</td>
+</tr>
+</tbody>
+</table>
+<p> 在实现时，作者利用一个字符串表示各指令。一个指令至多两个空格来区分指令名称与操作数。</p>
+<p> 每个操作数通过不同的前缀进行区分：<code>$</code> 代表立即数，<code>%</code> 代表寄存器，<code>B(...)</code> 表示地址以及偏移量 <code>B</code>。</p>
+<p> </p>
+<h3 id="5程序框架"><a class="markdownIt-Anchor" href="#5程序框架"></a> （5）程序框架</h3>
+<p><img src="https://s2.loli.net/2021/12/19/JXwepI763kFjDts.png" alt="" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2021/12/19/JXwepI763kFjDts.png" class="lozad post-image"></p>
+<p> </p>
+<h3 id="6-流程图"><a class="markdownIt-Anchor" href="#6-流程图"></a> (6) 流程图</h3>
+<p>笔者以“打印乘法表”为例，运行以下指令代码：</p>
+<p>其中循环部分参考了 gcc 编译器中 <code>jump 2 mid</code> 的翻译方法。</p>
+<pre class="highlight"><code class="hljs plaintext">MOV $1 %1 <br>JMP $5<br>OTC $10 <br>OTC $13<br>ADD $1 %1<br>CMP $10 %1<br>JEQ $20<br>MOV $1 %2<br>CMP %2 %1<br>JGT $2<br>MOV %1 %3<br>MUL %2 %3<br>OTR %1<br>OTC $42<br>OTR %2<br>OTC $61<br>OTR %3<br>OTC $32<br>ADD $1 %2<br>JMP $8<br>RET<br></code></pre>
+<p> </p>
+<p>流程以打印第一行为例：</p>
+<table>
+<thead>
+<tr>
+<th>寄存器 %1</th>
+<th>寄存器 %2</th>
+<th>PC对应指令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>ADD $1 %1 （第一个元素加一）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>JMP $5 （跳转至内循环）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>ADD $1 %2 （第二个元素加一）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>CMP %2 %1 （判断内循环是否结束）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>MOV %1 %3 （暂存 %1 至 %3）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>MUL %2 %3 （将答案赋值到 %3）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>OTR %1 …（打印答案）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>JMP $8 （继续进行内循环）</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>最终结果如下：</p>
+<pre class="highlight"><code class="hljs plaintext">1*1=1 <br>2*1=2 2*2=4 <br>3*1=3 3*2=6 3*3=9 <br>4*1=4 4*2=8 4*3=12 4*4=16 <br>5*1=5 5*2=10 5*3=15 5*4=20 5*5=25 <br>6*1=6 6*2=12 6*3=18 6*4=24 6*5=30 6*6=36 <br>7*1=7 7*2=14 7*3=21 7*4=28 7*5=35 7*6=42 7*7=49 <br>8*1=8 8*2=16 8*3=24 8*4=32 8*5=40 8*6=48 8*7=56 8*8=64 <br>9*1=9 9*2=18 9*3=27 9*4=36 9*5=45 9*6=54 9*7=63 9*8=72 9*9=81<br></code></pre>
+<p> </p>
+<h2 id="五-实验总结"><a class="markdownIt-Anchor" href="#五-实验总结"></a> 五。实验总结</h2>
+<h3 id="1收获"><a class="markdownIt-Anchor" href="#1收获"></a> （1）收获：</h3>
+<p>  通过这次实验，作者对于计算机软件原理，编译原理等内容有了更深刻的理解；亲自动手实现虚拟机也令作者感到十分震撼，令作者更清楚地认识到汇编语言与指令集架构之于硬件与软件的联系。</p>
+<h3 id="2不足"><a class="markdownIt-Anchor" href="#2不足"></a> （2）不足：</h3>
+<p>作者这次所实现的虚拟机仍有以下不足：</p>
+<ol>
+<li>指令数量较少，不能实现更为复杂的功能；</li>
+<li>没有错误检测模块，汇编代码安全性不足；</li>
+<li>没有实现 GUI 模块，虚拟机仅能通过命令行实现；</li>
+</ol>
+<p><s>爱谁整谁整去（</s></p>
+<p> </p>
+<h2 id="六-附录虚拟机源码"><a class="markdownIt-Anchor" href="#六-附录虚拟机源码"></a> 六。附录：虚拟机源码</h2>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cle(x) memset(x,0,sizeof(x))</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ok cout&lt;&lt;<span class="hljs-meta-string">&#x27;!&#x27;</span>&lt;&lt;endl</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> inf 2147483647</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ll long long</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inst</span>&#123;</span><br>    <span class="hljs-keyword">int</span> fir;<br>    <span class="hljs-keyword">int</span> p1, op1; <span class="hljs-comment">// 操作属性与操作数：0-立即数, 1-寄存器下标, 2-地址下标；</span><br>    <span class="hljs-keyword">int</span> p2, op2; <span class="hljs-comment">// 同上。</span><br>&#125;mem[<span class="hljs-number">256</span>], instr;<br><span class="hljs-keyword">int</span> x[<span class="hljs-number">9</span>], pc, ZF, SF;<br>string sig, o1, o2;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">change</span><span class="hljs-params">(string s)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> l = s.<span class="hljs-built_in">size</span>(), num = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i&lt;l; i++) num = num*<span class="hljs-number">10</span> + s[i] - <span class="hljs-string">&#x27;0&#x27;</span>;<br>    <span class="hljs-keyword">return</span> num;<br>&#125;<br><br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">setting</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, string a, string b)</span>  <span class="hljs-comment">//设置操作数属性</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (a[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;$&#x27;</span>) mem[x].p1 = <span class="hljs-number">0</span>, mem[x].op1 = <span class="hljs-built_in">change</span>( a.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>,a.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>) );<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;%&#x27;</span>) mem[x].p1 = <span class="hljs-number">1</span>, mem[x].op1 = <span class="hljs-built_in">change</span>( a.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>,a.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>) );<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;(&#x27;</span>) mem[x].p1 = <span class="hljs-number">2</span>, mem[x].op1 = <span class="hljs-built_in">change</span>( a.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>,a.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>) );<br><br>    <span class="hljs-keyword">if</span> (b[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;$&#x27;</span>) mem[x].p2 = <span class="hljs-number">0</span>, mem[x].op2 = <span class="hljs-built_in">change</span>(b.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>, b.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>));<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (b[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;%&#x27;</span>) mem[x].p2 = <span class="hljs-number">1</span>, mem[x].op2 = <span class="hljs-built_in">change</span>(b.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>, b.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>));<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (b[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;(&#x27;</span>) mem[x].p2 = <span class="hljs-number">2</span>, mem[x].op2 = <span class="hljs-built_in">change</span>(b.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>, b.<span class="hljs-built_in">size</span>() - <span class="hljs-number">2</span>));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">read</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;   <span class="hljs-keyword">int</span> t = <span class="hljs-number">0</span>;<br>    <span class="hljs-function">ifstream <span class="hljs-title">cin</span><span class="hljs-params">(<span class="hljs-string">&quot;list.txt&quot;</span>)</span></span>;  <span class="hljs-comment">// list 为指令序列文件</span><br>    <span class="hljs-keyword">while</span> ( !cin.<span class="hljs-built_in">eof</span>() ) &#123;  <br>        cin &gt;&gt; sig; <br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;ADD&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0001</span>;<br>            cin &gt;&gt; o1 &gt;&gt; o2;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);  <br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;SUB&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0010</span>;<br>            cin &gt;&gt; o1 &gt;&gt; o2;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;MOV&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0011</span>;<br>            cin &gt;&gt; o1 &gt;&gt; o2;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;MUL&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0100</span>;<br>            cin &gt;&gt; o1 &gt;&gt; o2;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;JMP&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0101</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;JGT&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0110</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;JEQ&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b1100</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;CMP&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b0111</span>;<br>            cin &gt;&gt; o1 &gt;&gt; o2;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;INP&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b1000</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;OTR&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b1001</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;OTC&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b1010</span>;<br>            cin &gt;&gt; o1;<br>            <span class="hljs-built_in">setting</span>(t, o1, o2);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (sig == <span class="hljs-string">&quot;RET&quot;</span>) &#123;<br>            mem[t].fir = <span class="hljs-number">0b1011</span>;<br>        &#125;<br>        t++, o2 = <span class="hljs-string">&quot;.&quot;</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">operate</span><span class="hljs-params">(inst t)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> n1 = t.p1 == <span class="hljs-number">1</span> ? x[t.op1] : t.op1 ;  <span class="hljs-comment">//读取操作数</span><br>    <span class="hljs-built_in"><span class="hljs-keyword">switch</span></span> (t.fir)  <span class="hljs-comment">//对每个指令转换为某种机器码，存储在 mem 中。</span><br>    &#123;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:<br>            x[t.op2] += n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:<br>            x[t.op2] -= n1;<br>            ZF = (x[t.op2] == <span class="hljs-number">0</span>);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:<br>            x[t.op2] = n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:<br>            x[t.op2] *= n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:<br>            pc = n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:<br>            <span class="hljs-keyword">if</span> (SF) pc = n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">12</span>:<br>            <span class="hljs-keyword">if</span> (ZF)  pc = n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">7</span>:<br>            ZF = ( (n1 - x[t.op2]) == <span class="hljs-number">0</span>);<br>            SF = ( n1 &gt; x[t.op2] );<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">8</span>:<br>            <span class="hljs-keyword">int</span> a; cin &gt;&gt; a;<br>            x[t.op1] = a;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">9</span>:<br>            cout &lt;&lt; n1;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">10</span>:<br>            cout &lt;&lt; (<span class="hljs-keyword">char</span>)(n1);<br>            <span class="hljs-keyword">break</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <br>    <span class="hljs-built_in">read</span>();  <span class="hljs-comment">//读取指令序列</span><br>    pc = <span class="hljs-number">0</span>;  <span class="hljs-comment">//初始化程序计数器；</span><br>    <span class="hljs-keyword">while</span> ( <span class="hljs-number">1</span> ) &#123;<br>        <span class="hljs-comment">//  cout &lt;&lt; &quot;%1 = &quot; &lt;&lt; x[1] &lt;&lt; &quot;, %2 = &quot; &lt;&lt; x[2] &lt;&lt; &quot; &quot; &lt;&lt; pc &lt;&lt; endl;</span><br>        instr = mem[pc], pc ++; <span class="hljs-comment">//抓取当前指令，计数器加一</span><br>        <span class="hljs-built_in">operate</span>( instr );  <span class="hljs-comment">// 执行指令内容</span><br>        <span class="hljs-keyword">if</span> (instr.fir == <span class="hljs-number">11</span>) <span class="hljs-keyword">break</span>; <span class="hljs-comment">// 结束程序</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><br><br></code></pre>
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/01/07/Virtual-Machine-by-Cpp/">
+            http://example.com/2022/01/07/Virtual-Machine-by-Cpp/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/01/08/CSAPP-chapter-7/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">CSAPP  第七章小结：链接 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/01/07/Game-Theory/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">博弈论学习笔记 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#center-%E5%9F%BA%E4%BA%8E%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-text">  基于高级语言实现虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#center-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86-%E5%85%AC%E9%80%89%E8%AF%BE%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A"><span class="toc-text">  计算机原理 公选课期末作业</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="toc-text"> 一。实验目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-text"> 二。实验内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-text"> 三。实验环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E9%AA%8C%E6%A0%B8%E5%BF%83"><span class="toc-text"> 四。实验核心</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> （1）存储器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text"> （2）寄存器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E6%9D%A1%E4%BB%B6%E7%A0%81"><span class="toc-text"> （3）条件码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E6%8C%87%E4%BB%A4%E9%9B%86%E4%B8%8E%E6%8C%87%E4%BB%A4%E8%A1%A8%E7%A4%BA"><span class="toc-text"> （4）指令集与指令表示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E7%A8%8B%E5%BA%8F%E6%A1%86%E6%9E%B6"><span class="toc-text"> （5）程序框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text"> (6) 流程图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-text"> 五。实验总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E6%94%B6%E8%8E%B7"><span class="toc-text"> （1）收获：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E4%B8%8D%E8%B6%B3"><span class="toc-text"> （2）不足：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%99%84%E5%BD%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%BA%90%E7%A0%81"><span class="toc-text"> 六。附录：虚拟机源码</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#center-%E5%9F%BA%E4%BA%8E%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-text">  基于高级语言实现虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#center-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86-%E5%85%AC%E9%80%89%E8%AF%BE%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A"><span class="toc-text">  计算机原理 公选课期末作业</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="toc-text"> 一。实验目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-text"> 二。实验内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-text"> 三。实验环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E9%AA%8C%E6%A0%B8%E5%BF%83"><span class="toc-text"> 四。实验核心</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> （1）存储器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text"> （2）寄存器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E6%9D%A1%E4%BB%B6%E7%A0%81"><span class="toc-text"> （3）条件码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E6%8C%87%E4%BB%A4%E9%9B%86%E4%B8%8E%E6%8C%87%E4%BB%A4%E8%A1%A8%E7%A4%BA"><span class="toc-text"> （4）指令集与指令表示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E7%A8%8B%E5%BA%8F%E6%A1%86%E6%9E%B6"><span class="toc-text"> （5）程序框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text"> (6) 流程图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-text"> 五。实验总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E6%94%B6%E8%8E%B7"><span class="toc-text"> （1）收获：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E4%B8%8D%E8%B6%B3"><span class="toc-text"> （2）不足：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%99%84%E5%BD%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%BA%90%E7%A0%81"><span class="toc-text"> 六。附录：虚拟机源码</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#center-%E5%9F%BA%E4%BA%8E%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-text">  基于高级语言实现虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#center-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86-%E5%85%AC%E9%80%89%E8%AF%BE%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A"><span class="toc-text">  计算机原理 公选课期末作业</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="toc-text"> 一。实验目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-text"> 二。实验内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-text"> 三。实验环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AE%9E%E9%AA%8C%E6%A0%B8%E5%BF%83"><span class="toc-text"> 四。实验核心</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> （1）存储器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text"> （2）寄存器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E6%9D%A1%E4%BB%B6%E7%A0%81"><span class="toc-text"> （3）条件码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E6%8C%87%E4%BB%A4%E9%9B%86%E4%B8%8E%E6%8C%87%E4%BB%A4%E8%A1%A8%E7%A4%BA"><span class="toc-text"> （4）指令集与指令表示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E7%A8%8B%E5%BA%8F%E6%A1%86%E6%9E%B6"><span class="toc-text"> （5）程序框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text"> (6) 流程图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-text"> 五。实验总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E6%94%B6%E8%8E%B7"><span class="toc-text"> （1）收获：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E4%B8%8D%E8%B6%B3"><span class="toc-text"> （2）不足：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%99%84%E5%BD%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%BA%90%E7%A0%81"><span class="toc-text"> 六。附录：虚拟机源码</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

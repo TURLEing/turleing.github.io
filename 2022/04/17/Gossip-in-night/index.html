@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>Gossip in night</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Gossip in night">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/04/17/Gossip-in-night/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-04-17">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-04-17">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="随笔">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Gossip in night
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-04-17T15:37:18.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-04-17</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E9%9A%8F%E7%AC%94/" 
+            class="post-meta-link">
+            随笔
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="四月十七日-2221"><a class="markdownIt-Anchor" href="#四月十七日-2221"></a> 四月十七日 22：21</h1>
+<h1 id="是夜晚"><a class="markdownIt-Anchor" href="#是夜晚"></a> 是夜晚</h1>
+<p>仍没返校的他坐在桌前，一如既往。</p>
+<p>面前摆着他的笔记本，现在正在显示出一行行随笔，但是几分钟前还是一份 60 行的代码。</p>
+<p>他刚才终于 AC 了这道题，这道调了他一下午的题，原因是线段树模板写错了。</p>
+<p>这点小事本来不值得他破防，但可惜的是他联想起这礼拜一塌糊涂的生活：</p>
+<pre><code>每天熬到两三点做着无意义的事，刷着无意义的视频，肝着无意义的活动，聊着无意义的天，仿佛无意义才是你人生的意义。
+
+更别提周六，你的周六上午是在昏迷中度过了，大脑弥散出浓郁的酒精味。你的下午是在游戏中度过的，而在晚上你的肌肉在浏览b站，分泌的是肾上腺素而非多巴胺。你寻思明天应该做一些有意义的事情，因此大发慈悲地将睡觉时间调整为一点四十。
+</code></pre>
+<p>但仔细想想，他似乎没什么可干不是吗 — — 我指的是，他的作业都做完了，那些无趣的军事理论也吸引不了他，那他为什么不能给他放个小小的假呢？</p>
+<pre><code>你回忆起自己曾立下过什么长远的目标，而具体的内容仿佛已经丢到了某个过期的文件夹里了。
+
+没什么可干？但是你的周日是动漫社的选拔活动外加 ACM 小队打比赛啊。
+
+希望你的假期并不包括养出来的十磅肉。
+</code></pre>
+<p>他刷着视频：今天是明天，明天需要睡眠。</p>
+<h1 id="zzz"><a class="markdownIt-Anchor" href="#zzz"></a> Zzz…</h1>
+<p>他的早上是从八点半开始的，伴随着奇怪的宿醉感。</p>
+<pre><code>你的母亲催促着你起床，但你只觉得世界翻了天。
+</code></pre>
+<p>他上午磨磨蹭蹭地写完了一份四级考试题，填词十个空错了五个，他觉得很好笑。</p>
+<pre><code>还有呢？
+</code></pre>
+<h1 id="可悲"><a class="markdownIt-Anchor" href="#可悲"></a> 可悲。</h1>
+<p>他中午吃过午饭，开始在 ACM 群里摇人打比赛：一个队友去做核酸、一个队友失踪，他决定自己先开题。</p>
+<pre><code>除了两道签到，不会。
+</code></pre>
+<p>他发现 F 挺可做的，一开始以为是个简单的背包但发现 “每组至少选一个” 的条件需要套一个状压，再上一个线段树优化 DP。</p>
+<pre><code>弱智的选择，但你很合适。
+你很喜欢把简单的问题复杂化，企图拔高你微乎其微的水平。
+
+但是拔高给谁看呢。
+</code></pre>
+<p>他在敲代码，敲了二十多分钟发现自己订的复习资料送到了，他可以开始期中复习了。</p>
+<p>下楼时他考虑买一杯奶茶，但是想起来自己已经胖了十斤，肉故作罢。</p>
+<pre><code>你是不是以复习资料没送到为由而颓废的？
+这个借口*并不*有趣。
+</code></pre>
+<p>回来，他继续敲代码，两个队友陆陆续续来了，一位同他吐槽城市苛刻的抗疫政策，一位同他分享一个 “我觉得是好消息而他认为是坏消息” 的消息：他找了什么奇怪的借口返校了。</p>
+<pre><code>你不知道他为什么对你来说是坏消息。
+</code></pre>
+<p>然后，他和另一位队友 emo 了，想到马上动漫社社长组选拔要开始，他匆匆离开了群聊，几人不欢而散。</p>
+<p>他掏出了准备好的稿子，枯燥地在等候室等待着，冷鸟的《群青》被他循环了一遍又一遍。</p>
+<pre><code>但这并不能帮你提升情绪。
+你只是没事干。
+
+那你为啥不回去调试代码呢。
+</code></pre>
+<p>突然，他进去了。</p>
+<h1 id="喂喂请问能听到吗"><a class="markdownIt-Anchor" href="#喂喂请问能听到吗"></a> 喂喂，请问能听到吗？</h1>
+<p>他摆正腔调，说了一些准备好的话。简单的问了几个问题就结束了，准备得似乎很成功。</p>
+<pre><code>你感到愉悦与释然、但更多是不安。要是这样他们都不要你怎么办？
+
+你已经畏惧于相信一些必然发生的事物将会发生。
+
+但你成功竞选一事并不是必然。
+</code></pre>
+<p>他继续调试题目，此时他没有发现自己线段树写错了。他猪脑宕机了。</p>
+<p>一位超人在QQ上找到了他，说他自己 icpc 打铁了求安慰。</p>
+<pre><code>你并不想安慰他，你都没去成 icpc，不应该他来安慰你？
+
+但是你能感受到他真的很伤心，和你调不出来这道题一样。
+</code></pre>
+<p>他安慰了那位超人，并获悉超人也返校了，并且都是在学校里打的比赛。</p>
+<pre><code>你突然想到，那位队友不会也去打 icpc 区域赛了吧。
+
+你祈祷他没有放弃你。
+</code></pre>
+<p>他继续调试题目，此时他还没有发现自己线段树写错了。他决定吃饭。</p>
+<p>吃饭，一位仍未返校的朋友喊他出去<em>散步</em>，并催促他快点已经在门口等了。</p>
+<p>他答应，并继续慢条斯理的吃饭。</p>
+<pre><code>你总不能很乐意地去当街溜子吧。
+</code></pre>
+<p>他和那位朋友在街上漫步，环顾着刻在DNA里的小城的街道，躲避着街上的坑洼，而那位朋友在旁边听英语四级听力。</p>
+<pre><code>你可能会质疑他怎么才开始听去年的听力，
+但请不要这么做，你明知他的英语比你好。
+</code></pre>
+<p>听完了，谈及他的那位队友返校一事。朋友顿了一会儿：“啊，哈工大深的几位马上也要走，那不就剩咱俩没返校了吗。”</p>
+<h1 id="啥哈哈哈草"><a class="markdownIt-Anchor" href="#啥哈哈哈草"></a> “啥，哈哈哈草”</h1>
+<pre><code>你感到一种 何处无月，何处无竹柏，但少闲着如吾两人者尔 的豁达。
+
+但这当然是假的，苏轼不会窝在床上看手机。
+</code></pre>
+<p>那位朋友和他又吐槽了快递送不进来、吐槽了狗屎的防疫政策，足足绕了一个小时才回了家。他跟那位朋友交谈甚欢，但朋友觉得不过是饭后散步的路程在他看来堪比马拉松。</p>
+<pre><code>你只是想回家窝着，不管干什么都行。
+</code></pre>
+<p>他突然发现自己动漫社社长组选拔过了，社长组除了他全是妹子，虽扬言自己不社恐可以和妹子共事的他感到了一丝尴尬。</p>
+<pre><code>你在担心她们会不会踢你走啊。
+</code></pre>
+<p>回家路上，他和最喜欢的学长进行动漫社交接，他努力显得自己很积极。</p>
+<pre><code>你想和学长多聊会儿天，因为他是你最喜欢的学长。
+
+但你并不熟知非学长的他，你觉得很失落。
+</code></pre>
+<p>回家，继续调代码。他仍然没有发现自己的线段树写错了，但是有好友邀请你来网易云音乐一起听歌。</p>
+<pre><code>你欣然答应了他，并瞟了一眼他送你的卡西欧以及自制的木质笔筒 — — 你喜欢它，你*真的*很喜欢它。
+</code></pre>
+<h1 id="他放的歌我全点红心了还"><a class="markdownIt-Anchor" href="#他放的歌我全点红心了还"></a> 他放的歌我全点红心了还。</h1>
+<pre><code>那，那你还很喜欢他的听歌品味，他的做事态度。
+
+他是你的好友，你感到欣慰。
+</code></pre>
+<p>于是，在歌声里，你发现你的线段树写错了。这点小事本来不值得他破防，但可惜的是他联想起这礼拜一塌糊涂的生活。</p>
+<p>他发现自己的生活也没那么糟糕了。</p>
+<h1 id="我现在有事儿干了我他妈的要在期中考前刷穿我买的资料"><a class="markdownIt-Anchor" href="#我现在有事儿干了我他妈的要在期中考前刷穿我买的资料"></a> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</h1>
+<h1 id="我就喜欢打-acm去不了区域赛我多练习不练习抱怨个屁"><a class="markdownIt-Anchor" href="#我就喜欢打-acm去不了区域赛我多练习不练习抱怨个屁"></a> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</h1>
+<h1 id="我有那么多喜欢的人我深深尊敬着他们我爱他们"><a class="markdownIt-Anchor" href="#我有那么多喜欢的人我深深尊敬着他们我爱他们"></a> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</h1>
+<p>他的发病就到此结束了吧，应该。</p>
+<p>我的发病就到此结束了啊，确实。</p>
+<pre><code>你要相信，你会过得很好。
+我会相信，我会过得更好。</code></pre>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/04/17/Gossip-in-night/">
+            http://example.com/2022/04/17/Gossip-in-night/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/07/25/Java-OnlineChat/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">【大作业】Java 多人聊天室报告 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/04/13/oop-of-cpp2/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Cpp 面向对象入门（其二 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>25</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>20</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E6%9C%88%E5%8D%81%E4%B8%83%E6%97%A5-2221"><span class="toc-text"> 四月十七日 22：21</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%AF%E5%A4%9C%E6%99%9A"><span class="toc-text"> 是夜晚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#zzz"><span class="toc-text"> Zzz…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E6%82%B2"><span class="toc-text"> 可悲。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%96%82%E5%96%82%E8%AF%B7%E9%97%AE%E8%83%BD%E5%90%AC%E5%88%B0%E5%90%97"><span class="toc-text"> 喂喂，请问能听到吗？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%95%A5%E5%93%88%E5%93%88%E5%93%88%E8%8D%89"><span class="toc-text"> “啥，哈哈哈草”</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%96%E6%94%BE%E7%9A%84%E6%AD%8C%E6%88%91%E5%85%A8%E7%82%B9%E7%BA%A2%E5%BF%83%E4%BA%86%E8%BF%98"><span class="toc-text"> 他放的歌我全点红心了还。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%BA%8B%E5%84%BF%E5%B9%B2%E4%BA%86%E6%88%91%E4%BB%96%E5%A6%88%E7%9A%84%E8%A6%81%E5%9C%A8%E6%9C%9F%E4%B8%AD%E8%80%83%E5%89%8D%E5%88%B7%E7%A9%BF%E6%88%91%E4%B9%B0%E7%9A%84%E8%B5%84%E6%96%99"><span class="toc-text"> 我现在有事儿干了！我他妈的要在期中考前刷穿我买的资料！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E5%B0%B1%E5%96%9C%E6%AC%A2%E6%89%93-acm%E5%8E%BB%E4%B8%8D%E4%BA%86%E5%8C%BA%E5%9F%9F%E8%B5%9B%E6%88%91%E5%A4%9A%E7%BB%83%E4%B9%A0%E4%B8%8D%E7%BB%83%E4%B9%A0%E6%8A%B1%E6%80%A8%E4%B8%AA%E5%B1%81"><span class="toc-text"> 我就喜欢打 ACM，去不了区域赛我多练习！不练习抱怨个屁！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%9C%89%E9%82%A3%E4%B9%88%E5%A4%9A%E5%96%9C%E6%AC%A2%E7%9A%84%E4%BA%BA%E6%88%91%E6%B7%B1%E6%B7%B1%E5%B0%8A%E6%95%AC%E7%9D%80%E4%BB%96%E4%BB%AC%E6%88%91%E7%88%B1%E4%BB%96%E4%BB%AC"><span class="toc-text"> 我有那么多喜欢的人，我深深尊敬着他们，我爱他们！</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-05-08</div>
+        <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记（上</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-25</div>
+        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-17</div>
+        <a href="/2022/09/17/solution-in-2022-summer/"><div class="recent-posts-item-content">2022 暑期集训补题题解【简版】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-25</div>
+        <a href="/2022/07/25/Java-OnlineChat/"><div class="recent-posts-item-content">【大作业】Java 多人聊天室报告</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
