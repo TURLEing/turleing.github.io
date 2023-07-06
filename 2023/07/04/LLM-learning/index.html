@@ -330,7 +330,7 @@
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">L</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.327674em;vertical-align:-1.277669em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0500050000000003em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace nobreak"> </span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">−</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">Θ</span><span class="mclose">)</span></span></span></span></span></p>
 <p>其中，k 是语境窗口的大小，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi></mrow><annotation encoding="application/x-tex">\Theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">Θ</span></span></span></span> 是当前模型的参数。在训练的过程中，<code>GPT1</code> 使用的是多层 Transformer decoder，可以在输入上下文 token 上应用多头自注意力操作，然后通过逐位置前馈层来产生目标 token 上的输出分布。</p>
 <p>对于下游任务的微调操作，<code>GPT1</code> 借助分割词等操作处理输入序列，转化为结构化的输入，如有序句子对或文档、问题和答案的三元组。对于不同的任务，还需引入大量任务的定制化架构。</p>
-<p><img src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230704152834400.png" alt="image-20230704152834400" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230704152834400.png" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230704152834400.png" alt="image-20230704152834400" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230704152834400.png" class="lozad post-image"></p>
 <h3 id="13-gpt3~35"><a class="markdownIt-Anchor" href="#13-gpt3~35"></a> 1.3 GPT3~3.5</h3>
 <p>在 <code>GPT3</code> 的时代，作者意识到真正的大语言模型应该仅需要少量的实例说明便可迅速适应新的下游任务，而并非对于每个下游任务进行大量样本的 <code>fine-tune</code>。</p>
 <p>而要想实现这一目的，论文作者通过实验发现，只需要增大参数量（<code>GPT3</code> 一共训练了 <strong>175billion</strong> 个参数），即可显著提高模型在 <code>Few-shot</code> 环境下的任务性能。</p>
@@ -348,15 +348,15 @@
 <h2 id="二-有效微调"><a class="markdownIt-Anchor" href="#二-有效微调"></a> 二、有效微调</h2>
 <p>对于预训练语言模型（PLM）进行微调，即 <code>fine-tuning</code> 的操作，一般指的是给定下游任务的数据集，对于模型中的所有参数进行调整。但是对于如今大语言模型（LLM）来说，进行全参数的“微调”显然是不可能的。</p>
 <p>高效微调技术可以粗略分为以下三大类：增加额外参数、选取一部分参数更新、引入重参数化。以上三种微调方案所对应的即为 Adapter, Prefix-Tuning 以及 LoRa.</p>
-<p><img src="https://pic1.zhimg.com/80/v2-c2ccc287c6c555b30c4c7f3355b0c4f8_1440w.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://pic1.zhimg.com/80/v2-c2ccc287c6c555b30c4c7f3355b0c4f8_1440w.webp" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cv2-c2ccc287c6c555b30c4c7f3355b0c4f8_1440w.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cv2-c2ccc287c6c555b30c4c7f3355b0c4f8_1440w.webp" class="lozad post-image"></p>
 <h3 id="21-adapter"><a class="markdownIt-Anchor" href="#21-adapter"></a> 2.1 Adapter</h3>
 <p>Adapter 的想法是，在原有的 Transformer 层中间添加 Adapter 层，当进行 <code>fine-tuning</code> 时，只微调 Adapter 层的参数即可。这样训练不仅更快，还保证了大模型原来存储的知识不被遗忘。</p>
 <p><code>AdapterFusion</code> 提出了 <strong>当下游存在多个任务</strong> 的时候，使用两阶段的 <code>Finetune</code>。第一阶段和<code>Adapter Finetune</code> 的思路一样，在预训练大模型基础上加上每个任务的 <code>adapter</code>进行微调，大模型参数不变。</p>
 <p>在第二阶段，进一步冻结第一阶段训练的 <code>adapter</code> 层的参数，学习一个 <code>AdapterFusion</code> 模型。这个模型的思路是利用当前样本在FF层的输出和各个任务的 adapter 输出做<code>Cross-Attention</code>，实现从多个 <code>Adapter</code> 层的选择和融合。</p>
-<p><img src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706004955616.png" alt="image-20230706004955616" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706004955616.png" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706004955616.png" alt="image-20230706004955616" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706004955616.png" class="lozad post-image"></p>
 <h3 id="22-prefix-tuning"><a class="markdownIt-Anchor" href="#22-prefix-tuning"></a> 2.2 Prefix-Tuning</h3>
 <p>在 Transformer 层之前加一个 prefix block，对于每个任务仅微调其前缀块的参数，并冻结预训练模型的参数。这样对于不同的任务，只需要 finetune 不同的前缀。</p>
-<p><img src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706134744885.png" alt="image-20230706134744885" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706134744885.png" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706134744885.png" alt="image-20230706134744885" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706134744885.png" class="lozad post-image"></p>
 <p>相比较于简单易懂的 Prompt Tuning，Prefix Tuning 采用的是添加一系列连续的 Word Embedding，并向上通过所有 Transformer 块，向右传播至后续 Token。</p>
 <p>举例说，假设原来的 Input 是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mi>x</mi><mo separator="true">;</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[x;y]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathdefault">x</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">]</span></span></span></span>，那么Prefix Tuning 的 Input 即为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mi>P</mi><mo separator="true">,</mo><mi>x</mi><mo separator="true">;</mo><msup><mi>P</mi><mo mathvariant="normal">′</mo></msup><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[P,x;P&#x27;,y]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">x</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">]</span></span></span></span>； 前缀的参数是通过一个矩阵 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>P</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">P_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 存储的，目标函数与 finetune 类似：</p>
 <p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><munder><mo><mi>max</mi><mo>⁡</mo></mo><mi>θ</mi></munder><mi>log</mi><mo>⁡</mo><msub><mi>p</mi><mrow><mi>ϕ</mi><mo separator="true">,</mo><mi>θ</mi></mrow></msub><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><msub><mi>Y</mi><mrow><mi>i</mi><mi>d</mi><mi>x</mi></mrow></msub></mrow></munder><mi>log</mi><mo>⁡</mo><msub><mi>p</mi><mrow><mi>ϕ</mi><mo separator="true">,</mo><mi>θ</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>z</mi><mi>i</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>h</mi><mrow><mo>&lt;</mo><mi>i</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\max_\theta \log p_{\phi,\theta}(y|x) = \sum_{i\in    Y_{idx}}\log p_{\phi,\theta}(z_i|h_{\lt i})
@@ -364,7 +364,7 @@
 <p>在实际应用中，会加一层扩大维数的MLP，即 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>P</mi><mi>θ</mi></msub><mo>=</mo><mi>M</mi><mi>L</mi><mi>P</mi><mo stretchy="false">(</mo><msubsup><mi>P</mi><mi>θ</mi><mo mathvariant="normal">′</mo></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P_\theta = MLP(P&#x27;_{\theta})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.035em;vertical-align:-0.2831079999999999em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-2.4168920000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，最后保留 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>P</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">P_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 即可。</p>
 <h2 id="23-lora"><a class="markdownIt-Anchor" href="#23-lora"></a> 2.3 LoRa</h2>
 <p>LoRa 感觉也不难，就是为原来的单纯的一个线性层变换，增加了一个 <code>low-rank</code> 的参数r，以及 (r, d) 和 (d, r) 的两个线性层。从而有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mo>=</mo><msub><mi>W</mi><mn>0</mn></msub><mi>x</mi><mo>+</mo><mi>B</mi><mi>A</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">h=W_0x+BAx</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord mathdefault">A</span><span class="mord mathdefault">x</span></span></span></span> .</p>
-<p><img src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706142739260.png" alt="image-20230706142739260" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230706142739260.png" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706142739260.png" alt="image-20230706142739260" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230706142739260.png" class="lozad post-image"></p>
 <p>微调的时候只需要对 A, B 两个线性层调参即可。</p>
 <h2 id="三-提示词策略"><a class="markdownIt-Anchor" href="#三-提示词策略"></a> 三、提示词策略</h2>
 <p>主要是 In-Context Learning 以及 Chain of Thought，这两个也挺直白的，结合 <code>ChatGPT</code> 简单提两嘴：</p>
@@ -380,7 +380,7 @@
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">ar<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">max</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mord">∣</span><span class="mspace nobreak"> </span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span></span></p>
 <p>其中，<code>个性T</code> 可以视为一个键值对的集合，包含性别、喜好标签等；而 <code>语境C</code> 可表示为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><msub><mi>U</mi><mi>i</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>T</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(U_i,~T_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace nobreak"> </span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的集合，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>U</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">U_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 对应对话内容，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>T</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">T_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 对应对话个性。</p>
 <p>模型对应的框架结构如下：</p>
-<p><img src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230705155758036.png" alt="image-20230705155758036" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CUsers%5C14927%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20230705155758036.png" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230705155758036.png" alt="image-20230705155758036" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cimage-20230705155758036.png" class="lozad post-image"></p>
 <p>其中 <code>语境C</code> 添加的属性嵌入用以标注每条对话所蕴含的个性。但是这种属性嵌入感觉没啥含金量，都是预设好的三个值（性别、居住地、爱好），感觉有点鸡肋。</p>
 <p>解码器中的注意力路由可以控制目标人格 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>E</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">E_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 对于解码过程的影响，这东西本质上就是三个多头注意力层，分别处理<strong>个性、语境和之前生成的文本</strong> ，并根据个性权重<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span></span></span></span> 得到最终输出，这是通过一个动态权重预测块（分类器）计算出来的。</p>
 <p>虽然说是要做个性化对话系统，但论文里给出的例子除了二者的居住地信息以外，没看出来有啥突出个性的地方。</p>
@@ -389,7 +389,7 @@
 <p>可解释推荐可以这样定义：给定一个用户ID和一个产品ID，生成一句话来解释为什么这个产品要推荐给这个用户。既然这种 ID 可以存储个性化信息，那就可以利用这个信息 做个性化的文本生成任务。</p>
 <p>作者在输入的开头加了两个 Token，分别代表 <code>UserID</code>以及<code>ProductID</code>，这个 <strong>Token对</strong> 可以通过 MLP 转化为上下文向量；但对于 Transformer 来说，token对出现的频率远小于单词出现的频率，如果单将这个 token对 视为一个词放进 Transformer 摁 train，很大概率会被视作词表外（OOV）。</p>
 <p>因此，作者设计了一个 <strong>“上下文预测”</strong> 的任务，通过产品ID对应的向量去预测生成解释文本中出现的单词，从而将ID信息与推荐文本联系起来。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-39977d62957cf0f3644f937d459bd172_720w.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://pic3.zhimg.com/80/v2-39977d62957cf0f3644f937d459bd172_720w.webp" class="lozad post-image"></p>
+<p><img src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cv2-39977d62957cf0f3644f937d459bd172_720w.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:%5CWorks%5CBlog%5Csource%5Cimg%5Cv2-39977d62957cf0f3644f937d459bd172_720w.webp" class="lozad post-image"></p>
 <h2 id="五-文本生成通识"><a class="markdownIt-Anchor" href="#五-文本生成通识"></a> 五、文本生成（通识</h2>
 <p>（模型）编码器-解码器框架 和 仅解码器框架的区别是，输入X 和 输出y 是否共享同一组参数的网络结构。</p>
 <p>（推理）基于搜索的推理 &amp; 基于采样的推理，前者追求准确度，后者追求随机性（surprise）。</p>
@@ -605,87 +605,39 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/NLP/" 
-        title="NLP">
-        <div class="tags-list-item">NLP</div>
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
       </a>
     
       <a 
-        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
-        title="数据结构">
-        <div class="tags-list-item">数据结构</div>
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
       </a>
     
       <a 
-        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
       </a>
     
       <a 
-        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
-        title="字符串">
-        <div class="tags-list-item">字符串</div>
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
       </a>
     
       <a 
-        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
-        title="多项式">
-        <div class="tags-list-item">多项式</div>
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
-        title="线性基">
-        <div class="tags-list-item">线性基</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
-        title="专业学习">
-        <div class="tags-list-item">专业学习</div>
-      </a>
-    
-      <a 
-        href="/tags/%E9%9A%8F%E7%AC%94/" 
-        title="随笔">
-        <div class="tags-list-item">随笔</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%9E%84%E9%80%A0/" 
-        title="构造">
-        <div class="tags-list-item">构造</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
-        title="生成函数入门">
-        <div class="tags-list-item">生成函数入门</div>
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
       </a>
     
       <a 
@@ -695,9 +647,57 @@
       </a>
     
       <a 
-        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
-        title="树上启发式合并">
-        <div class="tags-list-item">树上启发式合并</div>
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
   </div>
