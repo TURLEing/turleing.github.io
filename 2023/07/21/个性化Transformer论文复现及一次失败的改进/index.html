@@ -337,7 +337,7 @@
 <br>
 <h3 id="2-难点"><a class="markdownIt-Anchor" href="#2-难点"></a> 2. 难点</h3>
 <p>作者首先尝试将 <code>UserID</code> 与 <code>ItemID</code> 作为一个 Token 对，直接放到 Transformer 里硬 train，但就结果而言是失败的 — — 序列生成完全不会关注这个 Token 对的信息（可以通过 Attention 矩阵观察而得，两个 ID 完全不造成贡献）。</p>
-<p><img src="/v2-9b6edbd770993ab6463d9ac66d9a3016_1440w.png" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/v2-9b6edbd770993ab6463d9ac66d9a3016_1440w.png" class="lozad post-image"></p>
+<p><img src="v2-9b6edbd770993ab6463d9ac66d9a3016_1440w.png" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="v2-9b6edbd770993ab6463d9ac66d9a3016_1440w.png" class="lozad post-image"></p>
 <p>论其原因，作者给出了以下解释：</p>
 <blockquote>
 <p>试想在某宝某东这样的电商平台，用户数量和产品数量得上亿，但是用户写的点评里也就三千种常用的汉字，这使得 ID 和单词出现的频率非常不匹配（前者频率低，后者频率高），导致模型将 ID 视作词表外的词（OOV token），因此模型对ID完全不敏感。</p>
@@ -524,13 +524,6 @@
   </div>
   <div class="categories-list">
     
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">8</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业学习
@@ -538,10 +531,10 @@
         </div>
       </a>
     
-      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
         <div class="categories-list-item">
-          专业课学习
-          <span class="categories-list-item-badge">1</span>
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
         </div>
       </a>
     
@@ -549,6 +542,13 @@
         <div class="categories-list-item">
           社团推送
           <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E8%AF%BE%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业课学习
+          <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
