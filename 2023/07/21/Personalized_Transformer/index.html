@@ -369,20 +369,19 @@
 <br>
 <h3 id="1-模型实现"><a class="markdownIt-Anchor" href="#1-模型实现"></a> 1. 模型实现</h3>
 <p>不同于 Transformer 的 <code>Encoder-Decoder</code> 架构，PETER 采用的是 <code>Only Encoder</code> 架构，并且该模型未经过预训练，且叠的层数很少，只需要两层便可做到非常好的结果。参考 <code>module.py</code>。</p>
-<br>
 <h4 id="11-encoderlayer-类"><a class="markdownIt-Anchor" href="#11-encoderlayer-类"></a> 1.1 <code>EncoderLayer</code> 类</h4>
 <p>用以封装 <code>Encoder</code> 中的单独一层，包含了多头注意力层以及前馈神经网络层，其中多头注意力机制可以直接调库使用。如果参考斯坦福的 Transformer 教程，自己实现多头注意力的话可以封装得更好看（即一层蕴含两个子层），但原理是一样的。</p>
 <pre class="highlight"><code class="hljs py"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EncoderLayer</span>(<span class="hljs-params">nn.Module</span>):</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, d_model, nhead, dim_feedforward=<span class="hljs-number">2048</span>, dropout=<span class="hljs-number">0.1</span>, activation=<span class="hljs-string">&quot;relu&quot;</span></span>):</span><br>        <span class="hljs-built_in">super</span>(EncoderLayer, self).__init__()<br>        self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)<br>        <span class="hljs-comment"># Implementation of Feedforward model</span><br>        self.dropout = nn.Dropout(dropout)<br>        self.linear1 = nn.Linear(d_model, dim_feedforward)<br>        self.linear2 = nn.Linear(dim_feedforward, d_model)<br><br>        self.norm1 = nn.LayerNorm(d_model)<br>        self.norm2 = nn.LayerNorm(d_model)<br>        self.dropout1 = nn.Dropout(dropout)<br>        self.dropout2 = nn.Dropout(dropout)<br><br>        self.activation = _get_activation_fn(activation)<br> <br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__setstate__</span>(<span class="hljs-params">self, state</span>):</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-string">&#x27;activation&#x27;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> state: state[<span class="hljs-string">&#x27;activation&#x27;</span>] = func.relu<br>        <span class="hljs-built_in">super</span>(EncoderLayer, self).__setstate__(state)<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">forward</span>(<span class="hljs-params">self, src: Tensor, src_mask: <span class="hljs-type">Optional</span>[Tensor] = <span class="hljs-literal">None</span>, src_key_padding_mask: <span class="hljs-type">Optional</span>[Tensor] = <span class="hljs-literal">None</span></span>) -&gt; <span class="hljs-type">Tuple</span>[Tensor, Tensor]:</span><br><br>        <span class="hljs-comment"># First is multiheadedattention with resiual.</span><br>        src2, attn = self.self_attn(src, src, src, attn_mask=src_mask, <br>                                    key_padding_mask=src_key_padding_mask)<br>        src = self.norm1(src + self.dropout1(src2))<br>        <br>        <span class="hljs-comment"># Second is Feedforward with resiual.</span><br>        src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))<br>        src = self.norm2(src + self.dropout2(src2))<br><br>        <span class="hljs-keyword">return</span> src, attn<br><br></code></pre>
 <br>
 <h3 id="12-encoder-层"><a class="markdownIt-Anchor" href="#12-encoder-层"></a> 1.2  <code>Encoder</code> 层</h3>
-<p>即对于简单的 <code>nlayer</code> 个 <code>EncoderLayer</code> 类对象进行串联。</p>
+<p>将 nlayer 个 <code>EncoderLayer</code> 类对象进行串联。</p>
 <pre class="highlight"><code class="hljs py"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TransformerEncoder</span>(<span class="hljs-params">nn.Module</span>):</span><br>    __constants__ = [<span class="hljs-string">&#x27;norm&#x27;</span>]<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, encoder_layer, num_layers, norm=<span class="hljs-literal">None</span></span>):</span><br>        <span class="hljs-built_in">super</span>(TransformerEncoder, self).__init__()<br>        self.layers = _get_clones(encoder_layer, num_layers)<br>        self.num_layers = num_layers<br>        self.norm = norm<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">forward</span>(<span class="hljs-params">self, src: Tensor, mask: <span class="hljs-type">Optional</span>[Tensor] = <span class="hljs-literal">None</span>, src_key_padding_mask: <span class="hljs-type">Optional</span>[Tensor] = <span class="hljs-literal">None</span></span>) -&gt; <span class="hljs-type">Tuple</span>[Tensor, Tensor]:</span><br>        output = src<br>        attns = []<br><br>        <span class="hljs-comment"># Append all the layers one by one</span><br>        <span class="hljs-keyword">for</span> mod <span class="hljs-keyword">in</span> self.layers:<br>            output, attn = mod(output, src_mask=mask, src_key_padding_mask=src_key_padding_mask)<br>            attns.append(attn)<br>        attns = torch.stack(attns)<br><br>        <span class="hljs-keyword">if</span> self.norm <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            output = self.norm(output)<br><br>        <span class="hljs-keyword">return</span> output, attns<br><br><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_get_clones</span>(<span class="hljs-params">module, N</span>):</span><br>    <span class="hljs-comment"># Create N deepcopy of module</span><br>    <span class="hljs-keyword">return</span> nn.ModuleList([copy.deepcopy(module) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N)])<br></code></pre>
 <br>
 <h4 id="13-预测评分的-mlp-层"><a class="markdownIt-Anchor" href="#13-预测评分的-mlp-层"></a> 1.3 预测评分的 MLP 层</h4>
 <p>激活函数选用 Sigmoid 函数，比较典型，略去不谈。</p>
 <br>
-<h4 id="14-peter"><a class="markdownIt-Anchor" href="#14-peter"></a> 1.4 PETER</h4>
-<p>主要目的是将输入，<code>Eocoder</code> 模型以及输出部分连接起来，并且写好三个任务的训练函数。</p>
+<h4 id="14-peter-模型类"><a class="markdownIt-Anchor" href="#14-peter-模型类"></a> 1.4 PETER 模型类</h4>
+<p>将输入、<code>Eocoder</code> 模型以及输出部分整合起来的完整版。三个任务的训练函数、注意力掩码也在该类中实现。</p>
 <pre class="highlight"><code class="hljs py"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PETER</span>(<span class="hljs-params">nn.Module</span>):</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, peter_mask, src_len, tgt_len, pad_idx, nuser, nitem, ntoken, emsize, nhead, nhid, nlayers, dropout=<span class="hljs-number">0.5</span></span>):</span><br>        <span class="hljs-built_in">super</span>(PETER, self).__init__()<br>        <br>        <span class="hljs-comment"># emsize: word embedding size</span><br>        self.pos_encoder = PositionalEncoding(emsize, dropout)  <br>        <span class="hljs-comment"># nhid: dim_feedforward, one basic layer, including multi-head attention and FFN</span><br>        encoder_layers = EncoderLayer(emsize, nhead, nhid, dropout)  <br>        <span class="hljs-comment"># loop over the one above</span><br>        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)  <br>        <br>        <span class="hljs-comment"># Embedding ID &amp; words with different param.s</span><br>        self.user_embeddings = nn.Embedding(nuser, emsize)<br>        self.item_embeddings = nn.Embedding(nitem, emsize)<br>        self.word_embeddings = nn.Embedding(ntoken, emsize)<br>        <br>        <span class="hljs-comment"># For generation/prediciton tasks</span><br>        self.hidden2token = nn.Linear(emsize, ntoken)<br>        self.recommender = MLP(emsize)<br>        self.ui_len = <span class="hljs-number">2</span> <span class="hljs-comment"># UserID &amp; ItemID</span><br>        self.src_len = src_len <span class="hljs-comment"># Including feature tokens</span><br>        self.pad_idx = pad_idx<br>        self.emsize = emsize<br>        <span class="hljs-keyword">if</span> peter_mask:<br>            self.attn_mask = generate_peter_mask(src_len, tgt_len)<br>        <span class="hljs-keyword">else</span>:<br>            self.attn_mask = generate_square_subsequent_mask(src_len + tgt_len)<br><br>        self.init_weights()<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">init_weights</span>(<span class="hljs-params">self</span>):</span><br>        initrange = <span class="hljs-number">0.1</span><br>        self.user_embeddings.weight.data.uniform_(-initrange, initrange)<br>        self.item_embeddings.weight.data.uniform_(-initrange, initrange)<br>        self.word_embeddings.weight.data.uniform_(-initrange, initrange)<br>        self.hidden2token.weight.data.uniform_(-initrange, initrange)<br>        self.hidden2token.bias.data.zero_()<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">predict_context</span>(<span class="hljs-params">self, hidden</span>):</span><br>        <span class="hljs-comment"># 下标为 1 表示 Item ID</span><br>        context_prob = self.hidden2token(hidden[<span class="hljs-number">1</span>])  <span class="hljs-comment"># (batch_size, ntoken)</span><br>        log_context_dis = func.log_softmax(context_prob, dim=-<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> log_context_dis<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">predict_rating</span>(<span class="hljs-params">self, hidden</span>):</span><br>        <span class="hljs-comment"># 下标为 0 表示 User ID</span><br>        rating = self.recommender(hidden[<span class="hljs-number">0</span>])  <span class="hljs-comment"># (batch_size,)</span><br>        <span class="hljs-keyword">return</span> rating<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">predict_seq</span>(<span class="hljs-params">self, hidden</span>):</span><br>        <span class="hljs-comment"># 根据评论序列（从 src_len 起）预测评论</span><br>        word_prob = self.hidden2token(hidden[self.src_len:])  <span class="hljs-comment"># (tgt_len, batch_size, ntoken)</span><br>        log_word_prob = func.log_softmax(word_prob, dim=-<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> log_word_prob<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_token</span>(<span class="hljs-params">self, hidden</span>):</span><br>        word_prob = self.hidden2token(hidden[-<span class="hljs-number">1</span>])  <span class="hljs-comment"># (batch_size, ntoken)</span><br>        log_word_prob = func.log_softmax(word_prob, dim=-<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> log_word_prob<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_square_subsequent_mask</span>(<span class="hljs-params">total_len</span>):</span><br>        mask = torch.tril(torch.ones(total_len, total_len))  <br>        <span class="hljs-comment"># (total_len, total_len), lower triangle -&gt; 1.; others 0.</span><br>        mask = mask == <span class="hljs-number">0</span>  <span class="hljs-comment"># lower -&gt; False; others True</span><br>        <span class="hljs-keyword">return</span> mask<br><br>	<span class="hljs-comment"># 生成对应的 PETER 掩码</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_peter_mask</span>(<span class="hljs-params">src_len, tgt_len</span>):</span><br>        total_len = src_len + tgt_len<br>        mask = generate_square_subsequent_mask(total_len)<br>        mask[<span class="hljs-number">0</span>, <span class="hljs-number">1</span>] = <span class="hljs-literal">False</span>  <span class="hljs-comment"># allow to attend for user and item</span><br>        <span class="hljs-keyword">return</span> mask<br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">forward</span>(<span class="hljs-params">self, user, item, text, seq_prediction=<span class="hljs-literal">True</span>, </span></span><br><span class="hljs-params"><span class="hljs-function">                context_prediction=<span class="hljs-literal">True</span>, rating_prediction=<span class="hljs-literal">True</span></span>):</span><br>        device = user.device<br>        batch_size = user.size(<span class="hljs-number">0</span>)<br>        total_len = self.ui_len + text.size(<span class="hljs-number">0</span>)  <br>        <br>        <span class="hljs-comment"># 使用 attn_mask 及 key_padding_mask 做注意力掩码</span><br>        attn_mask = self.attn_mask[:total_len, :total_len].to(device)  <span class="hljs-comment"># (total_len, total_len)</span><br>        left = torch.zeros(batch_size, self.ui_len).<span class="hljs-built_in">bool</span>().to(device)  <span class="hljs-comment"># (batch_size, ui_len)</span><br>        right = text.t() == self.pad_idx  <br>        <span class="hljs-comment"># replace pad_idx with True and others with False, (batch_size, total_len - ui_len)</span><br>        key_padding_mask = torch.cat([left, right], <span class="hljs-number">1</span>)  <span class="hljs-comment"># (batch_size, total_len)</span><br><br>        <span class="hljs-comment"># 对三个不同语义下的输入做 Embedding</span><br>        u_src = self.user_embeddings(user.unsqueeze(<span class="hljs-number">0</span>))  <span class="hljs-comment"># (1, batch_size, emsize)</span><br>        i_src = self.item_embeddings(item.unsqueeze(<span class="hljs-number">0</span>))  <span class="hljs-comment"># (1, batch_size, emsize)</span><br>        w_src = self.word_embeddings(text)  <span class="hljs-comment"># (total_len - ui_len, batch_size, emsize)</span><br>        src = torch.cat([u_src, i_src, w_src], <span class="hljs-number">0</span>)  <span class="hljs-comment"># (total_len, batch_size, emsize)</span><br>        src = src * math.sqrt(self.emsize)<br>        <br>        <span class="hljs-comment"># 加上位置嵌入后开 train</span><br>        src = self.pos_encoder(src)<br>        hidden, attns = self.transformer_encoder(src, attn_mask, key_padding_mask)  <br>        <span class="hljs-comment"># (total_len, batch_size, emsize) vs. (nlayers, batch_size, total_len_tgt, total_len_src)</span><br>        <br>        <span class="hljs-comment"># 做三个训练任务</span><br>        <span class="hljs-keyword">if</span> rating_prediction:<br>            rating = self.predict_rating(hidden)  <span class="hljs-comment"># (batch_size,)</span><br>        <span class="hljs-keyword">else</span>:<br>            rating = <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">if</span> context_prediction:<br>            log_context_dis = self.predict_context(hidden)  <span class="hljs-comment"># (batch_size, ntoken)</span><br>        <span class="hljs-keyword">else</span>:<br>            log_context_dis = <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">if</span> seq_prediction:<br>            log_word_prob = self.predict_seq(hidden)  <span class="hljs-comment"># (tgt_len, batch_size, ntoken)</span><br>        <span class="hljs-keyword">else</span>:<br>            log_word_prob = self.generate_token(hidden)  <span class="hljs-comment"># (batch_size, ntoken)</span><br>        <br>        <span class="hljs-comment"># 返回三个任务的推理结果，以及注意力矩阵</span><br>        <span class="hljs-keyword">return</span> log_word_prob, log_context_dis, rating, attns<br></code></pre>
 <br>
 <h3 id="2-训练过程"><a class="markdownIt-Anchor" href="#2-训练过程"></a> 2. 训练过程</h3>
@@ -404,8 +403,8 @@
 <p>笔者在阅读论文的过程中，注意到论文作者所给出的推理测试样例如下：<br />
 <img src="image-20230723161838532.png" alt="image-20230723161838532" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230723161838532.png" class="lozad post-image"></p>
 <br>
-<p>可以注意到，PETER 模型可以通过生成 Context 与 Explanation 的方式，为 <code>User-Item</code> 的 Token 对赋予语义学信息，并能根据 ID 信息实现一定程度的个性化（参考下划线的特征）。</p>
-<p>然而，我们同样发现，在 “Context Prediction” 任务中，大量的预测词汇不具有实际含义，例如 the, and, a…… 这些词只是因为频繁地出现在语料中，才导致以较高的概率出现在被预测的上下文中。但是这种预测显然不符合该任务的目的，即 “赋予 ID 以语义学信息”。</p>
+<p>PETER 模型可以通过生成 Context 与 Explanation 的方式，为 <code>User-Item</code> 的 Token 对赋予语义学信息，并能根据 ID 信息实现一定程度的个性化（参考下划线的特征）。</p>
+<p>然而笔者发现，在 “Context Prediction” 任务中，大量的预测词汇不具有实际含义，例如 the, and, a…… 这些词只是因为频繁地出现在语料里，才导致以较高的概率成为被预测的上下文。但是这种预测显然不符合该任务的目的，即 “赋予 ID 以语义学信息”。</p>
 <p>作者显然也意识到了这个问题，他在论文中指出：</p>
 <blockquote>
 <p>Admittedly, there is still <strong>much room for improvement</strong> of the context prediction task, so as to more accurately predict the features in the ground-truth (e.g., rooms vs. pool in the first example).</p>
@@ -414,7 +413,7 @@
 <br>
 <h3 id="2-代码修改"><a class="markdownIt-Anchor" href="#2-代码修改"></a> 2. 代码修改</h3>
 <p>为了改进语料预处理流程，在其中加入停用词筛选这一步骤，我们需要对论文源代码中的 <code>util.py</code> 模块进行修改。我们先引入 nltk 包，并从中导入常见停用词列表：</p>
-<pre class="highlight"><code class="hljs py"><span class="hljs-keyword">import</span> nltk<br>nltk.download(<span class="hljs-string">&#x27;stopwords&#x27;</span>)<br>stop_words = <span class="hljs-built_in">set</span>(nltk.corpus.stopwords.words(<span class="hljs-string">&#x27;english&#x27;</span>))<br><span class="hljs-comment"># &gt;&gt; &#123;&#x27;between&#x27;, &#x27;does&#x27;, &#x27;because&#x27;, &#x27;ll&#x27;, &#x27;on&#x27;, &#x27;all&#x27;, ...&#125;</span><br></code></pre>
+<pre class="highlight"><code class="hljs py"><span class="hljs-keyword">import</span> nltk<br><br><span class="hljs-comment"># 加载并导入停用词列表</span><br>nltk.download(<span class="hljs-string">&#x27;stopwords&#x27;</span>)<br>stop_words = <span class="hljs-built_in">set</span>(nltk.corpus.stopwords.words(<span class="hljs-string">&#x27;english&#x27;</span>))<br><span class="hljs-comment"># &gt;&gt; &#123;&#x27;between&#x27;, &#x27;does&#x27;, &#x27;because&#x27;, &#x27;ll&#x27;, &#x27;on&#x27;, &#x27;all&#x27;, ...&#125;</span><br></code></pre>
 <br>
 <p>在 <code>util.py</code>模块中，我们找到加载数据集对应的方法如下：</p>
 <pre class="highlight"><code class="hljs py"><span class="hljs-comment"># 将原评论序列中的单词转为词嵌入表示</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">seq2ids</span>(<span class="hljs-params">self, seq</span>):</span><br>    <span class="hljs-keyword">return</span> [self.word_dict.word2idx.get(w, self.__unk) <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> seq.split()]<br><br><span class="hljs-keyword">for</span> review <span class="hljs-keyword">in</span> reviews:<br>    (fea, adj, tem, sco) = review[<span class="hljs-string">&#x27;template&#x27;</span>]<br>    data.append(&#123;<span class="hljs-string">&#x27;user&#x27;</span>: self.user_dict.entity2idx[review[<span class="hljs-string">&#x27;user&#x27;</span>]],<br>                 <span class="hljs-string">&#x27;item&#x27;</span>: self.item_dict.entity2idx[review[<span class="hljs-string">&#x27;item&#x27;</span>]],<br>                 <span class="hljs-string">&#x27;rating&#x27;</span>: review[<span class="hljs-string">&#x27;rating&#x27;</span>],<br>                 <span class="hljs-comment"># &#x27;text&#x27; 属性对应词嵌入后表示的矢量序列</span><br>                 <span class="hljs-string">&#x27;text&#x27;</span>: self.seq2ids(tem),<br>                 <span class="hljs-string">&#x27;feature&#x27;</span>: self.word_dict.word2idx.get(fea, self.__unk)&#125;)<br>    <span class="hljs-keyword">if</span> fea <span class="hljs-keyword">in</span> self.word_dict.word2idx:<br>        self.feature_set.add(fea)<br>    <span class="hljs-keyword">else</span>:<br>        self.feature_set.add(<span class="hljs-string">&#x27;&lt;unk&gt;&#x27;</span>)<br></code></pre>
@@ -423,9 +422,9 @@
 <pre class="highlight"><code class="hljs py"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">seq2filtered_ids</span>(<span class="hljs-params">self, seq</span>):</span><br><span class="hljs-comment"># 仅当 w 不在停用词列表中，才将其加入序列</span><br>    <span class="hljs-keyword">return</span> [self.word_dict.word2idx.get(w, self.__unk) <br>            <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> seq.split() <span class="hljs-keyword">if</span> w <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> stop_words]<br><br><span class="hljs-comment"># ... 前后代码无变化</span><br><span class="hljs-string">&#x27;text&#x27;</span>: self.seq2ids(tem),<br><span class="hljs-string">&#x27;filtered_text&#x27;</span>: self.seq2filtered_ids(tem),<br><span class="hljs-comment"># ... 前后代码无变化</span><br></code></pre>
 <br>
 <p>在数据批处理的过程中，<code>filtered_text</code>字段必定小于等于原<code>text</code>字段，长度不足的地方我们用 <code>&lt;pad&gt;</code> 进行补齐。由于我们仅用该字段处理上下文预测任务的损失函数优化过程，因此 <code>&lt;bos&gt;</code> 和 <code>&lt;eos&gt;</code> 也非必须存在，可以为 <code>&lt;pad&gt;</code> 替代。</p>
-<pre class="highlight"><code class="hljs py"><span class="hljs-comment"># Batchify 类用来对数据进行批处理</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Batchify</span>:</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, data, word2idx, seq_len=<span class="hljs-number">15</span>, batch_size=<span class="hljs-number">128</span>, shuffle=<span class="hljs-literal">False</span></span>):</span><br>        bos = word2idx[<span class="hljs-string">&#x27;&lt;bos&gt;&#x27;</span>]<br>        eos = word2idx[<span class="hljs-string">&#x27;&lt;eos&gt;&#x27;</span>]<br>        pad = word2idx[<span class="hljs-string">&#x27;&lt;pad&gt;&#x27;</span>]<br>        u, i, r, t, tf, f = [], [], [], [], [], []<br>        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> data:<br>            u.append(x[<span class="hljs-string">&#x27;user&#x27;</span>])<br>            i.append(x[<span class="hljs-string">&#x27;item&#x27;</span>])<br>            r.append(x[<span class="hljs-string">&#x27;rating&#x27;</span>])<br>            <span class="hljs-comment"># 训练文本序列应具有相同长度，因此需要截断/用&lt;pad&gt;填充</span><br>            t.append(sentence_format(x[<span class="hljs-string">&#x27;text&#x27;</span>], seq_len, pad, bos, eos))<br>            tf.append(sentence_format(x[<span class="hljs-string">&#x27;filtered_text&#x27;</span>], seq_len, pad, pad, pad))<br>            f.append([x[<span class="hljs-string">&#x27;feature&#x27;</span>]])   <br></code></pre>
+<pre class="highlight"><code class="hljs py"><span class="hljs-comment"># Batchify 类用来对数据进行批处理</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Batchify</span>:</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, data, word2idx, seq_len=<span class="hljs-number">15</span>, batch_size=<span class="hljs-number">128</span>, shuffle=<span class="hljs-literal">False</span></span>):</span><br>        bos = word2idx[<span class="hljs-string">&#x27;&lt;bos&gt;&#x27;</span>]<br>        eos = word2idx[<span class="hljs-string">&#x27;&lt;eos&gt;&#x27;</span>]<br>        pad = word2idx[<span class="hljs-string">&#x27;&lt;pad&gt;&#x27;</span>]<br>        u, i, r, t, tf, f = [], [], [], [], [], []<br>        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> data:<br>            u.append(x[<span class="hljs-string">&#x27;user&#x27;</span>])<br>            i.append(x[<span class="hljs-string">&#x27;item&#x27;</span>])<br>            r.append(x[<span class="hljs-string">&#x27;rating&#x27;</span>])<br>            <span class="hljs-comment"># 训练文本序列应具有相同长度，因此需要截断或者用&lt;pad&gt;填充</span><br>            t.append(sentence_format(x[<span class="hljs-string">&#x27;text&#x27;</span>], seq_len, pad, bos, eos))<br>            <span class="hljs-comment">#筛选文本序列仅用来优化上下文预测任务，只保留关键语义信息</span><br>            tf.append(sentence_format(x[<span class="hljs-string">&#x27;filtered_text&#x27;</span>], seq_len, pad, pad, pad))<br>            f.append([x[<span class="hljs-string">&#x27;feature&#x27;</span>]])   <br></code></pre>
 <br>
-<p>在 <code>main.py</code> 中，我们只需将 “上下文预测” 任务代码中参照的原序列，修改为经过筛选后的序列即可：</p>
+<p>在 <code>main.py</code> 中，我们只需将 “上下文预测” 任务代码中参照的原序列（seq），修改为经过筛选后的序列（filtered_seq）即可：</p>
 <pre class="highlight"><code class="hljs py">c_loss = text_criterion(context_dis.view(-<span class="hljs-number">1</span>, ntokens), filtered_seq[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>].reshape((-<span class="hljs-number">1</span>,)))<br></code></pre>
 <br>
 <h3 id="3-实验结果"><a class="markdownIt-Anchor" href="#3-实验结果"></a> 3. 实验结果</h3>
@@ -458,6 +457,20 @@
   </div>
 </article>
 <div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/07/24/Computer-Organization-and-Architecture-CPU/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">计算机组成原理学习笔记：CPU </div>
+          
+        </div>
+      </a>
+    </div>
   
   
     <div class="nav-item-next">
@@ -521,7 +534,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter"><span class="toc-text"> 1.4 PETER</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter-%E6%A8%A1%E5%9E%8B%E7%B1%BB"><span class="toc-text"> 1.4 PETER 模型类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -538,7 +551,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>27</span>
+    <span>28</span>
     <span>文章</span>
   </a>
   <a 
@@ -550,7 +563,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>21</span>
+    <span>22</span>
     <span>标签</span>
   </a>
 </div>
@@ -589,7 +602,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter"><span class="toc-text"> 1.4 PETER</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter-%E6%A8%A1%E5%9E%8B%E7%B1%BB"><span class="toc-text"> 1.4 PETER 模型类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -604,17 +617,17 @@
   </div>
   <div class="categories-list">
     
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">11</span>
+        </div>
+      </a>
+    
       <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
         <div class="categories-list-item">
           算法竞赛
           <span class="categories-list-item-badge">8</span>
-        </div>
-      </a>
-    
-      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
-        <div class="categories-list-item">
-          专业学习
-          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -647,51 +660,9 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Trie%E6%A0%91/" 
-        title="Trie树">
-        <div class="tags-list-item">Trie树</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%95%B0%E8%AE%BA/" 
-        title="数论">
-        <div class="tags-list-item">数论</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
-        title="主席树">
-        <div class="tags-list-item">主席树</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
-        title="动态规划">
-        <div class="tags-list-item">动态规划</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%80%9D%E7%BB%B4/" 
-        title="思维">
-        <div class="tags-list-item">思维</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
-        title="树上启发式合并">
-        <div class="tags-list-item">树上启发式合并</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BC%A9%E7%82%B9/" 
-        title="缩点">
-        <div class="tags-list-item">缩点</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
-        title="生成函数入门">
-        <div class="tags-list-item">生成函数入门</div>
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
       </a>
     
       <a 
@@ -701,33 +672,33 @@
       </a>
     
       <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
       </a>
     
       <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
+        href="/tags/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+        title="专业学习">
+        <div class="tags-list-item">专业学习</div>
       </a>
     
       <a 
-        href="/tags/%E6%9E%84%E9%80%A0/" 
-        title="构造">
-        <div class="tags-list-item">构造</div>
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
       </a>
     
       <a 
-        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
       <a 
@@ -737,9 +708,51 @@
       </a>
     
       <a 
-        href="/tags/NLP/" 
-        title="NLP">
-        <div class="tags-list-item">NLP</div>
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
       </a>
     
   </div>
@@ -760,7 +773,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter"><span class="toc-text"> 1.4 PETER</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-text"> 论文解读：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="toc-text"> 1. 概论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%BE%E7%82%B9"><span class="toc-text"> 2. 难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-text"> 3. 模型结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E8%BE%93%E5%85%A5%E7%89%B9%E5%BE%81"><span class="toc-text"> 3.1 输入特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%8E%A9%E7%A0%81"><span class="toc-text"> 3.2 注意力掩码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="toc-text"> 3.3 任务设计</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="toc-text"> 代码复现：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 1. 模型实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-encoderlayer-%E7%B1%BB"><span class="toc-text"> 1.1 EncoderLayer 类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-encoder-%E5%B1%82"><span class="toc-text"> 1.2  Encoder 层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E9%A2%84%E6%B5%8B%E8%AF%84%E5%88%86%E7%9A%84-mlp-%E5%B1%82"><span class="toc-text"> 1.3 预测评分的 MLP 层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-peter-%E6%A8%A1%E5%9E%8B%E7%B1%BB"><span class="toc-text"> 1.4 PETER 模型类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2. 训练过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text"> 2.1 读取数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text"> 2.2 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.3 训练过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E5%B0%9D%E8%AF%95"><span class="toc-text"> 改进尝试：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%9D%E6%83%B3%E7%AE%80%E8%BF%B0"><span class="toc-text"> 1. 思想简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text"> 2. 代码修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-text"> 3. 实验结果</span></a></li></ol></li></ol>
     </article>
   
   
@@ -775,6 +788,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-24</div>
+        <a href="/2023/07/24/Computer-Organization-and-Architecture-CPU/"><div class="recent-posts-item-content">计算机组成原理学习笔记：CPU</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-07-21</div>
         <a href="/2023/07/21/Personalized_Transformer/"><div class="recent-posts-item-content">个性化Transformer论文复现及一次失败的改进</div></a>
       </div>
@@ -787,11 +805,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-05-08</div>
         <a href="/2023/05/08/Transformer-learning/"><div class="recent-posts-item-content">Transformer 学习笔记</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-01-25</div>
-        <a href="/2023/01/25/bocchi-the-rock-talking/"><div class="recent-posts-item-content">【杂谈】吉他、孤独以及蓝色星球</div></a>
       </div>
     
   </div>
