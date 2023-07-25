@@ -50,7 +50,7 @@
         content="2023-07-21">
       <meta 
         property="og:article:modified_time" 
-        content="2023-07-24">
+        content="2023-07-25">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -400,16 +400,16 @@
 <p><br><br></p>
 <h2 id="改进尝试"><a class="markdownIt-Anchor" href="#改进尝试"></a> 改进尝试：</h2>
 <h3 id="1-思想简述"><a class="markdownIt-Anchor" href="#1-思想简述"></a> 1. 思想简述</h3>
-<p>笔者在阅读论文的过程中，注意到论文作者所给出的推理测试样例如下：<br />
+<p>笔者在阅读论文的过程中，注意到论文作者给出的推理样例如下：<br />
 <img src="image-20230723161838532.png" alt="image-20230723161838532" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230723161838532.png" class="lozad post-image"></p>
 <br>
-<p>PETER 模型可以通过生成 Context 与 Explanation 的方式，为 <code>User-Item</code> 的 Token 对赋予语义学信息，并能根据 ID 信息实现一定程度的个性化（参考下划线的特征）。</p>
-<p>然而笔者发现，在 “Context Prediction” 任务中，大量的预测词汇不具有实际含义，例如 the, and, a…… 这些词只是因为频繁地出现在语料里，才导致以较高的概率成为被预测的上下文。但是这种预测显然不符合该任务的目的，即 “赋予 ID 以语义学信息”。</p>
-<p>作者显然也意识到了这个问题，他在论文中指出：</p>
+<p>从样例中可以看出，PETER 模型确实可以通过生成 Context 与 Explanation，为 <code>User-Item</code> 的 Token 对赋予语义学信息，并能根据 ID 信息实现一定程度的个性化（参考样例中的下划线特征）。</p>
+<p>然而笔者发现，在 “Context Prediction” 任务中，大量的预测词汇不具有实际含义，例如 the, and, a…… 这些词频繁地出现在语料中，才以较高的概率成为被预测的上下文。但是这种预测显然不符合 “赋予 ID 以语义学信息” 的任务目的。</p>
+<p>作者显然也意识到了这个问题，他据此提出 PETER+ ，通过引入特征，指导模型的生成任务。作者在论文中指出：</p>
 <blockquote>
 <p>Admittedly, there is still <strong>much room for improvement</strong> of the context prediction task, so as to more accurately predict the features in the ground-truth (e.g., rooms vs. pool in the first example).</p>
 </blockquote>
-<p>作者也据此提出了 PETER+ ，通过引入特征，指导模型的生成任务。但笔者认为可以通过一个更加简单粗暴的做法解决该问题：既然上下文的预测结果大都是频繁出现在语料中而无实意的词汇，那么只需对语料预处理的时候进行<strong>停用词筛选</strong>，并且在训练的过程中采用非停用词序列去优化上下文预测任务，便可以较好地规避停用词所造成的影响。</p>
+<p>但笔者认为可以通过一个更加简单粗暴的做法解决该问题：既然上下文的预测结果大都是频繁出现在语料中而无实意的词汇，那么只需对语料预处理的时候进行<strong>停用词筛选</strong>，并且在训练的过程中采用非停用词序列去优化上下文预测任务，便可以较好地规避停用词所造成的影响。</p>
 <br>
 <h3 id="2-代码修改"><a class="markdownIt-Anchor" href="#2-代码修改"></a> 2. 代码修改</h3>
 <p>为了改进语料预处理流程，在其中加入停用词筛选这一步骤，我们需要对论文源代码中的 <code>util.py</code> 模块进行修改。我们先引入 nltk 包，并从中导入常见停用词列表：</p>
@@ -425,7 +425,7 @@
 <pre class="highlight"><code class="hljs py"><span class="hljs-comment"># Batchify 类用来对数据进行批处理</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Batchify</span>:</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, data, word2idx, seq_len=<span class="hljs-number">15</span>, batch_size=<span class="hljs-number">128</span>, shuffle=<span class="hljs-literal">False</span></span>):</span><br>        bos = word2idx[<span class="hljs-string">&#x27;&lt;bos&gt;&#x27;</span>]<br>        eos = word2idx[<span class="hljs-string">&#x27;&lt;eos&gt;&#x27;</span>]<br>        pad = word2idx[<span class="hljs-string">&#x27;&lt;pad&gt;&#x27;</span>]<br>        u, i, r, t, tf, f = [], [], [], [], [], []<br>        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> data:<br>            u.append(x[<span class="hljs-string">&#x27;user&#x27;</span>])<br>            i.append(x[<span class="hljs-string">&#x27;item&#x27;</span>])<br>            r.append(x[<span class="hljs-string">&#x27;rating&#x27;</span>])<br>            <span class="hljs-comment"># 训练文本序列应具有相同长度，因此需要截断或者用&lt;pad&gt;填充</span><br>            t.append(sentence_format(x[<span class="hljs-string">&#x27;text&#x27;</span>], seq_len, pad, bos, eos))<br>            <span class="hljs-comment">#筛选文本序列仅用来优化上下文预测任务，只保留关键语义信息</span><br>            tf.append(sentence_format(x[<span class="hljs-string">&#x27;filtered_text&#x27;</span>], seq_len, pad, pad, pad))<br>            f.append([x[<span class="hljs-string">&#x27;feature&#x27;</span>]])   <br></code></pre>
 <br>
 <p>在 <code>main.py</code> 中，我们只需将 “上下文预测” 任务代码中参照的原序列（seq），修改为经过筛选后的序列（filtered_seq）即可：</p>
-<pre class="highlight"><code class="hljs py">c_loss = text_criterion(context_dis.view(-<span class="hljs-number">1</span>, ntokens), filtered_seq[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>].reshape((-<span class="hljs-number">1</span>,)))<br></code></pre>
+<pre class="highlight"><code class="hljs py"><span class="hljs-comment"># 此处用来训练的语料为筛选后的序列</span><br>c_loss = text_criterion(context_dis.view(-<span class="hljs-number">1</span>, ntokens), filtered_seq[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>].reshape((-<span class="hljs-number">1</span>,)))<br></code></pre>
 <br>
 <h3 id="3-实验结果"><a class="markdownIt-Anchor" href="#3-实验结果"></a> 3. 实验结果</h3>
 <p>笔者将改进后的模型记为 PETERF（虽然模型结构本身没有改变，只是在训练方法上做了调整），并将其与原模型进行对比。各项指标对比如下：</p>
@@ -665,87 +665,45 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/NLP/" 
-        title="NLP">
-        <div class="tags-list-item">NLP</div>
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
       </a>
     
       <a 
-        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
-        title="数据结构">
-        <div class="tags-list-item">数据结构</div>
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
       </a>
     
       <a 
-        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
-        title="字符串">
-        <div class="tags-list-item">字符串</div>
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
       </a>
     
       <a 
-        href="/tags/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
-        title="专业学习">
-        <div class="tags-list-item">专业学习</div>
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
       </a>
     
       <a 
-        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
-        title="多项式">
-        <div class="tags-list-item">多项式</div>
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
       </a>
     
       <a 
-        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
-        title="线性基">
-        <div class="tags-list-item">线性基</div>
-      </a>
-    
-      <a 
-        href="/tags/%E9%9A%8F%E7%AC%94/" 
-        title="随笔">
-        <div class="tags-list-item">随笔</div>
-      </a>
-    
-      <a 
-        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
-        title="计算机组成原理">
-        <div class="tags-list-item">计算机组成原理</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%9E%84%E9%80%A0/" 
-        title="构造">
-        <div class="tags-list-item">构造</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
       </a>
     
       <a 
@@ -755,9 +713,51 @@
       </a>
     
       <a 
-        href="/tags/%E7%BC%A9%E7%82%B9/" 
-        title="缩点">
-        <div class="tags-list-item">缩点</div>
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
       </a>
     
   </div>
