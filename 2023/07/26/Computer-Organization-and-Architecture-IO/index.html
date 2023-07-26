@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>计算机组成原理：IO系统与设备</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="计算机组成原理：IO系统与设备">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://turleing.github.io/2023/07/26/Computer-Organization-and-Architecture-IO/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;用 Typora 整理笔记真香啊。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-07-26">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-07-26">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="计算机组成原理">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      计算机组成原理：IO系统与设备
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-07-26T04:50:36.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-07-26</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.7k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+            class="post-meta-link">
+            计算机组成原理
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>用 Typora 整理笔记真香啊。</p>
+<span id="more"></span>
+<h2 id="概论"><a class="markdownIt-Anchor" href="#概论"></a> 概论：</h2>
+<h3 id="1-io-系统组成"><a class="markdownIt-Anchor" href="#1-io-系统组成"></a> 1. IO 系统组成</h3>
+<p><img src="image-20230726125420843.png" alt="image-20230726125420843" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726125420843.png" class="lozad post-image"></p>
+<ul>
+<li>IO 设备：鼠标、键盘、显示器</li>
+<li>IO 设备控制器：完成了对硬件实现的抽象（例缓冲数据、控制磁头</li>
+<li>IO 接口：编写端口地址，实现数据交换</li>
+<li>IO 管理软件（驱动程序）：对应驱动与其交互</li>
+</ul>
+<br>
+<h3 id="2-io-的传输两阶段"><a class="markdownIt-Anchor" href="#2-io-的传输两阶段"></a> 2. IO 的传输两阶段</h3>
+<p><img src="image-20230726125853897.png" alt="image-20230726125853897" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726125853897.png" class="lozad post-image"></p>
+<br>
+<h3 id="3-数据传送方式"><a class="markdownIt-Anchor" href="#3-数据传送方式"></a> 3. 数据传送方式</h3>
+<ul>
+<li>
+<p>外设种类繁多，而不同种类的外设 <strong>数据传输速率差别很大</strong></p>
+</li>
+<li>
+<p>高速CPU与速度参差不齐的外设怎样在时间上同步呢？</p>
+<p>解决办法是在CPU和外设之间数据传送时，<strong>选择适当的定时方式</strong></p>
+</li>
+</ul>
+<p><img src="image-20230726131406838.png" alt="image-20230726131406838" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726131406838.png" class="lozad post-image"></p>
+<br>
+<h2 id="数据传送方式"><a class="markdownIt-Anchor" href="#数据传送方式"></a> 数据传送方式：</h2>
+<h3 id="1-无条件传送方式"><a class="markdownIt-Anchor" href="#1-无条件传送方式"></a> 1. 无条件传送方式</h3>
+<ul>
+<li>最简单的 IO 方式，传送时不携带条件（外设始终处于就绪状态）</li>
+<li>可以直接通过数据库输入、输出；</li>
+<li>可能出现丢失数据、覆盖数据或重复输入的情况（由于外设很慢；</li>
+<li><img src="image-20230726131629287.png" alt="image-20230726131629287" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726131629287.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h3 id="2-程序查询方式"><a class="markdownIt-Anchor" href="#2-程序查询方式"></a> 2. 程序查询方式</h3>
+<ul>
+<li>在 IO 之前查询 <strong>外设状态</strong> ，从而控制数据何时进行 IO.</li>
+<li>快速的 CPU 和低速的外设进行交互时，更多是一种串行的执行方式，会花销过多的时间查询、等待；</li>
+<li><img src="image-20230726140416817.png" alt="image-20230726140416817" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726140416817.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h3 id="3-程序中断方式"><a class="markdownIt-Anchor" href="#3-程序中断方式"></a> 3. 程序中断方式</h3>
+<ul>
+<li>当外设需要CPU服务时，通过接口向CPU发出<strong>中断请求</strong>（IO）；</li>
+<li>CPU在当前机器指令执行完毕后暂停正在执行的主程序，转去执行中断服务程序；</li>
+<li>提高了外设与 CPU 工作的并行性；但中断频率高的时候会阻塞执行；</li>
+<li><img src="image-20230726132700445.png" alt="image-20230726132700445" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726132700445.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h3 id="4-dma-方式"><a class="markdownIt-Anchor" href="#4-dma-方式"></a> 4. DMA 方式</h3>
+<ul>
+<li>
+<p>直接存储器访问 DMA （Direct Memory Access）方式是为在主存储器与 IO 设备间高速交换批量数据而设置的</p>
+</li>
+<li>
+<p>基本思想是：通过硬件控制实现主存与 IO 设备间的直接数据传送（通过 DMA 控制器），在传送过程中 <strong>无需CPU的干预</strong>，从而加速；</p>
+</li>
+</ul>
+<br>
+<h3 id="5-通道方式"><a class="markdownIt-Anchor" href="#5-通道方式"></a> 5. 通道方式</h3>
+<ul>
+<li>随着 DMA 的设计愈发复杂，我们把他分成了若干 <strong>通道</strong>，各个通道完成与不同 IO 设备的交互；</li>
+<li>可以把通道看做一种具有特定功能的简单处理器，它具有自己的指令和程序，专门负责数据输入输出控制；</li>
+<li>通道与CPU分时使用主存，实现CPU内部处理与 IO 设备并行工作</li>
+<li><img src="image-20230726140039097.png" alt="image-20230726140039097" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726140039097.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h2 id="中断方式"><a class="markdownIt-Anchor" href="#中断方式"></a> 中断方式：</h2>
+<h3 id="1-概念"><a class="markdownIt-Anchor" href="#1-概念"></a> 1. 概念</h3>
+<ul>
+<li>
+<p>中断（Interrupt）是指CPU暂停现行程序的执行， 转去处理随机发生的紧急事件，处理完后再返回原程序中断位置继续执行的技术</p>
+</li>
+<li>
+<p>中断源：能够向CPU发出中断请求的事件；</p>
+</li>
+<li>
+<p>中断系统是计算机实现中断功能的软硬件总称，一般包括</p>
+<ul>
+<li>在CPU中设置的中断机构：处理中断请求</li>
+<li>系统中设置的中断控制器：如何管理多个中断源</li>
+<li>软件上设置的中断服务程序</li>
+</ul>
+</li>
+<li>
+<p>以中断方式实现 CPU 与外界进行信息交换的握手联络，实现CPU与外设的并行工作，例如异常处理、程序调度、软中断。</p>
+<br>
+</li>
+</ul>
+<h3 id="2-中断处理"><a class="markdownIt-Anchor" href="#2-中断处理"></a> 2. 中断处理</h3>
+<p><img src="image-20230726142227668.png" alt="image-20230726142227668" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726142227668.png" class="lozad post-image"></p>
+<ul>
+<li>关中断/开中断：处理中断时执行 “关中断”，此时不允许其他中断执行；</li>
+<li>有些时候也管 “中断周期” 叫做执行了一条 <strong>“中断隐指令”</strong> ；</li>
+</ul>
+<br>
+<h3 id="3-中断源识别"><a class="markdownIt-Anchor" href="#3-中断源识别"></a> 3. 中断源识别</h3>
+<ol>
+<li>在单级中断中，采用 <strong>串行排队链</strong> 来实现具有公共请求线的中断源判优识别</li>
+<li>采用 <strong>中断控制器</strong> ，识别哪个设备发出的中断</li>
+<li>转中断服务程序（基于中断向量）：
+<ul>
+<li>预先规定中断服务程序的入口地址（不管是哪个外设先执行公共服务程序，再进一步地寻找对应的中断服务程序）</li>
+<li>通过查表方式找到入口地址（中断控制器获取中断向量交给 CPU，可以直接找到对应的服务程序）</li>
+</ul>
+</li>
+</ol>
+<p><img src="image-20230726145756314.png" alt="image-20230726145756314" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726145756314.png" class="lozad post-image"></p>
+<br>
+<h3 id="3-中断的基本-io-接口"><a class="markdownIt-Anchor" href="#3-中断的基本-io-接口"></a> 3. 中断的基本 IO 接口</h3>
+<p>程序中断由外设接口的状态和 CPU 两方面来控制。在接口方面，有决定 **是否向CPU发出中断请求 **的机构；在CPU方面，有决定 <strong>是否受理中断请求</strong> 的机构。四个标志触发器的具体功能如下：</p>
+<ul>
+<li>准备就绪的标志(<code>RD</code>)：一旦设备做好一次数据的接收或发送，便发出一个设备动作完毕信号，使 RD标志置“1”。在中断方式中，该标志用作为中断源触发器，简称中断触发器。</li>
+<li>允许中断触发器(<code>EI</code>，使能触发器)：可以用程序指令来置位。EI为“1”时，某设备可以向 CPU发出中断请求，反之意味着某中断源的中断请求被禁止。设置 EI 标志的目的，就是通过软件来控制是否允许某设备发出中断请求。</li>
+<li>中断请求触发器(<code>IR</code>)：暂存中断请求线上的由设备发出的中断请求信号。标志为“1”时设备发出了中断请求。</li>
+<li>中断屏蔽触发器(<code>IM</code>)：CPU是否受理中断或批准中断的标志。IM标志为“0”时CPU可以受理外界的中断请求，反之 CPU 不受理外界的中断。</li>
+</ul>
+<p><img src="image-20230726151810629.png" alt="image-20230726151810629" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726151810629.png" class="lozad post-image"></p>
+ <br>
+<h3 id="4-单级中断"><a class="markdownIt-Anchor" href="#4-单级中断"></a> 4. 单级中断</h3>
+<ul>
+<li>
+<p>在同时处理多个中断时，其策略可分为单级中断和多级中断；</p>
+</li>
+<li>
+<p>在单级中断系统中， <strong>所有的中断源都属于同一级</strong> ，所有中断源触发器排成一行，其优先次序是离 CPU 近的优先权高。当响应某一中断请求时，执行该中断源的中断服务程序。在此过程中，不允许其他中断源再打断中断服务程序，即使优先权比它高的中断源也不能再打断。</p>
+</li>
+<li>
+<p>CPU 接收中断请求后其实是不知道是哪个外设发的，他会发出中断响应信号（<code>INTA</code>），通常采用 <strong>串行排队链</strong> 的方式，来实现公共请求线上的中断源判优识别。 (见<code>图一</code>)</p>
+</li>
+<li>
+<p>由于存储器的地址码是一串布尔量的序列，因此常常把地址码称为 **向量地址 **。当CPU 响应中断时，由硬件直接产生一个固定的地址(即向量地址),由向量地址指出每个中断源设备的中断服务程序入口，这种方法通常称为 <strong>向量中断</strong> 。(见 <code>图二</code>，展示了中断向量的产生逻辑图)</p>
+</li>
+<li>
+<p>但是<strong>这种串行的中断处理对于故障十分敏感！</strong> 一旦排队链上某个外设出问题了那基本就废了。</p>
+</li>
+<li>
+<p><img src="image-20230726153351811.png" alt="image-20230726153351811" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726153351811.png" class="lozad post-image"></p>
+</li>
+<li>
+<p><img src="image-20230726155949931.png" alt="image-20230726155949931" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726155949931.png" class="lozad post-image"></p>
+</li>
+</ul>
+<br>
+<h3 id="5-多级中断中断嵌套"><a class="markdownIt-Anchor" href="#5-多级中断中断嵌套"></a> 5. 多级中断（中断嵌套）</h3>
+<ul>
+<li>在多级中断中，优先级高的中断可以打断优先级低的中断，以程序嵌套的方式工作。在多级中断中，会先执行低优先级的中断，并可以被高的打断。</li>
+<li>一个系统若有n级中断，在CPU中就有n个中断请求触发器（<code>IR</code>），总称为中断请求寄存器；与之对应的有 n 个中断屏蔽触发器，总称为中断屏蔽寄存器（<code>IM</code>）。</li>
+<li>多级中断中的每一级可以只有一个中断源，也可以有多个中断源。<strong>在多级中断之间可以实现中断嵌套</strong> ，但是同一级内有不同中断源的中断是不能嵌套的，<strong>采用串行排队链的链式查询</strong></li>
+<li>除了有中断优先级排队电路确定优先响应中断级外，还要确定优先响应的中断源，一般通过链式查询的硬件逻辑来实现，实现了 *<em>独立请求方式</em> 与链式查询方式相结合 ** ；</li>
+<li><img src="image-20230726162039414.png" alt="image-20230726162039414" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726162039414.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h3 id="6-独立请求方式"><a class="markdownIt-Anchor" href="#6-独立请求方式"></a> 6*. 独立请求方式</h3>
+<ul>
+<li>为了避免串行处理的故障，设计了 <strong>“独立请求方式”</strong> 的中断优先级排队的逻辑结构。</li>
+<li>每个中断请求信号保存在“中断请求”触发器中，经“中断屏蔽”触发器控制后，可能有若干个中断请求信号IR进入虚线框所示的 <strong>“排队器”</strong> 。排队电路在若干中断源中决定首先响应哪个中断源，并在其对应的输出线IR上给出“1”信号，其他线为“0”信号（即 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mi>R</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">IR1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord">1</span></span></span></span>~<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mi>R</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">IR4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord">4</span></span></span></span> 中只有一个信号有效）。</li>
+<li>之后，<strong>“编码器”</strong> 根据排上队的中断源输出信号 R，产生一个预定的地址码，转向中断服务程序入口地址。</li>
+<li>多级中断中，如果每一级请求线上还连接有多个中断源设备，那么在识别中断源时还需要进一步用串行链式方式查询。这意味着要用二维方式来设计中断排队逻辑。</li>
+<li><img src="image-20230726165637914.png" alt="image-20230726165637914" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726165637914.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h2 id="dma-传送方式"><a class="markdownIt-Anchor" href="#dma-传送方式"></a> DMA 传送方式：</h2>
+<ul>
+<li>
+<p>直接内存访问（<code>DMA</code>），是一种完全由硬件执行 IO 交换的工作方式。在这种方式中 DMA 控制器从 CPU <strong>完全接管对总线的控制</strong>，<strong>数据交换不经过CPU</strong>，使其直接在内存和IO设备之间进行。</p>
+</li>
+<li>
+<p>DMA 方式的主要优点是**速度快 **。由于 CPU 根本不参加传送操作，因此就省去了CPU取指令、取数、送数等操作。而相应地，DMA 控制器向内存发出地址和控制信号，修改地址，对所传送的字的个数计数；并最终用 <strong>中断方式或状态位方式</strong> 向CPU报告传送操作结束。</p>
+<br>
+</li>
+</ul>
+<h3 id="1-dma-传送过程"><a class="markdownIt-Anchor" href="#1-dma-传送过程"></a> 1. DMA 传送过程：</h3>
+<ul>
+<li>申请阶段：DMA控制器收到DMA传送请求后，<strong>向CPU发出总线请求信号，申请占用总线</strong> ；</li>
+<li>响应阶段：CPU 响应总线请求，<strong>释放总线（即断开数据总线）</strong>，并回送应答信号 表示已让出总线（总线证实）；</li>
+<li>数据传送阶段：DMA 控制器收到总线应答信号后，占用总线并完成以下工作。
+<ol>
+<li>分别向存储器和外设发出读/写控制信号；</li>
+<li>完成数据传送操作；</li>
+<li>修改地址记录传送字的个数（可能一次传送传不完，所以要记录传到哪里了）；</li>
+</ol>
+</li>
+<li>传送结束阶段：在规定字数传送完后，DMA 控制器向CPU报告传送操作结束，释放总线，CPU重新占用总线。</li>
+</ul>
+<p><img src="image-20230726213409546.png" alt="image-20230726213409546" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726213409546.png" class="lozad post-image"></p>
+<br>
+<h3 id="2-dma-传送方式"><a class="markdownIt-Anchor" href="#2-dma-传送方式"></a> 2. DMA 传送方式：</h3>
+<p>DMA 技术的出现，使得外围设备可以通过 DMA 控制器直接访问内存而不经过 CPU，与此同时 CPU 可以继续执行程序。那么 DMA 控制器与 CPU 怎样<strong>分时使用内存</strong>呢？</p>
+<h4 id="21-成组传送"><a class="markdownIt-Anchor" href="#21-成组传送"></a> 2.1 成组传送：</h4>
+<ul>
+<li>
+<p>CPU 响应总线请求并让出总线后，DMA 控制器会<strong>把一组数据传送完毕</strong>，之后才把总线控制权交还给 CPU。</p>
+</li>
+<li>
+<p>在 DMA 传送过程中，CPU 不能与内存交互，除了处理缓存的那点东西以外 处于摆烂状态；</p>
+</li>
+<li>
+<p>优点：控制简单，它适用于数据传输率很高的设备成组传送；</p>
+</li>
+<li>
+<p>缺点：CPU没有总线控制权，无法处理紧急事件，最好成组传送的数据块不能太大；</p>
+<br>
+</li>
+</ul>
+<h4 id="22-周期窃取-周期挪用"><a class="markdownIt-Anchor" href="#22-周期窃取-周期挪用"></a> 2.2 周期窃取 / 周期挪用</h4>
+<ul>
+<li>DMA 控制器与主存储器之间传送一个数据 <strong>会占用 / 窃取一个CPU周期</strong>，然后 CPU 继续执行程序；</li>
+<li>IO 设备要求 DMA 传送时可能遇到两种情况：一种是此时CPU不需要访内，如CPU正在执行乘法指令，<strong>在缓存内执行即可</strong>；如果要求访内，则会发生冲突，在这种情况下 <strong>IO设备访内优先</strong>，意味着 CPU <strong>延缓对指令的执行</strong>；</li>
+<li><img src="image-20230726223028011.png" alt="image-20230726223028011" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726223028011.png" class="lozad post-image"></li>
+</ul>
+<br>
+<h4 id="23-交替访存"><a class="markdownIt-Anchor" href="#23-交替访存"></a> 2.3 交替访存</h4>
+<p>总线使用权是通过 C1 和 C2 分时进行的。但 CPU 访存比 DMA 快得多，所以这种方式的效率极低，没啥用。</p>
+<br>
+<h3 id="3-dma-基本组成"><a class="markdownIt-Anchor" href="#3-dma-基本组成"></a> 3. DMA 基本组成</h3>
+<ul>
+<li>内存地址计数器：内存当前地址指针。传送前，初值为内存缓冲区首地址，每传送一次数据，自动加1</li>
+<li>字计数器：传送数据块长度计数，每传送一次数据，自动减1</li>
+<li>数据缓冲寄存器：采用从存储器到存储器传送方式时，暂存每次传送的数据</li>
+<li>控制/状态逻辑：完成控制功能</li>
+<li>中断机构：传送结束信号。表示DMA传送过程结束，可向CPU发出传送结束请求。</li>
+</ul>
+<p><img src="image-20230726213708771.png" alt="image-20230726213708771" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726213708771.png" class="lozad post-image"></p>
+<p>*外设应该是得挂载到数据总线上的。</p>
+<br>
+<h3 id="4-dma-数据处理过程"><a class="markdownIt-Anchor" href="#4-dma-数据处理过程"></a> 4. DMA 数据处理过程</h3>
+<p>传送一个数据块可以分为三个阶段。</p>
+<ul>
+<li>预处理：CPU对DMA控制器 <strong>预置初值，读取状态和设置传送需要的有关参数</strong>。</li>
+<li>数据传送：DMA控制器控制 <strong>外设与主存之间的数据交换</strong>。</li>
+<li>后处理：主要是对内存中<strong>缓冲区的处理</strong>（取走缓冲区中的数据或填入新数据，会分多次传输）。</li>
+</ul>
+<p><img src="image-20230726223653806.png" alt="image-20230726223653806" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726223653806.png" class="lozad post-image"></p>
+<br>
+<h3 id="5-选择型-or-多路型"><a class="markdownIt-Anchor" href="#5-选择型-or-多路型"></a> 5. 选择型 or 多路型？</h3>
+<ul>
+<li>选择型：在某一段时间内 只能为一个设备服务，共用硬件；</li>
+<li>多路型：DMA 控制器同时为多个<strong>慢速设备</strong>服务，设备间能以字节交叉方式进行数据传送；由于多路型 DMA 同时要为多个设备服务，因此对应多少个 DMA 通路(设备)，在控制器内部就有多少组寄存器用于存放各自的传送参数。</li>
+</ul>
+<p><img src="image-20230726223847768.png" alt="image-20230726223847768" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726223847768.png" class="lozad post-image"></p>
+<br>
+<h2 id="通道方式"><a class="markdownIt-Anchor" href="#通道方式"></a> 通道方式：</h2>
+<ul>
+<li>
+<p>DMA控制器的出现已经减轻了CPU对数据输入输出的控制，使得CPU的效率有显著的提高。</p>
+</li>
+<li>
+<p>通道的出现则进一步提高了CPU的效率，这是因为通道是一个特殊功能的处理器，它有 <strong>自己的指令和程序</strong> 专门负责数据输入输出的传输控制，而CPU将“传输控制”的功能下放给通道后，只负责“数据处理”功能即可。</p>
+<p>相当于对于传输控制加了一层抽象/接口。</p>
+</li>
+<li>
+<p>这样，通道与CPU分时使用存储器，实现了CPU内部运算与I/O设备的并行工作。</p>
+</li>
+</ul>
+<p><img src="image-20230726231731527.png" alt="image-20230726231731527" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230726231731527.png" class="lozad post-image"></p>
+<br>
+<h3 id="通道类型"><a class="markdownIt-Anchor" href="#通道类型"></a> 通道类型：</h3>
+<h4 id="1-选择通道"><a class="markdownIt-Anchor" href="#1-选择通道"></a> 1. 选择通道</h4>
+<p>选择通道又称高速通道，在物理上它可以连接多个设备，但是这些设备不能同时工作在某一段时间内通道只能选择一个设备进行工作。选择通道很像一个单道程序的处理器，在一段时间内只允许执行一个设备的通道程序，只有当这个设备的通道程序全部执行完毕后才能执行其他设备的通道程序</p>
+<h4 id="2-多路通道"><a class="markdownIt-Anchor" href="#2-多路通道"></a> 2. 多路通道</h4>
+<p>多路通道又称多路转换通道，在同一时间能处理多个 IO 设备的数据传输。它又分数组多路通道和字节多路通道（密密麻麻全是字儿）。数组多路通道把字节多路通道和选择通道的特点结合起来。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://turleing.github.io/2023/07/26/Computer-Organization-and-Architecture-IO/">
+            https://turleing.github.io/2023/07/26/Computer-Organization-and-Architecture-IO/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/07/24/Computer-Organization-and-Architecture-CPU/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">计算机组成原理学习笔记：CPU </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%AE%BA"><span class="toc-text"> 概论：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-io-%E7%B3%BB%E7%BB%9F%E7%BB%84%E6%88%90"><span class="toc-text"> 1. IO 系统组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-io-%E7%9A%84%E4%BC%A0%E8%BE%93%E4%B8%A4%E9%98%B6%E6%AE%B5"><span class="toc-text"> 2. IO 的传输两阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 数据传送方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 数据传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%97%A0%E6%9D%A1%E4%BB%B6%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 1. 无条件传送方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%A8%8B%E5%BA%8F%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. 程序查询方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 程序中断方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%96%B9%E5%BC%8F"><span class="toc-text"> 4. DMA 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 5. 通道方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 中断方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text"> 2. 中断处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E6%BA%90%E8%AF%86%E5%88%AB"><span class="toc-text"> 3. 中断源识别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%9F%BA%E6%9C%AC-io-%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 3. 中断的基本 IO 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8D%95%E7%BA%A7%E4%B8%AD%E6%96%AD"><span class="toc-text"> 4. 单级中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%BA%A7%E4%B8%AD%E6%96%AD%E4%B8%AD%E6%96%AD%E5%B5%8C%E5%A5%97"><span class="toc-text"> 5. 多级中断（中断嵌套）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%8B%AC%E7%AB%8B%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F"><span class="toc-text"> 6*. 独立请求方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-dma-%E4%BC%A0%E9%80%81%E8%BF%87%E7%A8%8B"><span class="toc-text"> 1. DMA 传送过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E6%88%90%E7%BB%84%E4%BC%A0%E9%80%81"><span class="toc-text"> 2.1 成组传送：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E5%91%A8%E6%9C%9F%E7%AA%83%E5%8F%96-%E5%91%A8%E6%9C%9F%E6%8C%AA%E7%94%A8"><span class="toc-text"> 2.2 周期窃取 &#x2F; 周期挪用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E4%BA%A4%E6%9B%BF%E8%AE%BF%E5%AD%98"><span class="toc-text"> 2.3 交替访存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-dma-%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="toc-text"> 3. DMA 基本组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-text"> 4. DMA 数据处理过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%89%E6%8B%A9%E5%9E%8B-or-%E5%A4%9A%E8%B7%AF%E5%9E%8B"><span class="toc-text"> 5. 选择型 or 多路型？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 通道方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E7%B1%BB%E5%9E%8B"><span class="toc-text"> 通道类型：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%89%E6%8B%A9%E9%80%9A%E9%81%93"><span class="toc-text"> 1. 选择通道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%9A%E8%B7%AF%E9%80%9A%E9%81%93"><span class="toc-text"> 2. 多路通道</span></a></li></ol></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>29</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>22</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%AE%BA"><span class="toc-text"> 概论：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-io-%E7%B3%BB%E7%BB%9F%E7%BB%84%E6%88%90"><span class="toc-text"> 1. IO 系统组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-io-%E7%9A%84%E4%BC%A0%E8%BE%93%E4%B8%A4%E9%98%B6%E6%AE%B5"><span class="toc-text"> 2. IO 的传输两阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 数据传送方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 数据传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%97%A0%E6%9D%A1%E4%BB%B6%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 1. 无条件传送方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%A8%8B%E5%BA%8F%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. 程序查询方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 程序中断方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%96%B9%E5%BC%8F"><span class="toc-text"> 4. DMA 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 5. 通道方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 中断方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text"> 2. 中断处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E6%BA%90%E8%AF%86%E5%88%AB"><span class="toc-text"> 3. 中断源识别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%9F%BA%E6%9C%AC-io-%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 3. 中断的基本 IO 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8D%95%E7%BA%A7%E4%B8%AD%E6%96%AD"><span class="toc-text"> 4. 单级中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%BA%A7%E4%B8%AD%E6%96%AD%E4%B8%AD%E6%96%AD%E5%B5%8C%E5%A5%97"><span class="toc-text"> 5. 多级中断（中断嵌套）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%8B%AC%E7%AB%8B%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F"><span class="toc-text"> 6*. 独立请求方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-dma-%E4%BC%A0%E9%80%81%E8%BF%87%E7%A8%8B"><span class="toc-text"> 1. DMA 传送过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E6%88%90%E7%BB%84%E4%BC%A0%E9%80%81"><span class="toc-text"> 2.1 成组传送：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E5%91%A8%E6%9C%9F%E7%AA%83%E5%8F%96-%E5%91%A8%E6%9C%9F%E6%8C%AA%E7%94%A8"><span class="toc-text"> 2.2 周期窃取 &#x2F; 周期挪用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E4%BA%A4%E6%9B%BF%E8%AE%BF%E5%AD%98"><span class="toc-text"> 2.3 交替访存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-dma-%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="toc-text"> 3. DMA 基本组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-text"> 4. DMA 数据处理过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%89%E6%8B%A9%E5%9E%8B-or-%E5%A4%9A%E8%B7%AF%E5%9E%8B"><span class="toc-text"> 5. 选择型 or 多路型？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 通道方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E7%B1%BB%E5%9E%8B"><span class="toc-text"> 通道类型：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%89%E6%8B%A9%E9%80%9A%E9%81%93"><span class="toc-text"> 1. 选择通道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%9A%E8%B7%AF%E9%80%9A%E9%81%93"><span class="toc-text"> 2. 多路通道</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          机器学习
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Trie%E6%A0%91/" 
+        title="Trie树">
+        <div class="tags-list-item">Trie树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E8%AE%BA/" 
+        title="数论">
+        <div class="tags-list-item">数论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
+        title="主席树">
+        <div class="tags-list-item">主席树</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
+        title="动态规划">
+        <div class="tags-list-item">动态规划</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%9D%E7%BB%B4/" 
+        title="思维">
+        <div class="tags-list-item">思维</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
+        title="树上启发式合并">
+        <div class="tags-list-item">树上启发式合并</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%AE%BA"><span class="toc-text"> 概论：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-io-%E7%B3%BB%E7%BB%9F%E7%BB%84%E6%88%90"><span class="toc-text"> 1. IO 系统组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-io-%E7%9A%84%E4%BC%A0%E8%BE%93%E4%B8%A4%E9%98%B6%E6%AE%B5"><span class="toc-text"> 2. IO 的传输两阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 数据传送方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 数据传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%97%A0%E6%9D%A1%E4%BB%B6%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 1. 无条件传送方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%A8%8B%E5%BA%8F%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. 程序查询方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 3. 程序中断方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%96%B9%E5%BC%8F"><span class="toc-text"> 4. DMA 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 5. 通道方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="toc-text"> 中断方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text"> 2. 中断处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E6%BA%90%E8%AF%86%E5%88%AB"><span class="toc-text"> 3. 中断源识别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%9F%BA%E6%9C%AC-io-%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 3. 中断的基本 IO 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8D%95%E7%BA%A7%E4%B8%AD%E6%96%AD"><span class="toc-text"> 4. 单级中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%BA%A7%E4%B8%AD%E6%96%AD%E4%B8%AD%E6%96%AD%E5%B5%8C%E5%A5%97"><span class="toc-text"> 5. 多级中断（中断嵌套）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%8B%AC%E7%AB%8B%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F"><span class="toc-text"> 6*. 独立请求方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-dma-%E4%BC%A0%E9%80%81%E8%BF%87%E7%A8%8B"><span class="toc-text"> 1. DMA 传送过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-dma-%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text"> 2. DMA 传送方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E6%88%90%E7%BB%84%E4%BC%A0%E9%80%81"><span class="toc-text"> 2.1 成组传送：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E5%91%A8%E6%9C%9F%E7%AA%83%E5%8F%96-%E5%91%A8%E6%9C%9F%E6%8C%AA%E7%94%A8"><span class="toc-text"> 2.2 周期窃取 &#x2F; 周期挪用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E4%BA%A4%E6%9B%BF%E8%AE%BF%E5%AD%98"><span class="toc-text"> 2.3 交替访存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-dma-%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="toc-text"> 3. DMA 基本组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-dma-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-text"> 4. DMA 数据处理过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%89%E6%8B%A9%E5%9E%8B-or-%E5%A4%9A%E8%B7%AF%E5%9E%8B"><span class="toc-text"> 5. 选择型 or 多路型？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E6%96%B9%E5%BC%8F"><span class="toc-text"> 通道方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%81%93%E7%B1%BB%E5%9E%8B"><span class="toc-text"> 通道类型：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%89%E6%8B%A9%E9%80%9A%E9%81%93"><span class="toc-text"> 1. 选择通道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%9A%E8%B7%AF%E9%80%9A%E9%81%93"><span class="toc-text"> 2. 多路通道</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-26</div>
+        <a href="/2023/07/26/Computer-Organization-and-Architecture-IO/"><div class="recent-posts-item-content">计算机组成原理：IO系统与设备</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-24</div>
+        <a href="/2023/07/24/Computer-Organization-and-Architecture-CPU/"><div class="recent-posts-item-content">计算机组成原理学习笔记：CPU</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-21</div>
+        <a href="/2023/07/21/Personalized_Transformer/"><div class="recent-posts-item-content">个性化Transformer论文复现及一次失败的改进</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-07-04</div>
+        <a href="/2023/07/04/LLM-learning/"><div class="recent-posts-item-content">大模型相关论文阅读笔记</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
