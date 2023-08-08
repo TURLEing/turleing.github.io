@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
-  <title>CSAPP 第五章小结：优化</title>
+  <title>计算机组成原理：虚拟内存</title>
   
     
       <meta 
         property="og:title" 
-        content="CSAPP 第五章小结：优化">
+        content="计算机组成原理：虚拟内存">
     
     
       <meta 
         property="og:url" 
-        content="https://turleing.github.io/2021/11/30/CSAPP-chapter-5/index.html">
+        content="https://turleing.github.io/2023/08/07/Computer-Organization-and-Architecture-VMemory/index.html">
     
     
       <meta 
@@ -38,7 +38,7 @@
     
       <meta 
         property="og:img" 
-        content="&lt;p&gt;一些早就知道却没用过 或是 从来没听说过可能会有用 的优化方式。&lt;/p&gt;">
+        content="&lt;p&gt;总感觉以前看 CSAPP 的时候学过，一看博客还真是。&lt;/p&gt;">
     
     
       <meta 
@@ -46,14 +46,18 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2021-11-30">
+        content="2023-08-07">
       <meta 
         property="og:article:modified_time" 
-        content="2023-07-12">
+        content="2023-08-08">
       <meta 
         property="og:article:author" 
         content="天泽龟">
       
+        
+          <meta 
+            property="og:article:tag" 
+            content="计算机组成原理">
         
       
     
@@ -268,16 +272,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      CSAPP 第五章小结：优化
+      计算机组成原理：虚拟内存
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-11-30T01:53:07.000Z">
+    <time datetime="2023-08-07T14:13:35.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2021-11-30</span>
+      <span>2023-08-07</span>
     </time>
     
       <span class="dot"></span>
@@ -291,68 +295,88 @@
     
     
       <span class="dot"></span>
-      <span>1.7k 字</span>
+      <span>921 字</span>
     
   </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+            class="post-meta-link">
+            计算机组成原理
+          </a>
+        
+      </div>
+    </div>
   
   </header>
   <div 
     id="section" 
     class="post-content">
-    <p>一些早就知道却没用过 或是 从来没听说过可能会有用 的优化方式。</p>
+    <p>总感觉以前看 CSAPP 的时候学过，一看博客还真是。</p>
 <span id="more"></span>
-<h2 id="一-编译器-优化方式"><a class="markdownIt-Anchor" href="#一-编译器-优化方式"></a> 一. <strong>编译器</strong> 优化方式：</h2>
-<ol>
-<li>
-<p>减小计算量：乘法比加法来的时间慢，能转化成加法的尽量不用乘法。</p>
-</li>
-<li>
-<p>多维数组引用：由于行优先的原则，一行元素总是在内存上连续的，而连续内存引用更快。所以遍历多维数组的时候应该以之前的维数为基遍历，切忌越维遍历。</p>
-</li>
-<li>
-<p>循环调用函数：对于遍历字符串时，如果判断条件写成 <code>i&lt;strlen(s)</code> 就会爆炸；原因是 <code>strlen()</code> 本身是一个 <strong>线性函数</strong>，所以遍历算法大致上 是 O(n^2) 的。</p>
-</li>
-</ol>
-<p>编译器不会优化该问题的原因是：在遍历字符串内部时我们可能会改变字符串长度，所以编译器会很小心的对待长度，每次都会重新计算一遍；</p>
-<p>另一个原因是，strlen 函数在 string.h 库里，它可能会在编译之后才在链接阶段被使用，编译器不能对 strlen 功能做出判断。</p>
-<ol start="4">
-<li><strong>Memory Matters（这个不知道）</strong>:</li>
-</ol>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">sum_row</span><span class="hljs-params">(<span class="hljs-keyword">double</span> *a, <span class="hljs-keyword">double</span> *b, <span class="hljs-keyword">int</span> n)</span> </span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>		b[i] = <span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; n; j++)<br>			b[i] += a[i * n + j];<br>	&#125;<br>&#125;<br></code></pre>
-<p>假设我写了这么一个程序，很直白就是说；但是他的汇编代码十分不正常：编译器首先从内存读出 b[i] 存在寄存器 %xmm0，再将 a[i*n+j] 加到寄存器中，又重新把值赋给内存。 得到了如下汇编代码：</p>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-number">0x0000000000401594</span> &lt;+<span class="hljs-number">52</span>&gt;:	<span class="hljs-built_in">lea</span>    (%r11,%rax,<span class="hljs-number">1</span>),%r9d  <span class="hljs-comment">// hold a_i address</span><br><span class="hljs-number">0x0000000000401598</span> &lt;+<span class="hljs-number">56</span>&gt;:	movslq %r9d,%r9  <br><span class="hljs-number">0x000000000040159b</span> &lt;+<span class="hljs-number">59</span>&gt;:	<span class="hljs-built_in">movsd</span>  (%r10),%xmm0  <span class="hljs-comment">// b_i into register</span><br><span class="hljs-number">0x00000000004015a0</span> &lt;+<span class="hljs-number">64</span>&gt;:	<span class="hljs-built_in">addsd</span>  (%rcx,%r9,<span class="hljs-number">8</span>),%xmm0  <span class="hljs-comment">// add a_i</span><br><span class="hljs-number">0x00000000004015a6</span> &lt;+<span class="hljs-number">70</span>&gt;:	movsd  %xmm0,(%r10)  <span class="hljs-comment">// register into b_i</span><br></code></pre>
-<p><strong>如此在内存与寄存器传送数据，极大地拖慢了程序运行速度。</strong> 怎么会是呢？原来，有一种可能就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo stretchy="false">[</mo><mn>3</mn><mo stretchy="false">]</mo><mo>=</mo><mi>A</mi><mo>+</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">B[3]=A+3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mopen">[</span><span class="mord">3</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">A</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span></span></span></span>，即 B 数组覆盖（或替身）A 中的某一行，这被称作 <strong>内存别名使用</strong>。如果改变了 B 数组，同时也改变了 A 中的值，导致求和结果的不同。</p>
-<p>因此，编译器无法否定内存别名使用的情况，这需要我们引入局部变量，先将求和结果存储于 val 结尾在赋值，就可以防止类似反复调用内存的问题。</p>
-<p>优化后的汇编代码片段如下：</p>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-number">0x0000000000401590</span> &lt;+<span class="hljs-number">48</span>&gt;:	<span class="hljs-built_in">lea</span>    (%r10,%rax,<span class="hljs-number">1</span>),%r9d  <span class="hljs-comment">//hold a_i address</span><br><span class="hljs-number">0x0000000000401594</span> &lt;+<span class="hljs-number">52</span>&gt;:	movslq %r9d,%r9<br><span class="hljs-number">0x0000000000401597</span> &lt;+<span class="hljs-number">55</span>&gt;:	<span class="hljs-built_in">addsd</span>  (%rcx,%r9,<span class="hljs-number">8</span>),%xmm0  <span class="hljs-comment">// add a_i into val</span><br><span class="hljs-number">0x000000000040159d</span> &lt;+<span class="hljs-number">61</span>&gt;:	add    $<span class="hljs-number">0x1</span>,%eax<br></code></pre>
-<p>这便减少了内存调用，加快了程序运行速率。</p>
-<h2 id="二-指令级别的并行程序"><a class="markdownIt-Anchor" href="#二-指令级别的并行程序"></a> 二. 指令级别的并行程序：</h2>
-<h3 id="1-理解现代处理器"><a class="markdownIt-Anchor" href="#1-理解现代处理器"></a> 1. 理解现代处理器：</h3>
-<p>这些优化是基于处理器所实现的，可以在任何机器上进行。</p>
-<p>在微处理器层面上，我们有两种下界描述其最大性能：</p>
+<h2 id="基本概念"><a class="markdownIt-Anchor" href="#基本概念"></a> 基本概念</h2>
+<h3 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景：</h3>
+<p>上古的电脑各个进程共享 CPU 和主存资源。然而随着进程数量增多，<strong>程序所需的存储器容量</strong>可能大于<strong>实际的主存容量</strong>。因此，我们希望添加一层对主存的抽象，从而更好地管理内存。<br />
+<br></p>
+<h3 id="抽象"><a class="markdownIt-Anchor" href="#抽象"></a> “抽象”：</h3>
 <ul>
-<li><strong>延迟界限</strong>：当一系列操作按照顺序执行时，<strong>指令级并行</strong>所带来的限制要求下一条指令开始前目前的指令必须结束；</li>
-<li><strong>吞吐量界限</strong>：代表处理器功能单元的原始计算能力。</li>
+<li>为每一个程序（进程）采用 <strong>独立编址</strong>；无需考虑程序是否在主存中放得下，无需考虑程序放置的物理位置。</li>
+<li>在程序运行时分配给每个程序一定的<strong>运行空间</strong>；</li>
+<li>由 <strong>地址转换部件</strong>（MMU）将编写程序时使用的 <strong>逻辑地址</strong> 转换成实际内存的 <strong>物理地址</strong>，称作程序再定位；</li>
 </ul>
-<p>超标量处理器允许其在每个时钟周期执行多个 <strong>乱序</strong> 操作；整个设计有两个主要部分：<strong>指令控制单元（ICU）</strong> 以及 <strong>执行单元（EU）</strong>，区别于按序流水线相比，乱序处理器能达到更高的指令集并行度。</p>
-<p>ICU 从 指令缓存 中读取指令并译码，再将其发给 EU 操作。</p>
-<p>面对选择分支时，我们通常使用 <strong>预测分支</strong> 的技术，猜测程序是否选择分支，并通过预测分支的目标地址，使用 <strong>投机执行</strong> 的技术，取出对应的指令提前译码；如果之后确认预测错误，则返回到分支点的状态。</p>
-<h3 id="2-功能单元"><a class="markdownIt-Anchor" href="#2-功能单元"></a> 2. 功能单元</h3>
-<p><img src="https://s2.loli.net/2022/01/06/ZuKRBMUJrYHtbwy.png" alt="功能单元.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/ZuKRBMUJrYHtbwy.png" class="lozad post-image"></p>
-<p>一个功能单元应该能完成多项任务，例如从处理器将数据写到内存的存储单元，不仅应该具备写入的功能，也应做到地址运算。</p>
-<p>功能单元的性能由以下数值刻画：一是延迟（latency），表示完成运算的总时间；二是发射时间，表示两同类型的运算之间所需的最小时钟周期；最后一个是容量（capacity），表示能执行概运算的功能单元的数量。</p>
-<p>我们引入一个叫 <code>CPE</code> 的指标，判断进行一次计算所需要的 <code>时钟周期</code> 是多少。我们所需要优化的就是单次运算的 CPE。在编译层面上我们优化后至多可降到：</p>
-<p><img src="https://i.loli.net/2021/11/30/bcSsnQgmdLHDhf4.png" alt="" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/11/30/bcSsnQgmdLHDhf4.png" class="lozad post-image"></p>
-<p>整型乘法之所以需要三个时钟周期是取决于现代 CPU 的设计方法。假设指令序列是内存上连续的一串，CPU 会提前读取一串指令再将它们分开，一些无关联的指令就可以同时执行（利用<strong>指令的并行性</strong>），这可以极大加快计算机的处理速度，我们称为  <strong>超标量乱序执行</strong>。</p>
-<p>同时，功能单元可以利用 <strong>流水线</strong> 技术进行优化。实际上，对于一个乘法器它被分成了三个阶段，一次乘法运算需要三个时钟周期，那么三次乘法运算就需要九个时钟周期。所幸的是，利用流水线优化，我们可以压缩到7个甚至更少（这依赖于指令的并行性）。如下图：</p>
-<p><img src="https://i.loli.net/2021/11/30/Hd1mrESJxnUYaVL.png" alt="image.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/11/30/Hd1mrESJxnUYaVL.png" class="lozad post-image"></p>
-<h3 id="3-循环展开-及-提高并行性"><a class="markdownIt-Anchor" href="#3-循环展开-及-提高并行性"></a> 3. 循环展开 及 提高并行性</h3>
-<p><strong>循环展开</strong> 是指通过增加每次迭代计算的元素数量从而减少迭代次数的技巧。例如如果同时处理前置和的两个元素，使得迭代数量减半，其中计算循环索引和条件计算的时间便大大减小了。如此操作可以使得 CPE 逼近延迟界限。我们称其为 <strong>2*1展开</strong>。</p>
-<p><img src="https://s2.loli.net/2022/01/06/y5FtPifbJrj32RE.png" alt="21.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/y5FtPifbJrj32RE.png" class="lozad post-image"></p>
-<p>由于我们将答案始终存储在单独的变量中，而在之前的计算完成之前都不能计算其新值。这也是为何突破不了延迟界限的原因。</p>
-<p>因此，我们可以将答案就拆开，acc0 表示偶数的累计值， acc1表示奇数的累计值，最后处理落单的元素、将其合并为完整的答案。我们称其为 <strong>2*2 循环展开</strong>。</p>
-<p><img src="https://s2.loli.net/2022/01/06/CXk7ZNYWMlEfAxP.png" alt="22.png" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s2.loli.net/2022/01/06/CXk7ZNYWMlEfAxP.png" class="lozad post-image"></p>
-<p>总的来说，重新组合变换能减少计算中关键路径上的操作数量。由于浮点数不符合结合律，大多数编译器不会对浮点运算做重新结合。</p>
+<br>
+<h3 id="主存-外存层次"><a class="markdownIt-Anchor" href="#主存-外存层次"></a> 主存 - 外存层次:</h3>
+<ul>
+<li>虚拟存储器 (VM) 只是一个容量非常大的存储器的逻辑模型，可以视作一个 <strong>存储在磁盘上的</strong> N 个字节的大数组；</li>
+<li>过去的 CPU 可以直接进行 <strong>物理寻址</strong>，直接指向存储器中的存储单元；而现在主要采用的是 <strong>虚拟寻址</strong>，实际地址可能对应于主存的不连续位置，需要一个 MMU 做地址转换；</li>
+</ul>
+<p><img src="image-20230808100806571.png" alt="image-20230808100806571" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808100806571.png" class="lozad post-image"></p>
+<br>
+<ul>
+<li>
+<p>VM 采用的是 <strong>“主存 - 外存层次”</strong>，用户编写程序时使用的地址称为虚拟地址，位于磁盘；而借助 CPU 访问物理地址是程序的实际地址，位于主存；</p>
+</li>
+<li>
+<p>主存 - 外存层次具有以下常用的几种存储管理方式：</p>
+<ul>
+<li>
+<p>直接物理寻址，存在于早期PC和嵌入式系统中；</p>
+</li>
+<li>
+<p><strong>段式存储管理</strong>：段是一种程序的<strong>模块化划分</strong>，是按照程序的逻辑结构所划分成的多个相对独立部分；段式管理可以根据 <strong>段表基址寄存器和段号</strong> 查找，从而实现信息共享和内存保护，但易造成主存中出现不好用的碎块，影响主存储器的利用效率。</p>
+<p><img src="image-20230808102847833.png" alt="image-20230808102847833" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808102847833.png" class="lozad post-image"></p>
+<br>
+</li>
+<li>
+<p><strong>页式存储管理</strong>：把虚拟空间和主存空间都分成<strong>大小相同的页（page）</strong>，并以页为单位进行虚存与主存间的信息交换。尽管处理、保护和共享都不如段式管理方便，但是存储单元大小一致有利于数据传输。</p>
+<p>虚拟地址被分为：虚拟页号（VPN）和页内地址（VPO）；而物理地址被分为：物理页号（PPN）和页内地址；页号不同，页内地址一致。我们也会通过查找<strong>页表</strong>中对应的<strong>页表条目（PTE）</strong>，确定对应的物理地址。</p>
+<p><img src="image-20230808161047967.png" alt="image-20230808161047967" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808161047967.png" class="lozad post-image"></p>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="页式虚拟存储器"><a class="markdownIt-Anchor" href="#页式虚拟存储器"></a> 页式虚拟存储器</h2>
+<h3 id="1-页表"><a class="markdownIt-Anchor" href="#1-页表"></a> 1. 页表</h3>
+<p>如上图所示，页表是由若干 PTE 组成的数组，可以通过查表的方式判断虚拟页是否被缓存在 DRAM 的某个地方。最简单的 PTE 是由一个有效位以及 n 位地址组成的：</p>
+<p><strong>有效位</strong>表明了该虚拟页是否被缓存，如果设置了有效位，则后面的地址字段则代表了 DRAM 相应页的物理地址；若未设置，则一个 NULL 值代表虚拟页未分配，否则指向虚拟页在磁盘的起始地址。</p>
+<p>其次，PTE 和其他数据字一样，可以被缓存在 cache 中。毕竟从内存中查找页表需要几百个时钟周期，而在 L1 cache 中查找到 PTE 只需要 1、2 个时钟周期。</p>
+<br>
+<h3 id="2-页命中"><a class="markdownIt-Anchor" href="#2-页命中"></a> 2. 页命中</h3>
+<ul>
+<li>当 CPU 想读取虚拟内存中的某一个字，他就会把对应的虚拟地址传给 MMU。MMU 则会生成对应的 PTE 地址，去</li>
+<li></li>
+</ul>
 
   </div>
   <div>
@@ -372,8 +396,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://turleing.github.io/2021/11/30/CSAPP-chapter-5/">
-            https://turleing.github.io/2021/11/30/CSAPP-chapter-5/
+            href="https://turleing.github.io/2023/08/07/Computer-Organization-and-Architecture-VMemory/">
+            https://turleing.github.io/2023/08/07/Computer-Organization-and-Architecture-VMemory/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -383,29 +407,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2022/01/07/Game-Theory/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">博弈论学习笔记 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2021/11/02/vocaloid-talking/" 
+        href="/2023/08/04/Computer-Organization-and-Architecture-storage/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">“媲美人声”真的是虚拟歌姬的未来吗？ </div>
+            <div class="nav-title">计算机组成原理：存储系统 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -459,7 +469,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -527,7 +537,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -698,7 +708,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BC%96%E8%AF%91%E5%99%A8-%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-text"> 一. 编译器 优化方式：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%88%AB%E7%9A%84%E5%B9%B6%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-text"> 二. 指令级别的并行程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text"> 1. 理解现代处理器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%8D%95%E5%85%83"><span class="toc-text"> 2. 功能单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-%E5%8F%8A-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text"> 3. 循环展开 及 提高并行性</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
     </article>
   
   
