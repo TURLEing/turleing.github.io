@@ -295,7 +295,7 @@
     
     
       <span class="dot"></span>
-      <span>921 字</span>
+      <span>2k 字</span>
     
   </div>
   
@@ -370,12 +370,82 @@
 <h3 id="1-页表"><a class="markdownIt-Anchor" href="#1-页表"></a> 1. 页表</h3>
 <p>如上图所示，页表是由若干 PTE 组成的数组，可以通过查表的方式判断虚拟页是否被缓存在 DRAM 的某个地方。最简单的 PTE 是由一个有效位以及 n 位地址组成的：</p>
 <p><strong>有效位</strong>表明了该虚拟页是否被缓存，如果设置了有效位，则后面的地址字段则代表了 DRAM 相应页的物理地址；若未设置，则一个 NULL 值代表虚拟页未分配，否则指向虚拟页在磁盘的起始地址。</p>
-<p>其次，PTE 和其他数据字一样，可以被缓存在 cache 中。毕竟从内存中查找页表需要几百个时钟周期，而在 L1 cache 中查找到 PTE 只需要 1、2 个时钟周期。</p>
+<p>其次，PTE 和其他数据字一样，可以被缓存在 cache 中。毕竟从内存中查找页表需要几百个时钟周期，而在 L1 cache 中查找 PTE 只需要 1、2 个时钟周期。</p>
+<p>再其次，从操作系统的角度来说，我们会为每一个程序（进程）都分配一个相同的虚拟地址空间，从而极大简化了内存分配的机制。</p>
+<p><img src="image-20230808163416777.png" alt="image-20230808163416777" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808163416777.png" class="lozad post-image"></p>
 <br>
 <h3 id="2-页命中"><a class="markdownIt-Anchor" href="#2-页命中"></a> 2. 页命中</h3>
 <ul>
-<li>当 CPU 想读取虚拟内存中的某一个字，他就会把对应的虚拟地址传给 MMU。MMU 则会生成对应的 PTE 地址，去</li>
-<li></li>
+<li>当 CPU 想读取虚拟内存中的某一个字，他就会把对应的虚拟地址传给 MMU。MMU 则会生成对应的 PTE 地址，去cache/主存中请求查找；</li>
+<li>如果对应 PTE 的有效位是 1，则页命中，MMU 利用对应的 PPN 构造物理地址，并将其传送给cache/主存查找对应的数据字；</li>
+</ul>
+<p><img src="image-20230808162417750.png" alt="image-20230808162417750" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808162417750.png" class="lozad post-image"></p>
+<br>
+<h3 id="3-页缺失"><a class="markdownIt-Anchor" href="#3-页缺失"></a> 3. 页缺失</h3>
+<p>首先我们得知道，页命中只需要硬件参与，而处理页缺失的功能则是由软硬件联合提供的（包括页表、OS、MMU 等）。</p>
+<ul>
+<li>当 CPU 想读取虚拟内存中的某一个字，他就会把对应的虚拟地址传给 MMU。MMU 则会生成对应的 PTE 地址，去cache/主存中请求查找；</li>
+<li>如果对应 PTE 的有效位是 0，则页缺失，MMU <strong>触发缺页异常</strong>，CPU 调用对应的异常处理程序；</li>
+<li>该程序会选择一个将会被替换掉的<strong>牺牲页</strong>，由于这里采用的是 cache 那一套读写逻辑，因此会先判断这个页面有没有被修改过（即查看对应页的修改位）。如果发现这个页面被修改过，则将其写回至磁盘；</li>
+<li>缺页程序将新的数据页调入至cache/主存，并更新 PTE，重新执行导致缺页的命令。由于 VP 现在已缓存在物理内存中， 所以肯定命中;</li>
+</ul>
+<p><img src="image-20230808163509081.png" alt="image-20230808163509081" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808163509081.png" class="lozad post-image"></p>
+<br>
+<h3 id="4-快表-tlb"><a class="markdownIt-Anchor" href="#4-快表-tlb"></a> 4. 快表 TLB</h3>
+<p>从cache/主存中查找页表需要花费 1~1000 不等的时钟周期，如果我们能在 MMU 中内置一个极小的缓存，即可省下这些开销，这个 cache 被称作<strong>翻译后备缓冲器（TLB）</strong>。</p>
+<p>对待 TLB，我们完全可以直接把 cache 那一套搬过来，本质上也就是不命中、替换算法之类的东西。如果地址命中，则 MMU 可以直接将对应 PTE 上的虚拟地址翻译成物理地址，发送出去。</p>
+<p><img src="image-20230808165326418.png" alt="image-20230808165326418" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808165326418.png" class="lozad post-image"></p>
+<br>
+<h3 id="5-二级页表"><a class="markdownIt-Anchor" href="#5-二级页表"></a> 5. 二级页表</h3>
+<ul>
+<li>
+<p>考虑如下系统：4KB 页大小，48 位虚拟地址空间，每个页表项 8 字节，问页表大小？<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mn>48</mn></msup><mo>⋅</mo><msup><mn>2</mn><mrow><mo>−</mo><mn>12</mn></mrow></msup><mo>∗</mo><msup><mn>2</mn><mn>3</mn></msup><mo>=</mo><msup><mn>2</mn><mn>39</mn></msup><mo>=</mo><mn>512</mn><mi>G</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">2^{48}\cdot2^{-12}*2^3=2^{39}=512GB</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">4</span><span class="mord mtight">8</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span><span class="mord mtight">9</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">5</span><span class="mord">1</span><span class="mord">2</span><span class="mord mathdefault">G</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span> !!</p>
+</li>
+<li>
+<p><strong>但虚拟内存的页表必须放在主存中</strong>，如何解决？我们发现虽然总体占用内存很大，但通常情况下只会有很少的一部分内存被调用！</p>
+</li>
+<li>
+<p>采取<strong>二级层次结构页表</strong>：</p>
+<ul>
+<li>一级页表（驻留主存）：每个表项指向一个二级页表；</li>
+<li>二级页表（可被调入调出）：每个表项指向一个虚拟页；如果对应二级页表中的<strong>每一页都未分配</strong>，则无需创建二级页表，对应一级页表的表项置为 NULL；</li>
+</ul>
+</li>
+</ul>
+<p><img src="image-20230808170846953.png" alt="image-20230808170846953" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808170846953.png" class="lozad post-image"></p>
+<br>
+<p>类似的，K 级页表的翻译会将虚拟地址位划分成 k 个 VPN 以及一个 VPO。如下图所示，每一位 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>V</mi><mi>P</mi><msub><mi>N</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">VPN_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 都是对应着 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span> 级页表的偏移索引，而其中每一个 PTE 对应的是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">i+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.74285em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 级页表的基址。</p>
+<p><img src="image-20230808172910088.png" alt="image-20230808172910088" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230808172910088.png" class="lozad post-image"></p>
+<br>
+<h2 id="虚拟内存-vs-高速缓存"><a class="markdownIt-Anchor" href="#虚拟内存-vs-高速缓存"></a> 虚拟内存 vs. 高速缓存</h2>
+<h3 id="1-存储区分"><a class="markdownIt-Anchor" href="#1-存储区分"></a> 1. 存储区分</h3>
+<ul>
+<li>
+<p>虚存：</p>
+<ul>
+<li>采用 “主存-辅存层次”，主要目的是解决存储容量问题；</li>
+<li>数据交换次数较少，但每次交换的数据量大；</li>
+</ul>
+</li>
+<li>
+<p>Cache：</p>
+<ul>
+<li>主要目的是解决存储速度问题，使存储器的访问速度不拖后腿；</li>
+<li>数据交换的次数较多，每次交换的数据量较小；</li>
+</ul>
+</li>
+</ul>
+<br>
+<h3 id="2-cache-主存-vs-主存-辅存"><a class="markdownIt-Anchor" href="#2-cache-主存-vs-主存-辅存"></a> 2. cache - 主存 vs. 主存 - 辅存</h3>
+<ul>
+<li>相同点：都为了提高存储系统的性能，原理都是程序运行时的局部性原理；</li>
+<li>不同点：
+<ol>
+<li>cache主要解决主存与CPU的速度差异问题，而虚存主要解决存储容量的问题（每个程序的虚地址空间可以远大于实地址空间）；</li>
+<li>CPU与cache和主存之间均有直接访问通路，cache不命中时可直接访问主存；而辅存与CPU之间不存在直接的数据通路，主存不命中时只能通过调页解决；</li>
+<li>cache的管理<strong>完全由硬件负责</strong>，对系统程序和应用程序均透明；而虚存管理是由软件（操作系统）和硬件共同负责。虚存只对应用程序透明；</li>
+</ol>
+</li>
 </ul>
 
   </div>
@@ -469,7 +539,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A1%B5%E7%BC%BA%E5%A4%B1"><span class="toc-text"> 3. 页缺失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%BF%AB%E8%A1%A8-tlb"><span class="toc-text"> 4. 快表 TLB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BA%8C%E7%BA%A7%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 5. 二级页表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-vs-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text"> 虚拟内存 vs. 高速缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%98%E5%82%A8%E5%8C%BA%E5%88%86"><span class="toc-text"> 1. 存储区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-cache-%E4%B8%BB%E5%AD%98-vs-%E4%B8%BB%E5%AD%98-%E8%BE%85%E5%AD%98"><span class="toc-text"> 2. cache - 主存 vs. 主存 - 辅存</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -537,7 +607,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A1%B5%E7%BC%BA%E5%A4%B1"><span class="toc-text"> 3. 页缺失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%BF%AB%E8%A1%A8-tlb"><span class="toc-text"> 4. 快表 TLB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BA%8C%E7%BA%A7%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 5. 二级页表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-vs-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text"> 虚拟内存 vs. 高速缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%98%E5%82%A8%E5%8C%BA%E5%88%86"><span class="toc-text"> 1. 存储区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-cache-%E4%B8%BB%E5%AD%98-vs-%E4%B8%BB%E5%AD%98-%E8%BE%85%E5%AD%98"><span class="toc-text"> 2. cache - 主存 vs. 主存 - 辅存</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -595,51 +665,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Trie%E6%A0%91/" 
-        title="Trie树">
-        <div class="tags-list-item">Trie树</div>
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
       </a>
     
       <a 
-        href="/tags/%E6%95%B0%E8%AE%BA/" 
-        title="数论">
-        <div class="tags-list-item">数论</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
-        title="主席树">
-        <div class="tags-list-item">主席树</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
-        title="动态规划">
-        <div class="tags-list-item">动态规划</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%80%9D%E7%BB%B4/" 
-        title="思维">
-        <div class="tags-list-item">思维</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
-        title="树上启发式合并">
-        <div class="tags-list-item">树上启发式合并</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BC%A9%E7%82%B9/" 
-        title="缩点">
-        <div class="tags-list-item">缩点</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
-        title="生成函数入门">
-        <div class="tags-list-item">生成函数入门</div>
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
       </a>
     
       <a 
@@ -649,33 +683,33 @@
       </a>
     
       <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
       </a>
     
       <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
       </a>
     
       <a 
-        href="/tags/%E6%9E%84%E9%80%A0/" 
-        title="构造">
-        <div class="tags-list-item">构造</div>
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
       <a 
-        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
-        title="计算机组成原理">
-        <div class="tags-list-item">计算机组成原理</div>
+        href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" 
+        title="机器学习">
+        <div class="tags-list-item">机器学习</div>
       </a>
     
       <a 
@@ -688,6 +722,42 @@
         href="/tags/%E9%9A%8F%E7%AC%94/" 
         title="随笔">
         <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
       </a>
     
   </div>
@@ -708,7 +778,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text"> 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text"> 背景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1"><span class="toc-text"> “抽象”：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E5%AD%98-%E5%A4%96%E5%AD%98%E5%B1%82%E6%AC%A1"><span class="toc-text"> 主存 - 外存层次:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B5%E5%BC%8F%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text"> 页式虚拟存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 1. 页表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-text"> 2. 页命中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A1%B5%E7%BC%BA%E5%A4%B1"><span class="toc-text"> 3. 页缺失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%BF%AB%E8%A1%A8-tlb"><span class="toc-text"> 4. 快表 TLB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BA%8C%E7%BA%A7%E9%A1%B5%E8%A1%A8"><span class="toc-text"> 5. 二级页表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98-vs-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text"> 虚拟内存 vs. 高速缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%98%E5%82%A8%E5%8C%BA%E5%88%86"><span class="toc-text"> 1. 存储区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-cache-%E4%B8%BB%E5%AD%98-vs-%E4%B8%BB%E5%AD%98-%E8%BE%85%E5%AD%98"><span class="toc-text"> 2. cache - 主存 vs. 主存 - 辅存</span></a></li></ol></li></ol>
     </article>
   
   
