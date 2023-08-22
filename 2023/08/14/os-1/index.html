@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
-  <title>新博客，新气象</title>
+  <title>Operating System Week1 - 应用视角的操作系统</title>
   
     
       <meta 
         property="og:title" 
-        content="新博客，新气象">
+        content="Operating System Week1 - 应用视角的操作系统">
     
     
       <meta 
         property="og:url" 
-        content="https://turleing.github.io/2021/07/16/hello-world/index.html">
+        content="https://turleing.github.io/2023/08/14/os-1/index.html">
     
     
       <meta 
@@ -36,20 +36,28 @@
         content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
     
     
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;学 NJU 操作系统时的一些札记。&lt;/p&gt;">
+    
     
       <meta 
         property="og:type" 
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2021-07-16">
+        content="2023-08-14">
       <meta 
         property="og:article:modified_time" 
-        content="2022-01-12">
+        content="2023-08-22">
       <meta 
         property="og:article:author" 
         content="天泽龟">
       
+        
+          <meta 
+            property="og:article:tag" 
+            content="操作系统">
         
       
     
@@ -264,32 +272,226 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      新博客，新气象
+      Operating System Week1 - 应用视角的操作系统
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-07-16T14:02:06.000Z">
+    <time datetime="2023-08-14T15:22:48.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2021-07-16</span>
+      <span>2023-08-14</span>
     </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
     
     
       <span class="dot"></span>
-      <span>73 字</span>
+      <span>2k 字</span>
     
   </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+            class="post-meta-link">
+            操作系统
+          </a>
+        
+      </div>
+    </div>
   
   </header>
   <div 
     id="section" 
     class="post-content">
-    <p>这里是天泽龟，就读于北京邮电大学。</p>
-<p>搞 OI 的时候鼓捣过 hexo 博客，但由于某些原因已经停止运营；</p>
-<p>会在新博客分享一些学习经历，吹水，或者打 ACM 时的题解啥的。</p>
-<p>欢迎大家交换友链ww</p>
+    <p>学 NJU 操作系统时的一些札记。</p>
+<span id="more"></span>
+<h2 id="第二课-应用视角的-os"><a class="markdownIt-Anchor" href="#第二课-应用视角的-os"></a> 第二课。应用视角的 OS</h2>
+<ul>
+<li>
+<p>编译器：状态机 <code>.c</code> <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">→</span></span></span></span> 状态机 <code>.s</code> ；不改变外部観测行为的解释器都是合法的。</p>
+</li>
+<li>
+<p>操作系统中的<strong>任何</strong>程序都是调用 <code>syscall</code> 的状态机！</p>
+<ul>
+<li>何以验证？使用一个 <code>strace</code> 的调试工具，追踪应用的系统调用。</li>
+<li><code>strace</code> 不关心硬件层面的指令（add, mov 等），而关注 OS 边界的东西</li>
+</ul>
+</li>
+<li>
+<p>例如，当我们尝试 <code>strace -f gcc hello.c</code> 追踪一个 c 程序的编译过程：</p>
+<ul>
+<li>
+<pre class="highlight"><code class="">execve(&quot;/usr/bin/gcc&quot;) # 串联所有命令的编译器
+execve(&quot;/usr/lib/gcc/x86_6h4-linux-gnu/11/cc1&quot;) # 进行编译过程
+execve(&quot;/usr/bin/as&quot;,L&quot;as&quot;) # 进行汇编过程
+execve(&quot;/usr/lib/gcc/x86_64-linux-gnu/11/collect2&quot;) # 链接预处理
+execve(&quot;/usr/bin/ld&quot;) # 进行链接过程
+<pre class="highlight"><code class="hljs plaintext"><br>&lt;br&gt;<br><br>## 第三课。硬件视角的 OS<br><br>- CPU 厂商与电脑主板厂商达成的约定：CPU Reset 后的状态（PC 寄存器的值）<br><br><br>- 厂商为操作系统开发者提供了 `Firmware`，可以把一个小存储设备的代码加载到内存（如 BIOS）<br>  - 例如 intel x86 手册里面，`EIP` 的初值是 0000FFF0H；<br>  - BIOS 也可以视作一个小“操作系统”，便于厂商配置硬件、加载OS，对应 MBR 的分区格式；<br>  - 如今的 UEFI 规定了硬件所对应的“驱动”规范，便于硬件管理，对应 GPT 的分区格式；<br><br><br>- `gdb` 调试工具十分重要，可以帮助我们理解操作系统的底层原理；<br>  - 当然，如果可以用一些小工具（例如 `Makefile`），这个过程会舒服更多；<br>  - `wa` 命令可以在内存上打一个 `watch point`，就可以观察到内存的修改；<br><br><br>- 操作系统本质上就是硬件上运行的 C 程序。<br>  - 只要实现若干个指令（如 `syscall`）就可以了（确信；<br>  - 要学会借助 AI 工具（`ChatGPT` 以及 Prompt 的艺术），简化学习复杂度；<br><br>&lt;br&gt;<br><br>## 第四课。Python视角的OS<br><br>- 回顾：硬件/软件的状态机模型<br>  - OS：包含了若干进程与文件，每个进程都有 API 访问文件；<br>  - 硬件：执行指令，从 Reset 状态开始就执行 Firmware 代码；<br><br><br>- C++ 中面向对象的虚函数在 OS 中是如何调用的？<br>  - 对于每一个类创造一个虚函数表，**动态绑定**（运行时根据对象类型确定所调用的函数）；<br><br><br>- 操作系统中的程序是状态机，那 OS 本身呢？<br>  - OS 就是**状态机集合的管理者**，可以创建/调度状态机！<br>  - 通过在不同状态机之间随机调度，OS   可以制造一种状态机并行的假象；<br>  - 状态机是线程或进程的抽象：线程可以共享内存、进程有独立的内存；<br>  - 调度的难点：封存当前状态机的状态，恢复一个被封存的状态机（分时调用）；<br><br>&lt;br&gt;<br><br>## 第五课。多处理器视角的OS<br><br>- 回顾：操作系统是状态机的管理者；<br>  -  在 `sys_sched(` 调度的过程中，实际上带来了**并发性**；<br>  - 操作系统是世界上最早的并发程序；<br><br>-  通过 `Thread.h`，可以编写多线程的程序；<br>  - 操作系统会将线程放在不同的处理器上，CPU使用率会超过 100% <br><br>- **Ask More Questions...**<br>  - 线程真的共享内存吗？<br>  - 线程真的具有独立堆栈吗？堆栈的范围又是多少？<br>  - 创建线程采用的是哪个系统调用？<br><br>&lt;br&gt;<br><br>### 共享内存 / 独立堆栈：<br><br>- 逐步 +1 但是乱序输出解释了程序的并发性；<br>- 而在函数内定义局部变量输出为1，证实了线程具有独立堆栈；   <br><br>```c<br>#include &quot;thread.h&quot;<br>int x1;<br><br>void Tprint(int id) &#123;<br>    int x2 = 1; printf(&quot;%d &quot;, x2);<br>	x1++; printf(&quot;%d\n&quot;, x1);<br>&#125;<br><br>int main() &#123;<br>    for (int i=0; i&lt;5; i++) spawn(Tprint);<br>&#125;<br><br>// Output: <br>//1 1<br>//1 4 <br>//1 3 <br>//1 2 <br>//1 5<br></code></pre>
+
+</code></pre>
+</li>
+</ul>
+<br>
+</li>
+</ul>
+<h3 id="堆栈范围我们可以配置线程吗"><a class="markdownIt-Anchor" href="#堆栈范围我们可以配置线程吗"></a> 堆栈范围/我们可以配置线程吗</h3>
+<p>通过写一个死循环的递归，我们可以模拟出内存中的上下边界：</p>
+<pre class="highlight"><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update_range</span><span class="hljs-params">(<span class="hljs-keyword">int</span> T, <span class="hljs-keyword">int</span> *ptr)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (ptr &lt; low[T]) low[T] = ptr;<br>    <span class="hljs-keyword">if</span> (ptr &gt; high[T]) high[T] = ptr;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">probe</span><span class="hljs-params">(<span class="hljs-keyword">int</span> T, <span class="hljs-keyword">int</span> n)</span> </span>&#123;<br>    update_range(T, &amp;n);<br>    <span class="hljs-keyword">long</span> sz = (<span class="hljs-keyword">uintptr_t</span>)high[T] - (<span class="hljs-keyword">uintptr_t</span>)low[T];<br>    <span class="hljs-keyword">if</span> (sz % <span class="hljs-number">1024</span> &lt; <span class="hljs-number">32</span>) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;stack(T%d) &gt; %ld KB\n&quot;</span>, T, sz/<span class="hljs-number">1024</span>);<br>    &#125;<br>    probe(T, n+<span class="hljs-number">1</span>);<br>&#125;<br></code></pre>
+<ul>
+<li>
+<p>最后我们试出来的答案是 8177KB，这说明编译器默认的堆栈是 8192KB（即 8MB）。</p>
+</li>
+<li>
+<p>当然，如果程序员需要更大的栈，也可以通过 <code>pthread.h</code> 这个库操作。当然额暂时还不需要了解。</p>
+</li>
+</ul>
+<br>
+<h3 id="并发从入门到放弃"><a class="markdownIt-Anchor" href="#并发从入门到放弃"></a> 并发：从入门到放弃</h3>
+<h4 id="1-原子性"><a class="markdownIt-Anchor" href="#1-原子性"></a> 1. 原子性</h4>
+<ul>
+<li>
+<p>状态机的隐含假设：“世界上只有一个状态机”；</p>
+</li>
+<li>
+<p>推论：对变量的 load，一定会返回最后一次 store 的值；</p>
+</li>
+<li>
+<p>因为引入了共享内存的东西，<strong>这在多处理器编程中不再成立！！</strong></p>
+</li>
+<li>
+<p>代码执行放弃了原子性（线程在多处理器上并行）；</p>
+<ul>
+<li>
+<p>例如：支付系统；</p>
+</li>
+<li>
+<pre class="highlight"><code class="c"><span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> balance = <span class="hljs-number">100</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Alipay_withdraw</span><span class="hljs-params">(<span class="hljs-keyword">int</span> amt)</span> </span>&#123;
+  <span class="hljs-keyword">if</span> (balance &gt;= amt) &#123;
+  <span class="hljs-comment">// 两个线程可能同时满足这个要求，进入该分支</span>
+    usleep(<span class="hljs-number">1</span>);  <span class="hljs-comment">// Unexpected delays</span>
+    balance -= amt;
+  &#125;
+&#125;
+&lt;!--code￼<span class="hljs-number">2</span>--&gt;
+
+</code></pre>
+</li>
+</ul>
+ <br> 
+</li>
+<li>
+<p>为此，标准库大部分函数都保证了 <strong>线程安全</strong> 的特性！</p>
+<ul>
+<li><code>printf</code> 就是从缓冲区一个个字符读出来的；</li>
+<li>但是执行 <code>buf[pos++] = ch</code> ( <code>pos</code> 共享) 不会 💥！</li>
+</ul>
+</li>
+<li>
+<p>互斥和原子性是本学期的重要主题：</p>
+<ul>
+<li><code>lock(&amp;lk)</code> &amp; <code>unlock(&amp;lk)</code></li>
+<li>在关键的地方，保证绝对串行化！</li>
+<li>程序的其他不冲突的部分依然可以并行执行~</li>
+</ul>
+</li>
+</ul>
+<br>
+<h4 id="2-执行顺序"><a class="markdownIt-Anchor" href="#2-执行顺序"></a> 2. 执行顺序</h4>
+<ul>
+<li>
+<p>在不同的编译优化下，多线程的单步求和会产生其他的答案：</p>
+<ul>
+<li><code>-O1</code> 优化：编译器暂存求和结果，在程序末尾写入，导致了代码执行的非原子性错误，<code>Sum = N</code>；</li>
+<li><code>-O2</code> 优化：直接把循环优化掉，转变为 <code>SUM += N</code>，这样答案输出就正确了 <code>Sum = 2N</code>；</li>
+</ul>
+</li>
+<li>
+<p>出于编译器的 “一致性” 原则，在单线程观测下的结果应该是一致的；</p>
+<ul>
+<li>这导致了多线程编程中，编译器很有可能出错！</li>
+<li>为了保证顺序执行，我们需要将代码/变量 “不可优化”
+<ul>
+<li>插入 “内存壁垒”：<code>asm volatile(&quot;&quot;:::&quot; memory&quot;)</code></li>
+<li>将变量标记位 <code>volatile</code> 类型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<h4 id="3-可见性"><a class="markdownIt-Anchor" href="#3-可见性"></a> 3. 可见性</h4>
+<ul>
+<li>首先额，啥是可见性？
+<ul>
+<li>准确来说，是处理器之间的可见性；</li>
+<li>不好理解？举个例子！</li>
+</ul>
+</li>
+</ul>
+<p><strong>一个例子：</strong></p>
+<pre class="highlight"><code class="hljs c"><span class="hljs-keyword">int</span> x = <span class="hljs-number">0</span>, y = <span class="hljs-number">0</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">T1</span><span class="hljs-params">()</span> </span>&#123;<br>  x = <span class="hljs-number">1</span>; <span class="hljs-comment">// store(x)</span><br>  <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(<span class="hljs-string">&quot;&quot;</span> : : <span class="hljs-string">&quot;memory&quot;</span>)</span></span>; <span class="hljs-comment">// compiler barrier</span><br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;y = %d\n&quot;</span>, y); <span class="hljs-comment">// load(y)</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">T2</span><span class="hljs-params">()</span> </span>&#123;<br>  y = <span class="hljs-number">1</span>; <span class="hljs-comment">// store(y)</span><br>  <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(<span class="hljs-string">&quot;&quot;</span> : : <span class="hljs-string">&quot;memory&quot;</span>)</span></span>; <span class="hljs-comment">// compiler barrier</span><br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;x = %d\n&quot;</span>, x);  <span class="hljs-comment">// load(x)</span><br>&#125;<br></code></pre>
+<ul>
+<li>
+<p>这个程序的输出会是什么？</p>
+<ul>
+<li><code>01, 10, 11</code> 三种对吧。</li>
+</ul>
+</li>
+<li>
+<p>额，真假？我试出来怎么全都是 <code>00</code> 啊？</p>
+<ul>
+<li>怎么解释？我们可以搬出计组里面学的知识了！</li>
+<li>首先，多处理器可以并行处理指令，那也得分个先来后到吧；</li>
+<li>其次，我们知道一条指令可以被拆成多条 “微指令”，如赋值指令可以拆成 <code>读内存-&gt;写寄存器-&gt;写内存</code>；</li>
+<li>而且，读指令一般是比写指令快的，当 <code>x, y</code> 不等价，对其内存的读写可以交换顺序！</li>
+<li>所以 <code>printf</code> 语句在并发的过程中会先执行，导致 <code>00</code> 这个结果的出现。</li>
+</ul>
+</li>
+</ul>
+<br>
+<ul>
+<li>
+<p>可见性指的是（个人理解）一个处理器在执行指令的过程中，只能考虑到其本身的可序列性，而无法兼顾其他处理器；</p>
+<ul>
+<li><code>x86</code> 采用<strong>宽松内存模型</strong>，使得单处理器的执行更加高效：
+<ul>
+<li>程序进行写操作时，会先将其写到一个缓冲队列里；</li>
+<li>不同线程之间具有优先级，在某个时间点会写到共享内存中；</li>
+</ul>
+</li>
+<li>对于 ARM 架构来说，共享内存是在所有进程之间随意通信的；
+<ul>
+<li>有点像分布式系统；</li>
+<li>最终会达到一致性；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>放弃了原子性、顺序执行以及可见性，本质上是对于<strong>性能的追求</strong>！</p>
+</li>
+</ul>
 
   </div>
   <div>
@@ -309,8 +511,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://turleing.github.io/2021/07/16/hello-world/">
-            https://turleing.github.io/2021/07/16/hello-world/
+            href="https://turleing.github.io/2023/08/14/os-1/">
+            https://turleing.github.io/2023/08/14/os-1/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -320,20 +522,20 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
+  
+    <div class="nav-item-next">
       <a 
-        href="/2021/07/26/Codeforces%20Solutions/" 
+        href="/2023/08/11/Computer-Organization-and-Architecture-bus/" 
         class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
-          <div class="nav-label">上一篇</div>
+          <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">一些有意思的 CF 题解集锦 </div>
+            <div class="nav-title">计算机组成原理：总线系统 </div>
           
         </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
       </a>
     </div>
-  
   
 </div>
 
@@ -382,7 +584,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E8%8C%83%E5%9B%B4%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E9%85%8D%E7%BD%AE%E7%BA%BF%E7%A8%8B%E5%90%97"><span class="toc-text"> 堆栈范围&#x2F;我们可以配置线程吗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -450,7 +652,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E8%8C%83%E5%9B%B4%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E9%85%8D%E7%BD%AE%E7%BA%BF%E7%A8%8B%E5%90%97"><span class="toc-text"> 堆栈范围&#x2F;我们可以配置线程吗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li></ol>
       </div>
     </article>
   
@@ -621,7 +823,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E8%8C%83%E5%9B%B4%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E9%85%8D%E7%BD%AE%E7%BA%BF%E7%A8%8B%E5%90%97"><span class="toc-text"> 堆栈范围&#x2F;我们可以配置线程吗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li></ol>
     </article>
   
   
