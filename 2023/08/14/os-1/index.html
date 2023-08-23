@@ -295,7 +295,7 @@
     
     
       <span class="dot"></span>
-      <span>2.8k 字</span>
+      <span>734 字</span>
     
   </div>
   
@@ -397,239 +397,6 @@
 </li>
 </ul>
 <br>
-<h2 id="第五课-多处理器视角的os"><a class="markdownIt-Anchor" href="#第五课-多处理器视角的os"></a> 第五课。多处理器视角的OS</h2>
-<ul>
-<li>
-<p>回顾：操作系统是状态机的管理者；</p>
-<ul>
-<li>在 <code>sys_sched(</code> 调度的过程中，实际上带来了<strong>并发性</strong>；</li>
-<li>操作系统是世界上最早的并发程序；</li>
-</ul>
-</li>
-<li>
-<p>通过 <code>Thread.h</code>，可以编写多线程的程序；</p>
-</li>
-<li>
-<p>操作系统会将线程放在不同的处理器上，CPU使用率会超过 100%</p>
-</li>
-<li>
-<p><strong>Ask More Questions…</strong></p>
-<ul>
-<li>线程真的共享内存吗？</li>
-<li>线程真的具有独立堆栈吗？堆栈的范围又是多少？</li>
-<li>创建线程采用的是哪个系统调用？</li>
-</ul>
-</li>
-</ul>
-<br>
-<p><strong>共享内存 / 独立堆栈：</strong></p>
-<ul>
-<li>逐步 +1 但是乱序输出解释了程序的并发性；</li>
-<li>而在函数内定义局部变量输出为1，证实了线程具有独立堆栈；</li>
-</ul>
-<pre class="highlight"><code class="hljs c"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;thread.h&quot;</span></span><br><span class="hljs-keyword">int</span> x1;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Tprint</span><span class="hljs-params">(<span class="hljs-keyword">int</span> id)</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> x2 = <span class="hljs-number">1</span>; <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, x2);<br>	x1++; <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>, x1);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">5</span>; i++) spawn(Tprint);<br>&#125;<br><br><span class="hljs-comment">// Output: </span><br><span class="hljs-comment">//1 1</span><br><span class="hljs-comment">//1 4 </span><br><span class="hljs-comment">//1 3 </span><br><span class="hljs-comment">//1 2 </span><br><span class="hljs-comment">//1 5</span><br></code></pre>
-  <br>
-<p><strong>堆栈范围/我们可以配置线程吗？</strong></p>
-<p>通过写一个死循环的递归，我们可以模拟出内存中的上下边界：</p>
-<pre class="highlight"><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update_range</span><span class="hljs-params">(<span class="hljs-keyword">int</span> T, <span class="hljs-keyword">int</span> *ptr)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (ptr &lt; low[T]) low[T] = ptr;<br>    <span class="hljs-keyword">if</span> (ptr &gt; high[T]) high[T] = ptr;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">probe</span><span class="hljs-params">(<span class="hljs-keyword">int</span> T, <span class="hljs-keyword">int</span> n)</span> </span>&#123;<br>    update_range(T, &amp;n);<br>    <span class="hljs-keyword">long</span> sz = (<span class="hljs-keyword">uintptr_t</span>)high[T] - (<span class="hljs-keyword">uintptr_t</span>)low[T];<br>    <span class="hljs-keyword">if</span> (sz % <span class="hljs-number">1024</span> &lt; <span class="hljs-number">32</span>) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;stack(T%d) &gt; %ld KB\n&quot;</span>, T, sz/<span class="hljs-number">1024</span>);<br>    &#125;<br>    probe(T, n+<span class="hljs-number">1</span>);<br>&#125;<br></code></pre>
-<ul>
-<li>
-<p>最后我们试出来的答案是 8177KB，这说明编译器默认的堆栈是 8192KB（即 8MB）。</p>
-</li>
-<li>
-<p>当然，如果程序员需要更大的栈，也可以通过 <code>pthread.h</code> 这个库操作。当然额暂时还不需要了解。</p>
-</li>
-</ul>
-<br>
-<h3 id="并发从入门到放弃"><a class="markdownIt-Anchor" href="#并发从入门到放弃"></a> 并发：从入门到放弃</h3>
-<h4 id="1-原子性"><a class="markdownIt-Anchor" href="#1-原子性"></a> 1. 原子性</h4>
-<ul>
-<li>
-<p>状态机的隐含假设：“世界上只有一个状态机”；</p>
-</li>
-<li>
-<p>推论：对变量的 load，一定会返回最后一次 store 的值；</p>
-</li>
-<li>
-<p>因为引入了共享内存的东西，<strong>这在多处理器编程中不再成立！！</strong></p>
-</li>
-<li>
-<p>代码执行放弃了原子性（线程在多处理器上并行）；</p>
-</li>
-</ul>
-<p>例如：支付系统；</p>
-<pre class="highlight"><code class="hljs c"><span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> balance = <span class="hljs-number">100</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Alipay_withdraw</span><span class="hljs-params">(<span class="hljs-keyword">int</span> amt)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (balance &gt;= amt) &#123;<br>    <span class="hljs-comment">// 两个线程可能同时满足这个要求，进入该分支</span><br>      usleep(<span class="hljs-number">1</span>);  <span class="hljs-comment">// Unexpected delays</span><br>      balance -= amt;<br>    &#125;<br>&#125;<br></code></pre>
-<br>
-<ul>
-<li>指令执行放弃了原子性（处理器不再一次执行一条指令）；</li>
-</ul>
-<p>例如：多线程的 for 循环求和导致随机数；</p>
-<pre class="highlight"><code class="hljs c"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> N 100000</span><br><span class="hljs-keyword">long</span> sum = <span class="hljs-number">0</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Tsum</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++) sum++;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    create(Tsum);<br>    create(Tsum);<br>    join();<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;sum = %ld\n&quot;</span>, sum);<br>&#125;<br><span class="hljs-comment">// Correct Answer: 2N</span><br></code></pre>
-   <br> 
-<ul>
-<li>
-<p>为此，标准库大部分函数都保证了 <strong>线程安全</strong> 的特性！</p>
-<ul>
-<li><code>printf</code> 就是从缓冲区一个个字符读出来的；</li>
-<li>但是执行 <code>buf[pos++] = ch</code> ( <code>pos</code> 共享) 不会 💥！</li>
-</ul>
-</li>
-<li>
-<p>互斥和原子性是本学期的重要主题：</p>
-<ul>
-<li><code>lock(&amp;lk)</code> &amp; <code>unlock(&amp;lk)</code></li>
-<li>在关键的地方，保证绝对串行化！</li>
-<li>程序的其他不冲突的部分依然可以并行执行~</li>
-</ul>
-</li>
-</ul>
-<br>
-<h4 id="2-执行顺序"><a class="markdownIt-Anchor" href="#2-执行顺序"></a> 2. 执行顺序</h4>
-<ul>
-<li>
-<p>在不同的编译优化下，多线程的单步求和会产生其他的答案：</p>
-<ul>
-<li><code>-O1</code> 优化：编译器暂存求和结果，在程序末尾写入，导致了代码执行的非原子性错误，<code>Sum = N</code>；</li>
-<li><code>-O2</code> 优化：直接把循环优化掉，转变为 <code>SUM += N</code>，这样答案输出就正确了 <code>Sum = 2N</code>；</li>
-</ul>
-</li>
-<li>
-<p>出于编译器的 “一致性” 原则，在单线程观测下的结果应该是一致的；</p>
-<ul>
-<li>这导致了多线程编程中，编译器很有可能出错！</li>
-<li>为了保证顺序执行，我们需要将代码/变量 “不可优化”
-<ul>
-<li>插入 “内存壁垒”：<code>asm volatile(&quot;&quot;:::&quot; memory&quot;)</code></li>
-<li>将变量标记位 <code>volatile</code> 类型</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<br>
-<h4 id="3-可见性"><a class="markdownIt-Anchor" href="#3-可见性"></a> 3. 可见性</h4>
-<ul>
-<li>首先额，啥是可见性？
-<ul>
-<li>准确来说，是处理器之间的可见性；</li>
-<li>不好理解？举个例子！</li>
-</ul>
-</li>
-</ul>
-<p><strong>一个例子：</strong></p>
-<pre class="highlight"><code class="hljs c"><span class="hljs-keyword">int</span> x = <span class="hljs-number">0</span>, y = <span class="hljs-number">0</span>;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">T1</span><span class="hljs-params">()</span> </span>&#123;<br>  x = <span class="hljs-number">1</span>; <span class="hljs-comment">// store(x)</span><br>  <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(<span class="hljs-string">&quot;&quot;</span> : : <span class="hljs-string">&quot;memory&quot;</span>)</span></span>; <span class="hljs-comment">// compiler barrier</span><br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;y = %d\n&quot;</span>, y); <span class="hljs-comment">// load(y)</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">T2</span><span class="hljs-params">()</span> </span>&#123;<br>  y = <span class="hljs-number">1</span>; <span class="hljs-comment">// store(y)</span><br>  <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(<span class="hljs-string">&quot;&quot;</span> : : <span class="hljs-string">&quot;memory&quot;</span>)</span></span>; <span class="hljs-comment">// compiler barrier</span><br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;x = %d\n&quot;</span>, x);  <span class="hljs-comment">// load(x)</span><br>&#125;<br></code></pre>
-<ul>
-<li>
-<p>这个程序的输出会是什么？</p>
-<ul>
-<li><code>01, 10, 11</code> 三种对吧。</li>
-</ul>
-</li>
-<li>
-<p>额，真假？我试出来怎么全都是 <code>00</code> 啊？</p>
-<ul>
-<li>怎么解释？我们可以搬出计组里面学的知识了！</li>
-<li>首先，多处理器可以并行处理指令，那也得分个先来后到吧；</li>
-<li>其次，我们知道一条指令可以被拆成多条 “微指令”，如赋值指令可以拆成 <code>读内存-&gt;写寄存器-&gt;写内存</code>；</li>
-<li>而且，读指令一般是比写指令快的，当 <code>x, y</code> 不等价，对其内存的读写可以交换顺序！</li>
-<li>所以 <code>printf</code> 语句在并发的过程中会先执行，导致 <code>00</code> 这个结果的出现。</li>
-</ul>
-</li>
-</ul>
-<br>
-<ul>
-<li>
-<p>可见性指的是（个人理解）一个处理器在执行指令的过程中，只能考虑到其本身的可序列性，而无法兼顾其他处理器；</p>
-<ul>
-<li><code>x86</code> 采用<strong>宽松内存模型</strong>，使得单处理器的执行更加高效：
-<ul>
-<li>程序进行写操作时，会先将其写到一个缓冲队列里；</li>
-<li>不同线程之间具有优先级，在某个时间点会写到共享内存中；</li>
-</ul>
-</li>
-<li>对于 ARM 架构来说，共享内存是在所有进程之间随意通信的；
-<ul>
-<li>有点像分布式系统；</li>
-<li>最终会达到一致性；</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>放弃了原子性、顺序执行以及可见性，本质上是对于<strong>性能的追求</strong>！</p>
-</li>
-</ul>
-<br>
-<h2 id="第六课-并发编程下的os"><a class="markdownIt-Anchor" href="#第六课-并发编程下的os"></a> 第六课。并发编程下的OS</h2>
-<ul>
-<li>
-<p>人类的本质是 <code>Sequential Creature</code>；</p>
-<ul>
-<li>我们习惯于写<strong>顺序执行</strong>的代码，不愿意承担“三个放弃”；</li>
-<li>然而，确认一个并发程序的可序列性是一个 <code>NPC</code> 问题；</li>
-</ul>
-</li>
-<li>
-<p>但人类是用于挑战的 <code>Creature</code>；</p>
-<ul>
-<li>并发不易理解，我们就通过手段“回退”至顺序执行；</li>
-<li>对于若干代码块，使得它们之间以某种顺序执行；</li>
-<li>这类问题被称为 <strong>“互斥”</strong> 。非互斥的代码块可以并行处理
-<ul>
-<li>但如果互斥的代码块过多，即使有一万个CPU也难以获得很好的性能，这称作 <strong>阿姆达尔定律</strong> 。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>先做出一个基本假设：内存的读/写可以保持顺序性和原子性！</p>
-<ul>
-<li>但是，写操作对应的是“覆盖”，不具备读的能力；</li>
-<li>读操作也只能瞬时进行，读完后的瞬间即可被更改；</li>
-</ul>
-</li>
-<li>
-<p>引入了第一个并发算法： <code>Peterson</code> 算法</p>
-<ul>
-<li>假设 A 和 B 争用宿舍厕所，他们每个人有一面旗子，和写着对方名字的纸条；</li>
-<li>想进入厕所，A或B首先要举起自己的旗子，并向厕所门贴上对方名字的标签；</li>
-<li>门上的标签是覆盖着贴上去的；</li>
-<li>如果进行如上操作后， <strong>对方举旗，且门上的名字是对方</strong>，则等待；反之可以进入；</li>
-<li>离开厕所后，放下自己的旗子；（不需理会门上的标签）</li>
-</ul>
-</li>
-<li>
-<p>如何验证算法的正确性？</p>
-<ul>
-<li>直接把所有的状态给画出来！<s>但是纯坐牢</s></li>
-<li>使用一种自动化的手段，让程序做繁琐的工作！</li>
-</ul>
-</li>
-<li>
-<p>是否存在 “<strong>死锁</strong>” 的情况呢？</p>
-<ul>
-<li>既然已经用状态机建模了，我们也可以将问题转化为图论问题！</li>
-<li>用 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mstyle mathcolor="green"><mi mathvariant="normal">绿</mi><mi mathvariant="normal">色</mi><mi mathvariant="normal">点</mi></mstyle></mrow><annotation encoding="application/x-tex">\color{green}绿色点</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord cjk_fallback" style="color:green;">绿</span><span class="mord cjk_fallback" style="color:green;">色</span><span class="mord cjk_fallback" style="color:green;">点</span></span></span></span> 代表 A 进入，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mstyle mathcolor="blue"><mi mathvariant="normal">蓝</mi><mi mathvariant="normal">色</mi><mi mathvariant="normal">点</mi></mstyle></mrow><annotation encoding="application/x-tex">\color{blue}蓝色点</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord cjk_fallback" style="color:blue;">蓝</span><span class="mord cjk_fallback" style="color:blue;">色</span><span class="mord cjk_fallback" style="color:blue;">点</span></span></span></span> 代表 B 进入。如果通过一个状态永远无法经过绿色点或者蓝色点，则这个算法是不正确的。</li>
-</ul>
-</li>
-<li>
-<p>回到现实，如何使我们的假设成立？</p>
-<ul>
-<li>读/写一个全局变量被要求是 “原子不可分” 的！但这个假设在现代多处理器上已经不成立了。</li>
-<li>为了实现这一点，我们需要编译器与处理器的共同帮助；
-<ul>
-<li>处理器提供特殊指令 <code>lock</code> 或者 <code>mfence</code> 保证可见性（原子指令）；</li>
-<li>编译器使用 <code>__sync_stnchronize()</code> 函数调用，并使用 <code>volatile</code> 关键词使其不被优化（<code>Compile barrier</code>）；
-<ul>
-<li>在 Intel 40386 处理器中，已经引入了该类型的指令；</li>
-<li>利用原子指令，Intel 实现了对于总线的全局锁（<code>Bus Lock</code>）！</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
   </div>
   <div>
@@ -668,7 +435,7 @@
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">Operating System Week1 - 并发视角的操作系统 </div>
+            <div class="nav-title">Operating System Week2 - 并发视角的操作系统 </div>
           
         </div>
       </a>
@@ -736,7 +503,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -804,7 +571,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li></ol>
       </div>
     </article>
   
@@ -819,17 +586,17 @@
   </div>
   <div class="categories-list">
     
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">8</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业学习
           <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">8</span>
         </div>
       </a>
     
@@ -975,7 +742,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li></ol>
     </article>
   
   
@@ -991,7 +758,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-23</div>
-        <a href="/2023/08/23/os-2/"><div class="recent-posts-item-content">Operating System Week1 - 并发视角的操作系统</div></a>
+        <a href="/2023/08/23/os-2/"><div class="recent-posts-item-content">Operating System Week2 - 并发视角的操作系统</div></a>
       </div>
     
       <div class="recent-posts-item">
