@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
-  <title>Operating System Week1 - 应用视角的操作系统</title>
+  <title>Operating System Week1 - 并发视角的操作系统</title>
   
     
       <meta 
         property="og:title" 
-        content="Operating System Week1 - 应用视角的操作系统">
+        content="Operating System Week1 - 并发视角的操作系统">
     
     
       <meta 
         property="og:url" 
-        content="https://turleing.github.io/2023/08/14/os-1/index.html">
+        content="https://turleing.github.io/2023/08/23/os-2/index.html">
     
     
       <meta 
@@ -36,17 +36,13 @@
         content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
     
     
-      <meta 
-        property="og:img" 
-        content="&lt;p&gt;学 NJU 操作系统时的一些札记。&lt;/p&gt;">
-    
     
       <meta 
         property="og:type" 
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2023-08-14">
+        content="2023-08-23">
       <meta 
         property="og:article:modified_time" 
         content="2023-08-23">
@@ -272,16 +268,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Operating System Week1 - 应用视角的操作系统
+      Operating System Week1 - 并发视角的操作系统
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-08-14T15:22:48.000Z">
+    <time datetime="2023-08-23T12:06:49.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-08-14</span>
+      <span>2023-08-23</span>
     </time>
     
       <span class="dot"></span>
@@ -295,7 +291,7 @@
     
     
       <span class="dot"></span>
-      <span>2.8k 字</span>
+      <span>2.1k 字</span>
     
   </div>
   
@@ -322,82 +318,7 @@
   <div 
     id="section" 
     class="post-content">
-    <p>学 NJU 操作系统时的一些札记。</p>
-<span id="more"></span>
-<h2 id="第二课-应用视角的-os"><a class="markdownIt-Anchor" href="#第二课-应用视角的-os"></a> 第二课。应用视角的 OS</h2>
-<ul>
-<li>
-<p>编译器：状态机 <code>.c</code> <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">→</span></span></span></span> 状态机 <code>.s</code> ；不改变外部観测行为的解释器都是合法的。</p>
-</li>
-<li>
-<p>操作系统中的<strong>任何</strong>程序都是调用 <code>syscall</code> 的状态机！</p>
-<ul>
-<li>何以验证？使用一个 <code>strace</code> 的调试工具，追踪应用的系统调用。</li>
-<li><code>strace</code> 不关心硬件层面的指令（add, mov 等），而关注 OS 边界的东西</li>
-</ul>
-</li>
-<li>
-<p>例如，当我们尝试 <code>strace -f gcc hello.c</code> 追踪一个 c 程序的编译过程：</p>
-</li>
-</ul>
-<pre class="highlight"><code class="hljs plaintext">execve(&quot;/usr/bin/gcc&quot;) # 串联所有命令的编译器<br>execve(&quot;/usr/lib/gcc/x86_6h4-linux-gnu/11/cc1&quot;) # 进行编译过程<br>execve(&quot;/usr/bin/as&quot;,L&quot;as&quot;) # 进行汇编过程<br>execve(&quot;/usr/lib/gcc/x86_64-linux-gnu/11/collect2&quot;) # 链接预处理<br>execve(&quot;/usr/bin/ld&quot;) # 进行链接过程<br></code></pre>
-<br>
-<h2 id="第三课-硬件视角的-os"><a class="markdownIt-Anchor" href="#第三课-硬件视角的-os"></a> 第三课。硬件视角的 OS</h2>
-<ul>
-<li>
-<p>CPU 厂商与电脑主板厂商达成的约定：CPU Reset 后的状态（PC 寄存器的值）</p>
-</li>
-<li>
-<p>厂商为操作系统开发者提供了 <code>Firmware</code>，可以把一个小存储设备的代码加载到内存（如 BIOS）</p>
-<ul>
-<li>例如 intel x86 手册里面，<code>EIP</code> 的初值是 0000FFF0H；</li>
-<li>BIOS 也可以视作一个小“操作系统”，便于厂商配置硬件、加载OS，对应 MBR 的分区格式；</li>
-<li>如今的 UEFI 规定了硬件所对应的“驱动”规范，便于硬件管理，对应 GPT 的分区格式；</li>
-</ul>
-</li>
-<li>
-<p><code>gdb</code> 调试工具十分重要，可以帮助我们理解操作系统的底层原理；</p>
-<ul>
-<li>当然，如果可以用一些小工具（例如 <code>Makefile</code>），这个过程会舒服更多；</li>
-<li><code>wa</code> 命令可以在内存上打一个 <code>watch point</code>，就可以观察到内存的修改；</li>
-</ul>
-</li>
-<li>
-<p>操作系统本质上就是硬件上运行的 C 程序。</p>
-<ul>
-<li>只要实现若干个指令（如 <code>syscall</code>）就可以了（确信；</li>
-<li>要学会借助 AI 工具（<code>ChatGPT</code> 以及 Prompt 的艺术），简化学习复杂度；</li>
-</ul>
-</li>
-</ul>
-<br>
-<h2 id="第四课-python视角的os"><a class="markdownIt-Anchor" href="#第四课-python视角的os"></a> 第四课。Python视角的OS</h2>
-<ul>
-<li>
-<p>回顾：硬件/软件的状态机模型</p>
-<ul>
-<li>OS：包含了若干进程与文件，每个进程都有 API 访问文件；</li>
-<li>硬件：执行指令，从 Reset 状态开始就执行 Firmware 代码；</li>
-</ul>
-</li>
-<li>
-<p>C++ 中面向对象的虚函数在 OS 中是如何调用的？</p>
-<ul>
-<li>对于每一个类创造一个虚函数表，<strong>动态绑定</strong>（运行时根据对象类型确定所调用的函数）；</li>
-</ul>
-</li>
-<li>
-<p>操作系统中的程序是状态机，那 OS 本身呢？</p>
-<ul>
-<li>OS 就是<strong>状态机集合的管理者</strong>，可以创建/调度状态机！</li>
-<li>通过在不同状态机之间随机调度，OS   可以制造一种状态机并行的假象；</li>
-<li>状态机是线程或进程的抽象：线程可以共享内存、进程有独立的内存；</li>
-<li>调度的难点：封存当前状态机的状态，恢复一个被封存的状态机（分时调用）；</li>
-</ul>
-</li>
-</ul>
-<br>
-<h2 id="第五课-多处理器视角的os"><a class="markdownIt-Anchor" href="#第五课-多处理器视角的os"></a> 第五课。多处理器视角的OS</h2>
+    <h2 id="第五课-多处理器视角的os"><a class="markdownIt-Anchor" href="#第五课-多处理器视角的os"></a> 第五课。多处理器视角的OS</h2>
 <ul>
 <li>
 <p>回顾：操作系统是状态机的管理者；</p>
@@ -408,9 +329,9 @@
 </li>
 <li>
 <p>通过 <code>Thread.h</code>，可以编写多线程的程序；</p>
-</li>
-<li>
-<p>操作系统会将线程放在不同的处理器上，CPU使用率会超过 100%</p>
+<ul>
+<li>操作系统会将线程放在不同的处理器上，CPU使用率会超过 100%</li>
+</ul>
 </li>
 <li>
 <p><strong>Ask More Questions…</strong></p>
@@ -452,9 +373,9 @@
 </li>
 <li>
 <p>因为引入了共享内存的东西，<strong>这在多处理器编程中不再成立！！</strong></p>
-</li>
-<li>
-<p>代码执行放弃了原子性（线程在多处理器上并行）；</p>
+<ul>
+<li>代码执行放弃了原子性（线程在多处理器上并行）；</li>
+</ul>
 </li>
 </ul>
 <p>例如：支付系统；</p>
@@ -649,8 +570,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://turleing.github.io/2023/08/14/os-1/">
-            https://turleing.github.io/2023/08/14/os-1/
+            href="https://turleing.github.io/2023/08/23/os-2/">
+            https://turleing.github.io/2023/08/23/os-2/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -660,29 +581,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/23/os-2/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">Operating System Week1 - 并发视角的操作系统 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/08/11/Computer-Organization-and-Architecture-bus/" 
+        href="/2023/08/14/os-1/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">计算机组成原理：总线系统 </div>
+            <div class="nav-title">Operating System Week1 - 应用视角的操作系统 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -736,7 +643,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -804,7 +711,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
       </div>
     </article>
   
@@ -975,7 +882,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE-%E5%BA%94%E7%94%A8%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第二课。应用视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE-%E7%A1%AC%E4%BB%B6%E8%A7%86%E8%A7%92%E7%9A%84-os"><span class="toc-text"> 第三课。硬件视角的 OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AF%BE-python%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第四课。Python视角的OS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AF%BE-%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E8%A7%86%E8%A7%92%E7%9A%84os"><span class="toc-text"> 第五课。多处理器视角的OS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83"><span class="toc-text"> 并发：从入门到放弃</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 1. 原子性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text"> 2. 执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 3. 可见性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%AF%BE-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%8B%E7%9A%84os"><span class="toc-text"> 第六课。并发编程下的OS</span></a></li></ol>
     </article>
   
   
