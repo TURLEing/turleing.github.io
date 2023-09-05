@@ -45,7 +45,7 @@
         content="2023-08-23">
       <meta 
         property="og:article:modified_time" 
-        content="2023-08-23">
+        content="2023-08-26">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -291,7 +291,7 @@
     
     
       <span class="dot"></span>
-      <span>2.1k 字</span>
+      <span>2.9k 字</span>
     
   </div>
   
@@ -483,13 +483,15 @@
 <br>
 <h2 id="第六课-并发编程下的os"><a class="markdownIt-Anchor" href="#第六课-并发编程下的os"></a> 第六课。并发编程下的OS</h2>
 <ul>
-<li>
-<p>人类的本质是 <code>Sequential Creature</code>；</p>
+<li>人类的本质是 <code>Sequential Creature</code>；
 <ul>
 <li>我们习惯于写<strong>顺序执行</strong>的代码，不愿意承担“三个放弃”；</li>
 <li>然而，确认一个并发程序的可序列性是一个 <code>NPC</code> 问题；</li>
 </ul>
 </li>
+</ul>
+<br>
+<ul>
 <li>
 <p>但人类是用于挑战的 <code>Creature</code>；</p>
 <ul>
@@ -542,11 +544,115 @@
 <li>处理器提供特殊指令 <code>lock</code> 或者 <code>mfence</code> 保证可见性（原子指令）；</li>
 <li>编译器使用 <code>__sync_stnchronize()</code> 函数调用，并使用 <code>volatile</code> 关键词使其不被优化（<code>Compile barrier</code>）；
 <ul>
+<li>毕竟如果编译器通过优化，使得关键区域的指令被移到了锁的外边，这就完蛋了。</li>
 <li>在 Intel 40386 处理器中，已经引入了该类型的指令；</li>
 <li>利用原子指令，Intel 实现了对于总线的全局锁（<code>Bus Lock</code>）！</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<ul>
+<li>使用原子指令！如 <code>atomic_inc</code>、<code>atomic_xchg</code> 等。
+<ul>
+<li>原子指令是绝对正确的，它不会被其他线程打断；</li>
+<li>包含 <code>compile barrier</code>，在此之前的所有指令会被执行；</li>
+<li>在该指令之前的指令，会对之后的所有原子指令“可见”。</li>
+</ul>
+</li>
+</ul>
+<pre class="highlight"><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">xchg</span><span class="hljs-params">(<span class="hljs-keyword">int</span> <span class="hljs-keyword">volatile</span> xptr,<span class="hljs-keyword">int</span> newval)</span> </span>&#123;<br>	<span class="hljs-keyword">int</span> result;<br>    <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-comment">//指今自带 memory barrier</span></span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-string">&quot;lock xchgl %0, %1&quot;</span></span></span><br><span class="hljs-params"><span class="hljs-function">        : <span class="hljs-string">&quot;+m&quot;</span>(*ptr)，<span class="hljs-string">&quot;=a&quot;</span>(result)</span></span><br><span class="hljs-params"><span class="hljs-function">        : <span class="hljs-string">&quot;1&quot;</span>(newval)</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-comment">// Compiler barrier</span></span></span><br><span class="hljs-params"><span class="hljs-function">        : <span class="hljs-string">&quot;memory&quot;</span></span></span><br><span class="hljs-params"><span class="hljs-function">    )</span></span>;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre>
+<br>
+<ul>
+<li>如何实现互斥？
+<ul>
+<li>做题家很重要，但是学会思考、问出问题同样重要。</li>
+<li><strong>自旋锁</strong> ：用 <code>xchg</code> 实现互斥！
+<ul>
+<li>厕所门口放着一张红卡，所有人手上只有绿卡；</li>
+<li>只有拿着红卡的同学才能进厕所；</li>
+<li>想上厕所的人可以和桌子上的卡进行“交换”！</li>
+<li>由于原子指令 <code>xchg</code> 保证其正确性，所以只有第一个交换的同学能得到红卡。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre class="highlight"><code class="hljs c"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> UNLOCK 0</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> LOCK 1</span><br><br><span class="hljs-keyword">int</span> table = UNLOCK;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">lock</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123; <span class="hljs-keyword">while</span> (xchg(&amp;table, LOCK)); &#125;<br><span class="hljs-comment">// 只要桌子上摆的不是“解锁”卡，则 lock</span><br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">unlock</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123; xchg(&amp;locked, UNLOCK); &#125;<br><span class="hljs-comment">// 用原子指令交换</span><br></code></pre>
+<br>
+<ul>
+<li><code>Compare &amp; Exchange</code> 算法：<code>cmpxhcg</code>
+<ul>
+<li>一种“无锁”的并发算法实现；</li>
+<li>通过<strong>比较</strong>上一次获得的值是否仍然有效；</li>
+<li>如果不一致，则与新的值进行交换；</li>
+</ul>
+</li>
+</ul>
+<pre class="highlight"><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cmpxchg</span><span class="hljs-params">(<span class="hljs-keyword">int</span> old, <span class="hljs-keyword">int</span> <span class="hljs-keyword">new</span>, <span class="hljs-keyword">int</span> <span class="hljs-keyword">volatile</span> *ptr)</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">asm</span> <span class="hljs-title">volatile</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">    <span class="hljs-string">&quot;lock cmpxchgl %[new], %[mem]&quot;</span></span></span><br><span class="hljs-params"><span class="hljs-function">      : <span class="hljs-string">&quot;+a&quot;</span>(old), [mem] <span class="hljs-string">&quot;+m&quot;</span>(*ptr)</span></span><br><span class="hljs-params"><span class="hljs-function">      : [<span class="hljs-keyword">new</span>] <span class="hljs-string">&quot;S&quot;</span>(<span class="hljs-keyword">new</span>)</span></span><br><span class="hljs-params"><span class="hljs-function">      : <span class="hljs-string">&quot;memory&quot;</span></span></span><br><span class="hljs-params"><span class="hljs-function">  )</span></span>;<br>  <span class="hljs-keyword">return</span> old;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cmpxchg_ref</span><span class="hljs-params">(<span class="hljs-keyword">int</span> old, <span class="hljs-keyword">int</span> <span class="hljs-keyword">new</span>, <span class="hljs-keyword">int</span> <span class="hljs-keyword">volatile</span> *ptr)</span> </span>&#123;<br>  <span class="hljs-keyword">int</span> tmp = *ptr;  <span class="hljs-comment">// Load</span><br>  <span class="hljs-keyword">if</span> (tmp == old) &#123;<br>    *ptr = <span class="hljs-keyword">new</span>;  <span class="hljs-comment">// Store (conditionally)</span><br>  &#125;<br>  <span class="hljs-keyword">return</span> tmp;<br>&#125;<br></code></pre>
+<br>
+<ul>
+<li>
+<p>自旋锁的缺陷</p>
+<ul>
+<li>性能问题（1）
+<ul>
+<li>除了进入临界区的线程，其他处理器的线程都在自旋；</li>
+<li>争抢锁的处理器越多，其 CPU 利用率越低；</li>
+</ul>
+</li>
+<li>性能问题（2）
+<ul>
+<li>如果线程数量比 CPU 数量多，那么持有自旋锁的线程随时可能被操作系统切换出去！</li>
+<li>这样就真的没人在 work 了，实现 100% 资源浪费；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>对自旋锁提出质疑</p>
+<ul>
+<li>提出一个新的 <code>Benchmark</code>：<code>Scalability</code>
+<ul>
+<li>同一计算任务，时间与空间随着处理器数量的增长而变化的趋势；</li>
+<li>实际上，随着线程的增长，时间并没有随着并行程度的提高而减少
+<ul>
+<li>第一种可能的原因是自旋锁的性能下降；</li>
+<li>第二种可能是随着CPU之间的切换，数据也要从不同 <code>CPU</code> 之间的 L1 cache 中搬动，这也是需要时间的；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>自旋锁的使用场景比较狭窄
+<ul>
+<li>临界区最好不会“拥堵”，且持有自旋锁的过程中不要进行流切换
+<ul>
+<li>这也可以通过关中断的操作防止切换，但是这不能阻止其他 CPU 发生切换；</li>
+</ul>
+</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mstyle mathcolor="red"><mi mathvariant="normal">操</mi><mi mathvariant="normal">作</mi><mi mathvariant="normal">系</mi><mi mathvariant="normal">统</mi><mi mathvariant="normal">内</mi><mi mathvariant="normal">核</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">并</mi><mi mathvariant="normal">发</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">据</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">构</mi><mi mathvariant="normal">（</mi><mi mathvariant="normal">短</mi><mi mathvariant="normal">临</mi><mi mathvariant="normal">界</mi><mi mathvariant="normal">区</mi><mi mathvariant="normal">）</mi></mstyle></mrow><annotation encoding="application/x-tex">\color{red}操作系统内核的并发数据结构（短临界区）</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord cjk_fallback" style="color:red;">操</span><span class="mord cjk_fallback" style="color:red;">作</span><span class="mord cjk_fallback" style="color:red;">系</span><span class="mord cjk_fallback" style="color:red;">统</span><span class="mord cjk_fallback" style="color:red;">内</span><span class="mord cjk_fallback" style="color:red;">核</span><span class="mord cjk_fallback" style="color:red;">的</span><span class="mord cjk_fallback" style="color:red;">并</span><span class="mord cjk_fallback" style="color:red;">发</span><span class="mord cjk_fallback" style="color:red;">数</span><span class="mord cjk_fallback" style="color:red;">据</span><span class="mord cjk_fallback" style="color:red;">结</span><span class="mord cjk_fallback" style="color:red;">构</span><span class="mord cjk_fallback" style="color:red;">（</span><span class="mord cjk_fallback" style="color:red;">短</span><span class="mord cjk_fallback" style="color:red;">临</span><span class="mord cjk_fallback" style="color:red;">界</span><span class="mord cjk_fallback" style="color:red;">区</span><span class="mord cjk_fallback" style="color:red;">）</span></span></span></span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>实现线程+长临界区的互斥</p>
+<ul>
+<li>
+<p>当某个线程获得锁失败之后，希望将 CPU 资源转让给其他线程使用；</p>
+</li>
+<li>
+<p>C 代码做不到对于 CPU 内核的操作，只能通过系统调用实现！</p>
+<ul>
+<li><code>syscall(SYSCALL_lock, &amp;lk);</code> 试图获得锁，失败则切换</li>
+<li><code>syscall(SYSCALL_unlock, &amp;lk);</code> 释放锁，有等待则唤醒</li>
+</ul>
+</li>
+<li>
+<p>实际上还是利用自旋锁去保证并发的正确性；</p>
 </li>
 </ul>
 </li>
@@ -580,6 +686,20 @@
   </div>
 </article>
 <div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/09/04/ACM-Template/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">OI/ACM 模板库 </div>
+          
+        </div>
+      </a>
+    </div>
   
   
     <div class="nav-item-next">
@@ -660,7 +780,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>35</span>
+    <span>36</span>
     <span>文章</span>
   </a>
   <a 
@@ -726,17 +846,17 @@
   </div>
   <div class="categories-list">
     
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
       <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业学习
           <span class="categories-list-item-badge">18</span>
-        </div>
-      </a>
-    
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">8</span>
         </div>
       </a>
     
@@ -897,6 +1017,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-04</div>
+        <a href="/2023/09/04/ACM-Template/"><div class="recent-posts-item-content">OI/ACM 模板库</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-23</div>
         <a href="/2023/08/23/os-2/"><div class="recent-posts-item-content">Operating System Week2 - 并发视角的操作系统</div></a>
       </div>
@@ -909,11 +1034,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-08-11</div>
         <a href="/2023/08/11/Computer-Organization-and-Architecture-bus/"><div class="recent-posts-item-content">计算机组成原理：总线系统</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-08-07</div>
-        <a href="/2023/08/07/Computer-Organization-and-Architecture-VMemory/"><div class="recent-posts-item-content">计算机组成原理：虚拟内存</div></a>
       </div>
     
   </div>
