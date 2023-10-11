@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>大三小学期项目回顾【破事水</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="大三小学期项目回顾【破事水">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://turleing.github.io/2023/10/11/2023coursework/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;blockquote&gt;
+&lt;p&gt;搞竞赛的时候特别瞧不起做 web 开发的，现在接触了 &lt;code&gt;django&lt;/code&gt;、&lt;code&gt;spring boot&lt;/code&gt;，我改变了一些看法，很佩服搞出这些轮子的人，也不再认为 web 开发是个垃圾职业了。虽然我还是认为开发岗、尤其是前端岗，本身跟搬砖没什么区别。—— &lt;code&gt;IceBound&lt;/code&gt; 学长&lt;/p&gt;
+&lt;/blockquote&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2023-10-11">
+      <meta 
+        property="og:article:modified_time" 
+        content="2023-10-11">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="随笔">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      大三小学期项目回顾【破事水
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-10-11T11:13:54.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-10-11</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/" 
+          class="post-meta-link">
+          生活分享
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>5.9k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E9%9A%8F%E7%AC%94/" 
+            class="post-meta-link">
+            随笔
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <blockquote>
+<p>搞竞赛的时候特别瞧不起做 web 开发的，现在接触了 <code>django</code>、<code>spring boot</code>，我改变了一些看法，很佩服搞出这些轮子的人，也不再认为 web 开发是个垃圾职业了。虽然我还是认为开发岗、尤其是前端岗，本身跟搬砖没什么区别。—— <code>IceBound</code> 学长</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="一-序言"><a class="markdownIt-Anchor" href="#一-序言"></a> 一、序言</h2>
+<p>今天下午成果验收完毕，标志着长达四个月的小学期结束了。趁机会和朋友去新四吃了顿饭，简单庆祝了一下（应该请的，怎么还让人家A了），又整好提到了博客的事情。回来想了想，确实好久没写博客了（不是懒，真没时间 <s>但仔细想了想感觉还是因为懒</s>），趁着这么一件事情结束，就简单写几笔，记录一下这件不大不小的事情。</p>
+<p>当然，写这篇博客的灵感还是来自于前几届 <code>IceBound</code> 学长的博客，学长在他的博客里提及了很多学习经验的分享，这也让同专业的我十分受益。当年大一暑假的时候，一边在宿舍里抠脚趾、一边看学长的这篇 <a target="_blank" rel="noopener" href="https://icebound.cc/2019/09/26/2019coursework.html">2019小学期作业反思 | Icebound</a> 用着我从未接触过的高端框架、还大谈自己有多菜，心里除了羡慕还是羡慕。</p>
+<p>现在轮到我自己去写这样主题的博客，又重温了一遍学长写的内容，果然当年不会的东西还是不会。但即使愚笨如我，也能从小学期里面学到什么东西的吧。</p>
+<br>
+<h2 id="二-上半场"><a class="markdownIt-Anchor" href="#二-上半场"></a> 二、上半场</h2>
+<p>整个小学期是分两部分进行的，前半段是在大二下的期末后一礼拜，后半段是在大三上国庆那段时间。由于是三个专业（电商、电管、物联）随机组一个十人的队完成一个项目，所以如果运气好，能抱上一个大腿那就爽翻了，但这个还是得看脸。</p>
+<p>我们的项目是要求设计一个迷宫探索系统，简单来讲就是迷宫里面有一个宝藏，电管专业的要去设计一个智能车走迷宫，把宝藏的照片拍出来；物联要用物体识别技术（CV）识别出宝藏的类型，电商专业负责的是设计一个网站的前后端，把这些信息展示出来。我负责的内容就是网站。</p>
+<p>然后典中典之，我的两位队友不太懂代码这些的，虽然不太懂但人都很好，我做啥都很支持我）所以抱不到大腿的我打算搞一个“伪”全栈开发，努力成为一个小腿给我的队友抱。</p>
+<p>之所以说是“伪全栈”，是因为老师小学期教的前后端技术是 <code>Servlet+JSP</code>，基本上与时代脱节了。但由于之前看过 <code>IceBound</code> 学长的博客，这个信息我很早就知道，但为啥最后还是用了这么一个老掉牙的技术去做小学期，而不是转向更成熟更牛逼的 <code>SpringBoot+Vue</code> 呢？理由当然也只有一个，那就是我懒的学）主要以后的方向还是想做 AI 相关的工作，前后端的知识虽然对码农很重要，但你要我真花时间系统性地学一遍我是坐不住的。</p>
+<p>总言而之，听了老师讲了两节（90分钟）满满的前后端干货之后，我就开始了狠狠的自学+实践之旅，到了小学期结束的时候还算是成功搞了一个还算能看的东西出来。</p>
+<br>
+<h3 id="11-前端"><a class="markdownIt-Anchor" href="#11-前端"></a> 1.1 前端</h3>
+<p>看 Icebound 学长前端用的是 Bootstrap 框架，我如法炮制也尝试了一下，结果发现这玩意儿是真的香。首先最重要的就是，他是基于 HTML / CSS / little JS 实现的，这表明了它背后的技术很简单，不用像 <code>vue</code> 一样，即使是速成也得耐下心思读一堆手册和语法。</p>
+<p>除此之外，Bootstrap 的网格排版非常舒服。他将页面划分成十二栏，你排版的宽度是取决于你分配多少栏位给他的，这样就保证了当你拉伸网页的时候，由于栏的长度也会动态变化，页面里面的组件就可以做到自适应的拉伸，它的整体布局就不会发生改变。 <s>哎呀我也讲不清楚，反正很牛逼就是了！</s></p>
+<p>然后 Icebound 学长在总结反思的时候，提到了他们小组的前端比较烂，所以老师不太喜欢，给打了低分。所以确定是使用 Bootstrap 搭前端之后我做的第一件事，就是全网搜罗好看的前端模板，没想到真给我找到了一个叫做 <code>&quot;Start BootStrap&quot;</code> 的东西，这玩意儿就像他的首字母缩写一样，完全就是傻瓜式前端搭建，非常之无脑，只要你能忍受 <code>ctrl+CV</code> 的痛苦，基本上都可以搭出来一个还算好看的东西。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="/../2023coursework/image-20231011195452211.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">最终网站的主页展示</div>
+</center>
+<p><br>/…/2023coursework/image-20231011203004749.png</p>
+<p><strong>哦对了还有，之所以说是伪前端，还因为这个 JSP 根本就不能说是在写前端。</strong> 由于你可以在里面掺杂乱起八糟的 JAVA 代码，所以这个网站的前端和后端就像口香糖沾到鞋底一样分离不开，但由于我是单人小学期玩家，所以即使没有完全分离也没有影响游戏体验，不如说当你发现你可以在前端天马星空地写后端代码，这种感觉真是令人舒畅啊（不是</p>
+<p>总体看来，写前端的时候没遇上什么大麻烦，即使有什么麻烦 GPT 也帮我解决了，难以想象几年前没有 GPT 的时代大学生是怎么完成他们的小学期的）</p>
+<p>还有一件小事，我在学长的博客里面看见他提到了 “模板引擎” 之类的字眼，但本人没接触过 <code>react、vue</code> 之类的技术，如果有读者能言简意赅地在评论区解释一下，鄙人感激不尽）</p>
+<br>
+<h3 id="12-后端"><a class="markdownIt-Anchor" href="#12-后端"></a> 1.2 后端</h3>
+<p>后端用的是 Servlet，有一说一我用下来感觉 Servlet 真不复杂，把几个层一分就清清楚楚，反观还是 <code>SpringBoot</code> 一堆乱起八糟的注解和映射才让人头大吧（暴论 <s>感觉以后会被打脸。</s></p>
+<p>这地方还是得夸两句的，我觉得信息黄埔这个名号含金量还是有的，至少从小学期老师教的内容上来看真不差。虽说是过时几百年的老技术，但是比起技术本身，老师的教学内容更多放在了 “思考方式” 这个方面。老话说得好，“计算机世界的本质就是抽象，一层抽象不够就再加一层”， 这个后端分层的想法我觉得也多多少少借鉴了一点。</p>
+<p>在小学期项目的后端框架中我设计了四层，我们自上而下地看。首先最顶层是 <code>Servlet</code> 层，它直接负责了与页面（HTTP 请求）的交互。当渲染一个网页时，他会向后端调用 <code>doGet</code> 方法，将一些必要的元素（比如用户昵称，探索总次数等）递交至前端展示；当提交表单时（修改密码，发起一次探索请求），会调用 <code>doPost</code> 方法，执行另一套逻辑。</p>
+<p>其次是 <code>Service</code> 层，借助下层 DAO 层提供的接口，为上层 Servlet 提供服务。但其实绝大多数服务都是偷懒直接在 Servlet 层调用 DAO 接口实现的，只有几个逻辑稍显复杂的，出于代码美观的目的做了封装，例如用户登录注册、密码修改。 <s>（笑死，根本没人看代码）</s></p>
+<p>而所谓 DAO 层，全称 Data Access Object，即负责与数据库进行交互，并提供对数据的增删改查操作。这个 DAO 层还是挺重要的，我几乎对于每一张数据库里的表都写了增改查的方法。一开始用老师教的办法写，一个个操作都得手动赋值，写的非常痛苦。然后遛其他人的博客，发现了一个叫做 <code>Dbutils</code> 的工具包，可以方便地对数据库访问的语句做封装，整理之后才发现舒服多了。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="/../2023coursework/image-20231011203004749.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">DAO 层中实现用户插入的方法</div>
+</center>
+<br>
+<p>还有一层是独立于其他三层的 VO/DTO 层，其实就是对代码中用到的类（如用户类、探索类、迷宫类等）做了数据封装，他们有人说如果用 JSP 做前端的话，VO 层用 JavaBean 做一层封装会方便许多（可以使用 <code>&lt;jsp:useBean&gt;</code> 的标签等等），但是额哥们儿直接用 Java 硬钢上去了，感觉也还行，就没管这些个花里胡哨的东西。</p>
+<p><code>IceBound</code> 学长在博客里说，这种分层没卵用，Debug 还是从下改到上。但我个人觉得分层这种思想还是很有用的，只要你能保证底层代码不出错，提供的 API 都正常运行，那你在抽象层面上改你上一层的代码，这种体验还是很爽的。有一种从打地基开始、然后搬砖垒墙、最后大厦建成的快感（？</p>
+<p>最后一层也不能算层了，Util 属于是一种辅助的工具包。我模仿学长搞了一个什么阿里的数据连接池、MD5 数据库加密，那个连接池感觉挺有用的，进一步优化了我的DAO层代码，但 MD5 数据库加密纯粹是自我陶醉，不仅没啥卵用而且还导致我忘了密码都不知道怎么查（还得找网站做解码</p>
+<br>
+<h3 id="13-中期验收"><a class="markdownIt-Anchor" href="#13-中期验收"></a> 1.3 中期验收</h3>
+<p>这部分本来感觉从技术层面也没啥讲，但这个博客本质上还是生活分享类的，所以也讲讲所谓的琐事。给我们做中期验收的女老师就是我上文夸的那位，人非常好，当时她一整天都在沙河给我们上课，从早八讲到中午十一点半，吃了个午饭又从下午开始讲课讲到三四点。说是平常不看QQ，但我们有啥问题找她基本上都能即时回复。</p>
+<p>可能因为我是一边做一边有问题去问她，老师对我做的东西还挺看好的（但其实本质上就是她讲的那些内容，加了一些花里胡哨的小玩意），最后验收的时候还点名让我到她跟前去验收。要知道一般的组都是找一个助教水一水就过去了，所以那位老师这么关心我，整的我还是挺感动的。</p>
+<p>验收是当天上午，八九点就在那里排队等着验收了。我就在哪里叨逼叨，疯狂扣我做的细节在那里扯，然后老师从一些非常宏观的角度问了几个问题，把我问倒了：</p>
+<ul>
+<li>
+<p>当我在解释用户注册的逻辑时，由于我们是机器人走迷宫的系统，要求在注册用户的时候也得注册一个隶属于该用户的机器人。我跟老师讲，我们是先注册一个用户，然后得到了他的用户ID后，再单独在机器人的表中注册一个机器人。那老师就问：“那假设在注册机器人的时候，你的服务器Crash Down了，怎么办？” 我心里一想，我草对啊，如果机器人没注册成功，那你注册用户的操作也得回滚啊！</p>
+<p>之后我在博客里搜了搜，发现 MySQL 确实是支持把两个操作绑在一起，作为一个事务执行的，而事务具有原子性，所以这样就能解决老师提出的问题。但是我太菜了，没弄懂。</p>
+</li>
+<li>
+<p>我提到用户的功能时，说我们网页支持用户注销，但其实就是把网页重定向到 <code>LoginPage</code>，然后老师就眼尖地说，那你返回上一个网页看看，结果发现还能回到之前用户的页面，这下又烂完。</p>
+</li>
+</ul>
+<p>唉反正除了这两个问题，验收还算是比较顺利的，唉我猜的，我也不知道行不行。但是老师人真的挺好的，按理说上完期末的小学期之后老师就不用管我们了，但是之后国庆我找老师问问题，老师还愿意耐心地跟我探讨这个可行性，这让我觉得挺开心的，如果老师教的是 <code>SpringBoot</code> 我将称之为绝杀，可惜教不得。</p>
+<br>
+<h2 id="三-下半场"><a class="markdownIt-Anchor" href="#三-下半场"></a> 三、下半场</h2>
+<p>按道理小学期到这里，我负责的部分已经写完了，那应该也结束了，但是更痛苦的是你还得负责和电管的小车、物联的物体识别算法对接，，，对接永远是最哈人的事情，因为每个组对于各自的知识都存在一定壁垒，如果不太清楚自己的需求以及对方的能力，很容易就能吵起来）至少我已经看到有些组就在互相甩锅的了。</p>
+<p>但平心而论、我们三个专业的真还行。电商就不用说了，我一个人杀穿小学期，其他两个专业有啥问题找我就行，可惜的是出了问题不能甩锅给别人，这一点有些难受；物联的是训一个图像分类模型，他那个可以调预训练模型，而且也就十几行代码，感觉有点水，没想到的是他们组也觉得自己有点水；电管我草，一组全是爹，天天跑学八地下室，顶着潮湿闷热的空气、蹲着看小车跑迷宫，或许有夸大之成分，但不可置否，他们做的工作确实最多，因此小学期主要也是他们专业的在推进度。</p>
+<p><s>辟谣，物联的代码不止十几行）最后验收他们的PPT展示的代码挺多的，每天蹲电脑前等着模型训出来也不容易，这下那个专业最摆一目了然了。</s></p>
+<p>我是快国庆的时候被找上门来的，当时终于要对接了，他们就问我电商怎么一个对接法。我说那我写一个网页，你们开始探索迷宫了我就摁一下开关，结束探索我在摁一下记录到数据里面；图片的话你们看看能不能直接传我本地，我直接读本地的照片展示就行。</p>
+<p>电管的叠又问我能不能做实时地图，他们能给我提供三个方位的距离传感器。我心想你给这玩意儿让我咋算啊，然后就说我尽力而为。过了几天他又过来追问一遍，我就摆明了跟他说我不会搞，我顶多写一个能接收照片的页面完事儿了。没想到的是过了一天，他又来问我说这个地图是不是算分的，能不能努力做一下，整的我这个血压陡增啊。我都说了我不会搞了，咋还天天吊打我。为了说明这个东西不是我菜所以做不了的，我把问题还问了老师，老师听完问题也沉思了十分钟，之后跟我说很难实现。那位大哥这才作罢。</p>
+<p>其实事后想一想，如果能给我提供坐标信息而不是距离信息的话，或许还是可以做一做的，但当时确实就是懒了，所以也没问他这回事情。后来验收的当天上午看到有的组通过坐标信息实现了实时地图，搞得我还是蛮尴尬的，总感觉是这次小学期的一个小缺憾。</p>
+<p>说这个事儿其实目的是想说，这个不同专业的壁垒确实是存在的，所以交流的时候尽量多找找该专业的其他同学，多交流交流，有问题多问问其他同学了解实际情况，明辨是非（？</p>
+<br>
+<h3 id="21-电商对接"><a class="markdownIt-Anchor" href="#21-电商对接"></a> 2.1 电商对接</h3>
+<p>由于每个专业的对接我都掺和了一点，所以都可以在博客里面聊聊（即使现在已经 4.5k 字了）。电商这个网页就没啥说的了，比较手工：首先选择好迷宫的类型，等到电管的小车在放下去探索迷宫的时候，摁下 “开始探索” 的按钮。</p>
+<p>然后我写了一个自动化的脚本，具体是干什么的之后再聊，反正这个脚本最终可以把拍摄到的宝藏以及对应的类型返回到本地的文件夹，然后我刷新一下资源（很关键！），再刷新一下网页，就可以显示在页面上。但这个页面比较丑，就不展示给大家看了））之后只需要摁一下 “结束探索” 的按钮，就可以把数据插入到对应的数据库中，也是比较基础的操作。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="/../2023coursework/image-20231011223119451.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">“启动探索”界面</div>
+</center>
+<br>
+<h3 id="22-电管对接"><a class="markdownIt-Anchor" href="#22-电管对接"></a> 2.2 电管对接</h3>
+<p>电管各组的小车尽不相同，我就聊聊我们组的情况。实时地图的事情之前讲过了，确实没想明白其他组是怎么实现坐标信息的（因为你连初始坐标也不知道吧）。但是听说为了让小车能正常走完迷宫而不被卡住，来来回回调了很多次参数，包括摄像头模块、WIFI模块都非常折磨人，这一点还是很感谢电管同学的付出的。</p>
+<p>最后为了实现探索迷宫的自动化，我们采用了将图片发送至网页，并且借助爬虫工具将照片爬取至本地的方法。爬虫工具也是电管哪个大叠写的，改了他的代码还被骂了一顿））但当日验收的时候WIFI模块和爬虫都没有爆炸，谢天谢地。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="/../2023coursework/image-20231011224303645.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">咱们组的小车</div>
+</center>
+<br>
+<h3 id="23-物联对接"><a class="markdownIt-Anchor" href="#23-物联对接"></a> 2.3 物联对接</h3>
+<p>由于对机器学习的部分略知一二，因此对物联的工作更感兴趣一些。实际和物联的同学打过交道才发现，一个个都是真的爹啊。</p>
+<p>事情是这样的，验收前一天晚上我们打算把原来的手动拍照改成自动拍照了，这就引发了一个问题：因为是每隔 0.5s 爬取一张照片，那么实际包含宝藏的照片肯定很少，大部分估计都是墙壁的照片。那么墙壁的照片会不会被误识别呢？</p>
+<p>我们首先找电管的人要了一组小车实际运行过程中的照片，确实如我们所想的一样，140张照片中120张都是墙，只有20张是魔方。我们直接拿原来的模型训了一下，发现墙的照片会有10%的几率被误识别成 book 类别，但即使是如此小的误识别率在极大的基数下也会出现 15~20 张误判的照片，而实际被识别成魔方的只有 11 张，这下烂完了。</p>
+<p>那得想办法啊，我一开始的想法是再额外训一个类别叫 wall，然后把这一伯张照片丢进去训练，物联的大叠立刻否定了这个提案：首先你这个照片的数量太少了，正常训练集都是要 1k 左右的数据量的；其次你这些照片都没有做过标注，都用不了。</p>
+<p>之后物联大叠的室友给出一个方案：把wall作为空标签训练，这样不用标注，看到 wall 这种样子的照片就直接屏蔽掉，因为也不用作为一个标签，用不到那样子程度的训练集。我们觉得这个方法可以，连夜开始加练模型，两位大叠训到 2 点多，训出了三版新的模型。用新模型测试发现，墙被误识别的概率极大地降低了。</p>
+<center> 
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);
+    width:80%" 
+    src="/../2023coursework/image-20231011230156559.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">验收前一晚，物联组展开的工作</div>
+</center>
+<br>
+<h3 id="23-终期验收"><a class="markdownIt-Anchor" href="#23-终期验收"></a> 2.3 终期验收</h3>
+<p>之后验收部分也就可以几笔带过了，当天的心情确实还挺紧张的，但更多地还是兴奋吧，准备了一点稿子，但最后居然还是脱稿讲的多，<s>感觉口语确实还得练，讲得超过五分钟嘴就开始瓢得不知道再说什么单词了</s>。</p>
+<p>我们组一开始就展示了小车探索迷宫的功能，博主是一个猪鼻，第一次没连上小车WIFI模块发送的网络，连到 BUPT-portal 去了）但是第一次探索失败后我立马切到了探索展示的页面，并向老师展示了即使因为某些不可抗性因素没有找到宝藏，我们也能在对应的区域输出 “Treasure Not Found!” 的异常处理，应该还是挽回了一些颜面（我猜的</p>
+<p>实物展示后就是 PPT 朗读环节，我做了四页纸 PPT，但是我又觉得读 PPT 太无聊了，“Talk is Cheap, show me the Website!” 本着这样的想法，我直接打开网页给老师展示我们实现的各种功能，并且像中期验收一样接着给老师抠细节））结果这一抠不要紧，把我们组的展示时间抠没了，此时物联的还没做展示呢……</p>
+<p>然后又挤占了一些时间，让物联的同学把他们的内容展示完，此时老师也没时间问问题了，随便问了问物联训练集的大小之类的问题，验收就结束了。老师人挺好的，我们在配环境的时候也在耐心等我们，结束的时候还夸我们组做的挺好的）</p>
+<p>总之，结束啦！</p>
+<br>
+<h2 id="四-后记"><a class="markdownIt-Anchor" href="#四-后记"></a> 四、后记</h2>
+<p>感觉后记也没啥说得了，这博客都六千多字，有些哈人））应该收手了。刚开头没想好自己在小学期里学了啥，现在回顾了一遍全流程，感觉除了一些过时的前后端技术以外，还是下半场各个专业对接的时候更让人激动吧。感觉我们组真的有不少大叠，和大叠交流总是让人愉快的。</p>
+<p>感觉虽然在组织上大大小小也出现了一系列问题，但是这种小学期的形式还是挺有意思的：让不同专业的同学在一起，各司其职地完成工作，最后汇总到一起真正做出一个还能看的东西，成就感也多多少少会有一点。</p>
+<p>嘛，小学期结束了，接下来又会有其他乱七八糟的事情，将本就贫瘠的本科生活冲刷得粉碎吧。从学习中汲取营养、而非向学习输血的日子，又可以在哪里寻求呢？</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://turleing.github.io/2023/10/11/2023coursework/">
+            https://turleing.github.io/2023/10/11/2023coursework/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/04/ACM-Template/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">OI/ACM 模板库 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BA%8F%E8%A8%80"><span class="toc-text"> 一、序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%B8%8A%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 二、上半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%89%8D%E7%AB%AF"><span class="toc-text"> 1.1 前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E5%90%8E%E7%AB%AF"><span class="toc-text"> 1.2 后端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E4%B8%AD%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 1.3 中期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%8B%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 三、下半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E7%94%B5%E5%95%86%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.1 电商对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E7%94%B5%E7%AE%A1%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.2 电管对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%89%A9%E8%81%94%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.3 物联对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%BB%88%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 2.3 终期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%90%8E%E8%AE%B0"><span class="toc-text"> 四、后记</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>37</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>23</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BA%8F%E8%A8%80"><span class="toc-text"> 一、序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%B8%8A%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 二、上半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%89%8D%E7%AB%AF"><span class="toc-text"> 1.1 前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E5%90%8E%E7%AB%AF"><span class="toc-text"> 1.2 后端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E4%B8%AD%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 1.3 中期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%8B%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 三、下半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E7%94%B5%E5%95%86%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.1 电商对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E7%94%B5%E7%AE%A1%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.2 电管对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%89%A9%E8%81%94%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.3 物联对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%BB%88%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 2.3 终期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%90%8E%E8%AE%B0"><span class="toc-text"> 四、后记</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          机器学习
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" 
+        title="数据结构">
+        <div class="tags-list-item">数据结构</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" 
+        title="机器学习">
+        <div class="tags-list-item">机器学习</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9E%84%E9%80%A0/" 
+        title="构造">
+        <div class="tags-list-item">构造</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BA%8F%E8%A8%80"><span class="toc-text"> 一、序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%B8%8A%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 二、上半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%89%8D%E7%AB%AF"><span class="toc-text"> 1.1 前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E5%90%8E%E7%AB%AF"><span class="toc-text"> 1.2 后端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E4%B8%AD%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 1.3 中期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%B8%8B%E5%8D%8A%E5%9C%BA"><span class="toc-text"> 三、下半场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E7%94%B5%E5%95%86%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.1 电商对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E7%94%B5%E7%AE%A1%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.2 电管对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%89%A9%E8%81%94%E5%AF%B9%E6%8E%A5"><span class="toc-text"> 2.3 物联对接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%BB%88%E6%9C%9F%E9%AA%8C%E6%94%B6"><span class="toc-text"> 2.3 终期验收</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%90%8E%E8%AE%B0"><span class="toc-text"> 四、后记</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-10-11</div>
+        <a href="/2023/10/11/2023coursework/"><div class="recent-posts-item-content">大三小学期项目回顾【破事水</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-04</div>
+        <a href="/2023/09/04/ACM-Template/"><div class="recent-posts-item-content">OI/ACM 模板库</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-23</div>
+        <a href="/2023/08/23/os-2/"><div class="recent-posts-item-content">Operating System Week2 - 并发视角的操作系统</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-14</div>
+        <a href="/2023/08/14/os-1/"><div class="recent-posts-item-content">Operating System Week1 - 应用视角的操作系统</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2023
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
