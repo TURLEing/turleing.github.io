@@ -401,7 +401,7 @@
 <h2 id="改进尝试"><a class="markdownIt-Anchor" href="#改进尝试"></a> 改进尝试：</h2>
 <h3 id="1-思想简述"><a class="markdownIt-Anchor" href="#1-思想简述"></a> 1. 思想简述</h3>
 <p>笔者在阅读论文的过程中，注意到论文作者给出的推理样例如下：<br />
-<img src="image-20230723161838532.png" alt="image-20230723161838532" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230723161838532.png" class="lozad post-image"></p>
+<img src="table1.png" alt="image-20230723161838532" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="table1.png" class="lozad post-image"></p>
 <br>
 <p>从样例中可以看出，PETER 模型确实可以通过生成 Context 与 Explanation，为 <code>User-Item</code> 的 Token 对赋予语义学信息，并能根据 ID 信息实现一定程度的个性化（参考样例中的下划线特征）。</p>
 <p>然而笔者发现，在 “Context Prediction” 任务中，大量的预测词汇不具有实际含义，例如 the, and, a…… 这些词频繁地出现在语料中，才以较高的概率成为被预测的上下文。但是这种预测显然不符合 “赋予 ID 以语义学信息” 的任务目的。</p>
@@ -429,7 +429,7 @@
 <br>
 <h3 id="3-实验结果"><a class="markdownIt-Anchor" href="#3-实验结果"></a> 3. 实验结果</h3>
 <p>笔者将改进后的模型记为 PETERF（虽然模型结构本身没有改变，只是在训练方法上做了调整），并将其与原模型进行对比。各项指标对比如下：</p>
-<p><img src="image-20230724223205321.png" alt="image-20230724223205321" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20230724223205321.png" class="lozad post-image"></p>
+<p><img src="table2.png" alt="image-20230724223205321" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="table2.png" class="lozad post-image"></p>
 <br>
 <p>如图可知，绝大多数指标有所提升，说明笔者的改进方法确实有利于模型训练。<s>但笔者无法解释各项指标所对应的含义，所以也无法向读者说明改进方法具体从哪些方向改善了模型。</s></p>
 <p>此外，尽管各指标均有所提升，但提升幅度极小，所以这项改进工作也可忽略不计。<s>但这项任务本来就是笔者灵光乍现所尝试的，不确定是否具有实际意义。</s></p>
@@ -629,17 +629,17 @@
         </div>
       </a>
     
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">9</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业学习
           <span class="categories-list-item-badge">19</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">9</span>
         </div>
       </a>
     
