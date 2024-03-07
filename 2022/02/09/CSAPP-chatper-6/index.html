@@ -306,7 +306,7 @@
 <h2 id="一-局部性"><a class="markdownIt-Anchor" href="#一-局部性"></a> 一。局部性</h2>
 <p>局部性指一个程序倾向于引用 <strong>临近于最近引用过的数据项</strong> 的数据项。局部性分为时间局部性和空间局部性。在 <strong>时间局部性</strong> 中，被引用过一次的内存位置在不久的将来会被多次引用；在 <strong>空间局部性</strong> 中，若一个内存被引用一次，那么程序在不久的将来会引用附件的内存位置。</p>
 <p>对于以下的代码片段：</p>
-<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sumv</span><span class="hljs-params">(<span class="hljs-keyword">int</span> *v)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> i, sum = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++) sum += v[i];<br>    <span class="hljs-keyword">return</span> sum;<br>&#125;<br></code></pre>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sumv</span><span class="hljs-params">(<span class="hljs-type">int</span> *v)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">int</span> i, sum = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++) sum += v[i];<br>    <span class="hljs-keyword">return</span> sum;<br>&#125;<br></code></pre>
 <p>该程序片段具有良好的空间局部性，因为它每次顺序访问数组中下一个元素，我们称其具有 <strong>步长为 1 的引用模式</strong>。若将 <code>i++</code> 改为 <code>i+=k</code>，我们称作 “步长为 k”。随着步长增加，空间局部性下降。</p>
 <p>对于二维嵌套数组，如果按照行优先顺序读元素的话能具有良好的空间局部性，但按照列顺序扫描的话会导致其步长为 N，使得程序效率降低。</p>
 <h2 id="二-缓存"><a class="markdownIt-Anchor" href="#二-缓存"></a> 二。缓存</h2>
