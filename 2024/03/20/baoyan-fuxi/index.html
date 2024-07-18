@@ -49,7 +49,7 @@
         content="2024-03-20">
       <meta 
         property="og:article:modified_time" 
-        content="2024-05-13">
+        content="2024-07-18">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -299,7 +299,7 @@
     
     
       <span class="dot"></span>
-      <span>1.9k 字</span>
+      <span>2.2k 字</span>
     
   </div>
   
@@ -354,6 +354,13 @@
 <p>这题唉其实一点儿也不难，纯粹是脑子浆糊了，结果第二遍过的时候发现还是不会，感觉有点傻逼，记录一下。</p>
 <p>首先开一个像是集合的东西去维护划分的组，把所有区间按左端点排序后依次往后扫，如果发现当前线段的左端点比现有集合中的右边界要大，则利用该线段的右端点去刷新边界；如果发现集合中所有的右边界都大于左端点（即相交），则贪心地往集合中加入一个元素（表示一个新的划分组）。</p>
 <p>具体实现中，可以用小根堆去维护，方便时刻取出最小的右边界判断是否可以更新（其实也是利用了贪心的思想）。</p>
+<br>
+<h3 id="7-接雨水-力扣"><a class="markdownIt-Anchor" href="#7-接雨水-力扣"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/trapping-rain-water/">7. 接雨水 - 力扣</a></h3>
+<p>给定 <code>n</code> 个非负整数表示每个宽度为 <code>1</code> 的柱子的高度图，计算按此排列的柱子在下雨之后能接多少雨水。</p>
+<h4 id="分析-7"><a class="markdownIt-Anchor" href="#分析-7"></a> 分析：</h4>
+<p>这个题本质上就是，每处位置水槽的高度是由左右两个区间中最高点的较小值决定的。我一开始的想法是维护一个 <code>st</code> 表，查询左右区间的最大值，然后取较小者就行了。但这个时间复杂度是 <code>O(nlogn)</code>，表现不太优秀。</p>
+<p>然后就到了力扣民最喜欢的双指针环节。我们设左右端点的指针为 <code>left</code> 和 <code>right</code>，左区间最大高度值为 <code>leftMax</code>，右区间最大高度值为 <code>rightMax</code>，这样我们就可以从两侧向中间收缩。</p>
+<p>当两个指针没有相遇时，执行以下操作：如果 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mo stretchy="false">[</mo><mi>l</mi><mi>e</mi><mi>f</mi><mi>t</mi><mo stretchy="false">]</mo><mo>&lt;</mo><mi>h</mi><mo stretchy="false">[</mo><mi>r</mi><mi>i</mi><mi>g</mi><mi>h</mi><mi>t</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">h[left]&lt;h[right]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">h</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">h</span><span class="mord mathdefault">t</span><span class="mclose">]</span></span></span></span>，则必有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>l</mi><mi>e</mi><mi>f</mi><mi>t</mi><mi>M</mi><mi>a</mi><mi>x</mi><mo>&lt;</mo><mi>r</mi><mi>i</mi><mi>g</mi><mi>h</mi><mi>t</mi><mi>M</mi><mi>a</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">leftMax&lt;rightMax</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">h</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span></span></span></span>，下标 <code>left</code> 处能接的雨水量等于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>l</mi><mi>e</mi><mi>f</mi><mi>t</mi><mi>M</mi><mi>a</mi><mi>x</mi><mi mathvariant="normal">−</mi><mi>h</mi><mo stretchy="false">[</mo><mi>l</mi><mi>e</mi><mi>f</mi><mi>t</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">leftMax−h[left]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mord">−</span><span class="mord mathdefault">h</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">t</span><span class="mclose">]</span></span></span></span>，右侧同理。</p>
 
   </div>
   <div>
@@ -446,7 +453,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8E%A5%E9%9B%A8%E6%B0%B4-%E5%8A%9B%E6%89%A3"><span class="toc-text"> 7. 接雨水 - 力扣</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -514,7 +521,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8E%A5%E9%9B%A8%E6%B0%B4-%E5%8A%9B%E6%89%A3"><span class="toc-text"> 7. 接雨水 - 力扣</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -579,57 +586,21 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/%E9%9A%8F%E7%AC%94/" 
-        title="随笔">
-        <div class="tags-list-item">随笔</div>
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
       </a>
     
       <a 
-        href="/tags/Trie%E6%A0%91/" 
-        title="Trie树">
-        <div class="tags-list-item">Trie树</div>
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
       </a>
     
       <a 
-        href="/tags/%E6%95%B0%E8%AE%BA/" 
-        title="数论">
-        <div class="tags-list-item">数论</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%BB%E5%B8%AD%E6%A0%91/" 
-        title="主席树">
-        <div class="tags-list-item">主席树</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" 
-        title="动态规划">
-        <div class="tags-list-item">动态规划</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%80%9D%E7%BB%B4/" 
-        title="思维">
-        <div class="tags-list-item">思维</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%A0%91%E4%B8%8A%E5%90%AF%E5%8F%91%E5%BC%8F%E5%90%88%E5%B9%B6/" 
-        title="树上启发式合并">
-        <div class="tags-list-item">树上启发式合并</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%BC%A9%E7%82%B9/" 
-        title="缩点">
-        <div class="tags-list-item">缩点</div>
-      </a>
-    
-      <a 
-        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
-        title="生成函数入门">
-        <div class="tags-list-item">生成函数入门</div>
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
       </a>
     
       <a 
@@ -639,21 +610,39 @@
       </a>
     
       <a 
-        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
-        title="网络流">
-        <div class="tags-list-item">网络流</div>
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
       </a>
     
       <a 
-        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
-        title="树形DP">
-        <div class="tags-list-item">树形DP</div>
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
-        title="线性DP">
-        <div class="tags-list-item">线性DP</div>
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
       <a 
@@ -663,15 +652,33 @@
       </a>
     
       <a 
-        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
-        title="计算机组成原理">
-        <div class="tags-list-item">计算机组成原理</div>
+        href="/tags/%E7%BA%BF%E6%80%A7DP/" 
+        title="线性DP">
+        <div class="tags-list-item">线性DP</div>
       </a>
     
       <a 
-        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
+        href="/tags/%E6%A0%91%E5%BD%A2DP/" 
+        title="树形DP">
+        <div class="tags-list-item">树形DP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%81/" 
+        title="网络流">
+        <div class="tags-list-item">网络流</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%E5%85%A5%E9%97%A8/" 
+        title="生成函数入门">
+        <div class="tags-list-item">生成函数入门</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BC%A9%E7%82%B9/" 
+        title="缩点">
+        <div class="tags-list-item">缩点</div>
       </a>
     
   </div>
@@ -692,7 +699,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 多重背包问题（单调队列优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%AC%ACk%E5%A4%A7%E6%95%B0%E5%BF%AB%E6%8E%92"><span class="toc-text"> 2. 第k大数（快排） </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-2"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97lis"><span class="toc-text"> 3. 最长上升子序列（LIS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-3"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B4%E6%95%B0%E5%88%92%E5%88%86dp%E7%8A%B6%E6%80%81%E6%9E%84%E9%80%A0"><span class="toc-text"> 4. 整数划分（DP状态构造）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-4"><span class="toc-text"> 分析：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="toc-text"> 代码：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E7%B1%B3%E8%AF%BA%E5%88%92%E5%88%86%E7%8A%B6%E5%8E%8B"><span class="toc-text"> 5.  多米诺划分（状压）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-5"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8C%BA%E9%97%B4%E5%88%86%E7%BB%84%E6%A8%A1%E6%8B%9F%E8%B4%AA%E5%BF%83"><span class="toc-text"> 6. 区间分组（模拟+贪心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-6"><span class="toc-text"> 分析：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8E%A5%E9%9B%A8%E6%B0%B4-%E5%8A%9B%E6%89%A3"><span class="toc-text"> 7. 接雨水 - 力扣</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%9E%90-7"><span class="toc-text"> 分析：</span></a></li></ol></li></ol>
     </article>
   
   
