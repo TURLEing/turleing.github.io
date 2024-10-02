@@ -45,7 +45,7 @@
         content="2024-10-01">
       <meta 
         property="og:article:modified_time" 
-        content="2024-10-02">
+        content="2024-10-03">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -299,7 +299,7 @@
     
     
       <span class="dot"></span>
-      <span>6.5k 字</span>
+      <span>7.1k 字</span>
     
   </div>
   
@@ -407,21 +407,39 @@
 <p>于是，恐怖的一周开始了。</p>
 <p><img src="image-20241002221516816.png" alt="image-20241002221516816" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20241002221516816.png" class="lozad post-image"></p>
 <h2 id="第三章-死亡-追求-多巴胺"><a class="markdownIt-Anchor" href="#第三章-死亡-追求-多巴胺"></a> 第三章  死亡、追求、多巴胺</h2>
-<p>2324年的7月7日至15日，龟度过了大学三年以来最为充实的一周暑假。他在一周之内连续完成了两个夏令营（北邮ai院和浙大软件学院）的考核。时至今日，龟都无法回忆起来这一周他究竟是如何度过的。</p>
-<p>没办法啊，那开看吧。于是一晚上看论文去了。于是恐怖的一周开始了。<br />
-我大概是花了一天半的时间弄明白这两个工作讲了怎么个事儿。就是在多模态工作中要把不同模态的知识映射到同一个空间中，a论文提出了一个损失函数，b论文提出了对抗学习方法。其中这个对抗学习方法，我以前只是听过有GAN这么一回事，结果他让我在一个礼拜内复现一个出来，我：？？？<br />
-打开代码，我突然发现其实我还不会pytorch，我：？？？<br />
-那咋办啊，学吧！于是我参考他给的论文，速通了一下模型训练需要哪些个组件，然后怎么写模型，怎么调用损失函数这类的，陆陆续续花了我好几天。结果论文复现还是没搞明白。真想死了。<br />
-关键是我没有什么人能讨论，我同学肯定不现实了，我认识ai院有水平的除了实验室带我的学长也只有rua宝了。于是厚脸皮找rua宝，问他能不能帮帮忙，他喊我去他宿舍。他们宿舍空调还坏了，rua赤裸上身窝在床上，很涩。我两三句话给他讲了一下论文算法，然后给他把我写的代码又讲了一遍。感觉他听懂了，并且他也大受震撼。<br />
-在他的操作下，试了些神秘的训练技巧（好像有一次效果真挺好，但是忘了怎么调出来的了）。最后在和他的讨论中，我突然自己想出来模型的一种写法了。当时觉得自己贼牛逼，rua也觉得我很牛逼，但后来感觉那个策略就纯jb是错的……<br />
-当时按照那个方法调了几个模型，效果很烂。但没办法啊，时间来不及了，只能开写论文阅读报告以及实验报告。 当时就一边写报告，一边训模型，希望模型结果能更好一点。<br />
-反正最后报告写完了，模型一直训得像坨史，很难受。当时最后一天就要交了，我实在受不了，只能又去找了实习带我的学长，虚心下跪请求帮帮忙。但人家对这个也不熟啊，所以他就针对我报告里写的东西，给了我几点建议，其中有一条是让我再关注一下损失函数和论文中的是否一致。我仔细一想，确实不太一致，这给我整慌了，连忙改了重训模型。结果发现我草，还真的有用！虽然结果还是史，但这个史至少看上去没有那么烂了，只能说和原模型“具有竞争力”。<br />
-只能说训模型方面的经验还是少了，很多坑都踩得比较青涩。但这也是我在一个礼拜内能搞出来最好的东西了。这一个礼拜我几乎没干什么事，一天至少有十个小时在做这个论文复现，只能说，唉……真想先有个offer，想至少有个学上。<br />
-其实这周一二的时候，浙软夏令营那边也发来了考核通知，并且还挺亲民：他给了一个论文的列表（大概有十二个吧），要求从里边选任意篇阅读，并做一个十分钟的论文阅读答辩。这个贼长的论文清单看似很可怕，但其实你考虑到汇报只有十分钟，那其实顶多就讲两篇论文，就没那么可怕了。所以我准备浙软的夏令营其实满打满算也就两天半时间，前两天读了三篇论文并且写了阅读手稿，最后半天里根据手稿做了超简易ppt，然后简单地练了两下，就进腾讯会议答辩了。<br />
-进了会议室，感觉张老师对我不太客气，可能还是因为我背景太差了，所以有一种催人命的感觉让我快点讲完，收拾东西滚蛋。然后我就开始讲了，其实自认为讲的还可以，只在一个地方稍有卡顿，最后好像超了一丢丢时间讲完了两篇论文。<br />
-然后就到了问答环节，张老师首先根据我指出论文的几项不足，问我会怎么改进，前两个我打出来了，最后一个我想了想没想出来，其实感觉可以随便口胡一个数据结构啥的骗一骗他，但是也算了。然后是问我什么把kg展平拼接在prompt里有什么劣势，我心里想着大哥你自己都把答案说了我还说些啥。最后一个问题，他问我如果给你一万张a100，问我想做什么。我心想什么逼问题，然后说可能会做一些模型基座相关的任务。他就怼我说是个人都会这么说，那具体做什么内容的。我就跟他说现在大模型都是基于Transformer的，我想尝试一些其他架构的大模型看看效果如何。他问我具体有什么其他架构，我就给他口胡了一个rwkv，其实我也不知道rwkv具体运作原理是什么，只知道它好像是有一些人在吹的架构。简单跟他讲讲rwkv是将rnn和Transformer结合在一起的架构就完了。然后就结束了。<br />
-这两天他妈的睡觉不超过六个小时，感觉自己健康的要死，下午彩排的时候大脑直缺氧。其实两个夏令营最后自我感觉都挺良好，就是不知道结果会怎样。god bless.<br />
-没想到，只是痛苦的开始……</p>
+<h3 id="一-3"><a class="markdownIt-Anchor" href="#一-3"></a> 一</h3>
+<p>2024年的7月7日至15日，龟度过了大学三年以来最为充实的一周暑假。他在一周之内连续完成了两个夏令营（北邮ai院和浙大软件学院）的考核。时至今日，龟都无法回忆起来这一周他究竟是如何度过的。</p>
+<p>上文提到龟在看到北邮AI夏令营考核内容的一瞬间，就觉得估计大概是要完蛋了，但为了这仅有的保底offer，龟还是没有放弃。</p>
+<p>龟大概花了一天半的时间弄明白这两篇论文讲了怎么个事儿，就是多模态工作中需要把不同模态的知识映射到同一个空间，A 论文提出了一个损失函数，B 论文提出了对抗学习方法。考核要求把这两个论文的方法结合起来，给定的只有一个简单的实验框架，大部分代码都要自己写。</p>
+<p>其中这个对抗学习方法，我以前只是听说过有 GAN 这么一回事，结果他让我在一个礼拜内复现一个差不多的出来，我：？？？</p>
+<p>打开<code>VSCode</code>，我突然发现我其实还不会<code>pytorch</code>，我：？？？</p>
+<p>那咋办啊，学吧！于是我参考他给的论文和代码，速通了一下模型训练需要哪些个组件，然后怎么写模型模块，怎么调用损失函数这类的，陆陆续续花了我好几天。结果论文复现还是没搞明白。真想死了。</p>
+<p>关键是我没有什么人能讨论，找同学肯定不现实了，我认识 AI 院有水平的除了实验室带我的学长也只有漫社的 Rua 学长了。于是厚脸皮找 Rua，问他能不能帮帮忙，他喊我去他宿舍。他们宿舍空调还坏了，Rua 赤裸上身坐在床边，很涩。</p>
+<p>我两三句话给他讲了一下论文算法，然后给他把我写的代码又讲了一遍。感觉他听懂了，并且他也大受震撼。</p>
+<p>在 Rua 的指导下，龟尝试了些神秘的训练技巧（好像有一次效果真挺好，但是忘了怎么调出来的了）。最后在和他的讨论中，我突然自己想出来模型的一种写法了。当时觉得自己贼牛逼，Rua 也觉得很牛逼，但后来感觉那个策略纯错的……</p>
+<p>反正调了几版模型，效果都很烂。但没办法啊，时间来不及了，只能开始写论文阅读报告以及实验报告。 当时就一边写报告，一边调参训模型，希望模型结果能更好一点。</p>
+<p>反正最后报告写完了，模型还是训得像坨史，很难受。当时报告是最后一天就要交了，龟实在受不了，只能又去找了科研实习的学长，跪求帮忙。但人家对这个也不熟啊，所以他就针对报告里写的东西，给了几点建议，其中有一条是让龟再关注一下损失函数和论文中的是否一致。</p>
+<p>龟仔细一想，这个损失函数好像确实不太一致，给龟整慌了，连夜修改重训模型。结果发现还真的有用！虽然结果还是史，但这个史至少看上去没有那么烂了，可以说和原模型 “具有竞争力” 了。</p>
+<p>只能说训模型方面的经验还是少了，很多坑都踩得比较青涩。但这也是龟在一个礼拜内能搞出来最好的东西了。这一个礼拜龟几乎没干什么别的事，一天至少有十个小时在搞论文复现，<code>AutoDL</code> 上至少烧了一百多块钱。只能说，唉…… 真想有个 offer、真想有个学上。</p>
+<h3 id="二-3"><a class="markdownIt-Anchor" href="#二-3"></a> 二</h3>
+<p>一刻也没有为提交的考核报告而感到哀悼，立刻赶来的是——夏令营线下汇报！</p>
+<p>其实此时此刻，龟对于北邮AI夏令营考核的完成度还是很满意的，训了很多版模型，也尝试了很多调参策略，对于表现不佳的任务也准备了很多话术，反正自我感觉良好。</p>
+<p>来到面试的会议室，里边儿有课题组的三个老师，我之前联系的王老师也在。龟觉得我都跟你做了好几个月项目了，给我发个offer应该问题不大吧？抱着这样的想法，龟开始了他的答辩报告。</p>
+<p>总体来说，龟的报告还是挺顺利的，之前也练习了很多次，感觉没啥问题。正当龟觉得胜利号角即将吹响之时，问答环节开始，王老师只用一个问题直接击穿了龟破碎的心：他从论文几百条句子中挑出了一条，问这个句子中的术语是什么意思。</p>
+<p>我直接黑人问号？？？问答环节难道不是应该问做实验的一些细节吗，逮着论文问细节是何意啊？关键是那个概念我看论文的时候就没看懂，百度了也没搜到，百度都搜不到的东西你让我怎么给你做解释呢？</p>
+<p>之后也是差不多的情况，王老师问了几个问题，电波和我都对不上，给我整破防了。</p>
+<p>之后换了另一个老师问我，还是问论文，就和论文杠上了是吧，你们倒是问问我花了一个礼拜通宵做的实验啊！？</p>
+<p>反正啊呜啊呜了一通，感觉非常失败。老师看我没活了就让我滚蛋了。哈哈。</p>
+<h3 id="三-3"><a class="markdownIt-Anchor" href="#三-3"></a> 三</h3>
+<p>其实这周一二的时候，浙软夏令营我填报的那个 Z 导师也发来了考核通知，而且挺亲民：他给了一个论文的列表，要求从里边选任意篇阅读，做一个十分钟的论文阅读答辩。这个比起论文复现不是亲民多了？</p>
+<p>这个贼长的论文清单看似很可怕，其实你考虑到汇报只有十分钟，那其实顶多就讲两篇论文。所以龟准备浙软的夏令营其实满打满算也就两天半时间，在跑实验的间隙挑了两三篇RAG的论文读了读，并且写了阅读手稿，最后半天里根据手稿糊成了超简易PPT，然后简单地练了两下，就进腾讯会议答辩了。</p>
+<p>进了会议室，感觉 Z 老师开场就对我不太客气，可能是因为我背景太差了，所以有一种催人命的感觉让我快点讲完，收拾东西滚蛋的感觉。然后我就开始讲了，自认为讲的还可以，只在一个地方稍有卡顿，最后好像超了一丢丢时间讲完了两篇论文。</p>
+<p>然后就到了问答环节，Z 老师首先看我在汇报的最后提出了这几篇论文的若干不足，问我会怎么改进，前两个我答出来了，最后一个我没想出来，其实感觉可以随便口胡一个数据结构啥的骗一骗他，但其实无所谓。</p>
+<p>然后是问我什么把 KG 展平拼接在 prompt 里有什么劣势，我心里想着大哥你自己都把答案说了我还说些啥。他又问我如果给你一万张a100，问我想做什么。我心想什么鬼问题，然后说可能会做一些模型基座相关的任务。他就怼我说是个人都会这么说，那具体做什么内容的。我就跟他说现在大模型都是基于 Transformer 架构，我想尝试一些其他架构的大模型看看效果如何。</p>
+<p>他问我具体有什么其他架构，我就给他口胡了一个 <code>rwkv</code>，其实我也不知道 <code>rwkv</code> 具体运作原理是什么，只知道它好像是有一些人在吹的架构。简单跟他讲讲 <code>rwkv</code> 是将 <code>rnn</code> 和 <code>Transformer</code> 结合在一起的架构就完了。</p>
+<p>然后就结束了。这两天他妈的睡觉不超过六个小时，感觉自己健康的要死，下午彩排的时候大脑直缺氧。最后北邮做了一个礼拜的项目，不如我浙软两天糊出来的报告表现得好，给我整大破防。就是不知道结果会怎样，god bless 了。</p>
+<p>没想到，这只是痛苦的开始……</p>
+<p><em>To Be Continued…</em></p>
 
   </div>
   <div>
@@ -514,7 +532,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-3"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-3"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-3"><span class="toc-text"> 三</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -582,7 +600,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-3"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-3"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-3"><span class="toc-text"> 三</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -597,17 +615,17 @@
   </div>
   <div class="categories-list">
     
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">10</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
         <div class="categories-list-item">
           生活分享
           <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -760,7 +778,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text"> 序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%87%AA%E7%9C%81-%E7%BA%AF%E7%B2%B9-%E8%80%81%E5%A4%B4%E7%8E%AF"><span class="toc-text"> 第一章  自省、纯粹、老头环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8A%AA%E5%8A%9B-%E6%9C%AA%E6%9D%A5-%E7%A9%BA%E6%B4%9E%E6%84%9F"><span class="toc-text"> 第二章  努力、未来、空洞感</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-2"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-2"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-2"><span class="toc-text"> 三</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%AD%BB%E4%BA%A1-%E8%BF%BD%E6%B1%82-%E5%A4%9A%E5%B7%B4%E8%83%BA"><span class="toc-text"> 第三章  死亡、追求、多巴胺</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-3"><span class="toc-text"> 一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-3"><span class="toc-text"> 二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-3"><span class="toc-text"> 三</span></a></li></ol></li></ol>
     </article>
   
   
