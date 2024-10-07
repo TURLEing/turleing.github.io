@@ -28,7 +28,7 @@
     
       <meta 
         property="og:url" 
-        content="https://turleing.github.io/2023/07/04/LLM-learning/index.html">
+        content="https://tzturtle.moe/2023/07/04/LLM-learning/index.html">
     
     
       <meta 
@@ -333,7 +333,7 @@
     <p>有幸参加了南大 NLP 夏令营，导师安排了一些读论文的任务，除了经典的“那篇论文”以外都没读过。这篇博客会简单记一些论文中核心的点（结合其他博客），不会去钻研细节，毕竟得一礼拜速通理论，目前仍然是完全没有实践的状态。</p>
 <span id="more"></span>
 <h2 id="一-大语言模型"><a class="markdownIt-Anchor" href="#一-大语言模型"></a> 一。大语言模型</h2>
-<p>要求详细地看一下 <code>Transformer</code> 模型，这个我之前已经写过博客了：<a href="https://turleing.github.io/2023/05/08/Transformer-learning/">Transformer 学习笔记</a>。除此之外，还需要对两个常见的预训练模型家族 BERT、GPT 有一定了解。</p>
+<p>要求详细地看一下 <code>Transformer</code> 模型，这个我之前已经写过博客了：<a target="_blank" rel="noopener" href="https://turleing.github.io/2023/05/08/Transformer-learning/">Transformer 学习笔记</a>。除此之外，还需要对两个常见的预训练模型家族 BERT、GPT 有一定了解。</p>
 <h3 id="11-bert"><a class="markdownIt-Anchor" href="#11-bert"></a> 1.1 BERT</h3>
 <p>BERT 是把基于特征的预训练模型 <code>ELMo</code> 可以做双向训练的优势，运用基于微调的 <code>GPT</code> 的 <code>Transformer</code> 架构上的大模型。其训练过程依然是 “预训练+微调”，即先通过完形填空 + 句子预测（NSP）的任务去训练参数，再根据下游任务进行微调。</p>
 <p>BERT 的输入可以是一个句子，也可以是句子对（因为只有编码器。输入的第一个元素是起始符 <code>[CLS]</code>，不同的句子之间用 <code>[SEQ]</code> 分割。根据下游任务的需求，要么是用 <code>[CLS]</code> 所对应的输出来判断情感等分类任务，要么是根据每个词元的输出做 QA 系统、序列标注等序列生成的事情。</p>
@@ -432,8 +432,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://turleing.github.io/2023/07/04/LLM-learning/">
-            https://turleing.github.io/2023/07/04/LLM-learning/
+            href="https://tzturtle.moe/2023/07/04/LLM-learning/">
+            https://tzturtle.moe/2023/07/04/LLM-learning/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -536,7 +536,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>42</span>
+    <span>43</span>
     <span>文章</span>
   </a>
   <a 
@@ -568,7 +568,7 @@
       </div>
     
       <div class="author-card-society-icon">
-        <a href="https://turleing.github.io/about/">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
           <i class="iconfont icon-mail society-icon"></i>
         </a>
       </div>
@@ -602,17 +602,10 @@
   </div>
   <div class="categories-list">
     
-      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
-        <div class="categories-list-item">
-          算法竞赛
-          <span class="categories-list-item-badge">10</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
         <div class="categories-list-item">
           生活分享
-          <span class="categories-list-item-badge">4</span>
+          <span class="categories-list-item-badge">5</span>
         </div>
       </a>
     
@@ -620,6 +613,13 @@
         <div class="categories-list-item">
           专业学习
           <span class="categories-list-item-badge">19</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -780,6 +780,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-07</div>
+        <a href="/2024/10/07/baoyan-experience-3/"><div class="recent-posts-item-content">baoyan-experience-3</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2024-10-05</div>
         <a href="/2024/10/05/baoyan-experience-2/"><div class="recent-posts-item-content">我的青春保研物语一定有问题【其二</div></a>
       </div>
@@ -792,11 +797,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2024-07-21</div>
         <a href="/2024/07/21/how_to_research/"><div class="recent-posts-item-content">如何科研入门？</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2024-03-20</div>
-        <a href="/2024/03/20/baoyan-fuxi/"><div class="recent-posts-item-content">2024 保研机试复习</div></a>
       </div>
     
   </div>
