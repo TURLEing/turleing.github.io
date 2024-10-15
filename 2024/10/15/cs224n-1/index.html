@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>CS224N 学习笔记【一】</title><meta name="robots" content="noindex">
+  
+    
+      <meta 
+        property="og:title" 
+        content="CS224N 学习笔记【一】">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2024/10/15/cs224n-1/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2024-10-15">
+      <meta 
+        property="og:article:modified_time" 
+        content="2024-10-15">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      CS224N 学习笔记【一】
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2024-10-15T01:51:12.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2024-10-15</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.4k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="第一章-word2vec-模型"><a class="markdownIt-Anchor" href="#第一章-word2vec-模型"></a> 第一章  Word2Vec 模型</h2>
+<h3 id="1-如何进行-min-操作"><a class="markdownIt-Anchor" href="#1-如何进行-min-操作"></a> 1. <strong>如何进行 min 操作？</strong></h3>
+<p>在 Word2Vec 中，min 操作指的是通过梯度下降法（Gradient Descent）对词向量矩阵 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span></span></span></span> 进行优化。我们希望通过最小化损失函数（即负对数似然函数）来找到最优的词向量表示。具体步骤如下：</p>
+<ul>
+<li>初始化词向量矩阵 ( U ) 和 ( V ) 为随机值。</li>
+<li>对每对中心词 ( c ) 和上下文词 ( o )，计算预测的概率 ( p(o|c) )。</li>
+<li>计算损失函数的梯度，即相对于 ( U ) 和 ( V ) 的偏导数。</li>
+<li>使用梯度下降法更新 ( U ) 和 ( V ) 的值，直到损失函数达到最小或收敛。</li>
+</ul>
+<p>通过这一过程，我们对每个词学习出它的词向量，使得在给定中心词的情况下，能够最大化预测正确的上下文词的概率。</p>
+<h3 id="2-如何获取随机变量-o-和-c"><a class="markdownIt-Anchor" href="#2-如何获取随机变量-o-和-c"></a> 2. <strong>如何获取随机变量 O 和 C？</strong></h3>
+<p>在 Word2Vec 中，( O ) 和 ( C ) 是语料库中词对的随机变量：</p>
+<ul>
+<li>( O ) 表示上下文词（Observed Word），即中心词附近的词。</li>
+<li>( C ) 表示中心词（Context Word），即我们想要根据上下文来预测的词。</li>
+</ul>
+<p>在实际中，模型通过滑动窗口从文本语料库中提取词对。滑动窗口会在每个句子中移动，取出每个词及其周围的词。例如，在 Skip-gram 模型中，给定中心词 ( c )，模型会预测它左右若干个词作为上下文词 ( o )。</p>
+<h3 id="3-为什么使用概率的负对数"><a class="markdownIt-Anchor" href="#3-为什么使用概率的负对数"></a> 3. <strong>为什么使用概率的负对数？</strong></h3>
+<p>使用负对数是为了简化优化过程并且符合最大似然估计（Maximum Likelihood Estimation, MLE）的目标：</p>
+<ul>
+<li><strong>最大化概率</strong>：在模型中，我们希望最大化给定中心词 ( c ) 的情况下预测上下文词 ( o ) 的条件概率 ( p(o|c) )。</li>
+<li><strong>负对数的作用</strong>：对概率取负对数是常见的做法，因为对数函数是单调递增的，最大化对数概率等价于最大化原始概率。而取负值后，我们的目标变成了最小化损失函数，这与优化算法（如梯度下降）对最小化问题的处理相一致。</li>
+<li><strong>简化数学处理</strong>：对数函数还能将连乘形式的联合概率转化为加法，使得数学计算更为简单，同时负对数可以避免小数计算带来的数值稳定性问题。</li>
+</ul>
+<h3 id="4-为什么比共现计数方法好"><a class="markdownIt-Anchor" href="#4-为什么比共现计数方法好"></a> 4. <strong>为什么比共现计数方法好？</strong></h3>
+<p>共现计数方法（如传统的词袋模型或共现矩阵）主要基于词之间在语料库中共同出现的频率，存在以下缺陷：</p>
+<ul>
+<li><strong>稀疏性问题</strong>：共现矩阵通常是非常稀疏的，因为大多数词对在语料库中很少同时出现，这导致共现计数方法很难捕捉到词之间的潜在关系。</li>
+<li><strong>维度灾难</strong>：共现计数方法生成的矩阵维度非常高（词汇表大小的平方），处理和存储都非常困难。</li>
+<li><strong>不能捕捉语义相似性</strong>：简单的共现计数无法充分表达词的语义信息，仅能反映表面上的共现关系。</li>
+</ul>
+<p>相比之下，Word2Vec 将词映射到低维的词向量空间，能够通过词向量的几何关系捕捉到词语之间的语义相似性。而且，训练过程中，模型能够通过上下文预测优化词向量，使其能够更好地表示词之间的潜在关联。</p>
+<h3 id="5-为什么并非所有的-poc-分布都能被这个模型表示"><a class="markdownIt-Anchor" href="#5-为什么并非所有的-poc-分布都能被这个模型表示"></a> 5. <strong>为什么并非所有的 ( p(o|c) ) 分布都能被这个模型表示？</strong></h3>
+<p>Word2Vec 的核心是通过词向量的内积（或点积）来计算词与词之间的相似性，并使用 softmax 函数将其转化为概率。因此，它只能表示基于线性关系的条件概率分布。然而，语言中的词语关系是复杂的，很多情况并不能简单地通过词向量的点积来表示。</p>
+<ul>
+<li><strong>局限性</strong>：词向量模型假设了简单的线性结构，而现实语言中的词语关系往往具有复杂的非线性特征，这限制了模型对所有可能的 ( p(o|c) ) 分布的表达能力。</li>
+<li><strong>这是否是好事或坏事？</strong>：从一个角度看，这种限制使得模型更简洁，避免了过拟合问题，并且在计算效率上更优。但从另一个角度看，它也限制了模型在捕捉复杂语言现象时的表现。因此，虽然这种限制是合理的，但在某些情况下会导致模型对复杂语言结构的表达能力不足。</li>
+</ul>
+<h3 id="6-这是好的吗坏的吗令人惊讶吗显而易见吗"><a class="markdownIt-Anchor" href="#6-这是好的吗坏的吗令人惊讶吗显而易见吗"></a> 6. <strong>这是好的吗？坏的吗？令人惊讶吗？显而易见吗？</strong></h3>
+<p>这种限制既可以视为好的，也可以视为不理想的：</p>
+<ul>
+<li><strong>好的方面</strong>：Word2Vec 的简单结构能够有效处理大规模语料库，并且通过低维表示简化了计算复杂度。它的局限性反而帮助模型避免了对复杂分布的过拟合问题。</li>
+<li><strong>不理想的方面</strong>：对于某些需要复杂上下文关系的任务，Word2Vec 可能无法捕捉到足够的细节。比如语法关系、长距离依赖等，可能需要更复杂的模型来表达。</li>
+<li><strong>是否令人惊讶？</strong>：不令人惊讶。因为大多数自然语言处理模型都面临类似的权衡——在模型的复杂度和计算效率之间找到平衡。因此，Word2Vec 这种设计体现了在可计算性与表达能力之间的合理折中。</li>
+</ul>
+<!-- flag of hidden posts -->
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2024/10/15/cs224n-1/">
+            https://tzturtle.moe/2024/10/15/cs224n-1/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-word2vec-%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 第一章  Word2Vec 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C-min-%E6%93%8D%E4%BD%9C"><span class="toc-text"> 1. 如何进行 min 操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F-o-%E5%92%8C-c"><span class="toc-text"> 2. 如何获取随机变量 O 和 C？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E6%A6%82%E7%8E%87%E7%9A%84%E8%B4%9F%E5%AF%B9%E6%95%B0"><span class="toc-text"> 3. 为什么使用概率的负对数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E5%85%B1%E7%8E%B0%E8%AE%A1%E6%95%B0%E6%96%B9%E6%B3%95%E5%A5%BD"><span class="toc-text"> 4. 为什么比共现计数方法好？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B9%B6%E9%9D%9E%E6%89%80%E6%9C%89%E7%9A%84-poc-%E5%88%86%E5%B8%83%E9%83%BD%E8%83%BD%E8%A2%AB%E8%BF%99%E4%B8%AA%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%A4%BA"><span class="toc-text"> 5. 为什么并非所有的 ( p(o|c) ) 分布都能被这个模型表示？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%BF%99%E6%98%AF%E5%A5%BD%E7%9A%84%E5%90%97%E5%9D%8F%E7%9A%84%E5%90%97%E4%BB%A4%E4%BA%BA%E6%83%8A%E8%AE%B6%E5%90%97%E6%98%BE%E8%80%8C%E6%98%93%E8%A7%81%E5%90%97"><span class="toc-text"> 6. 这是好的吗？坏的吗？令人惊讶吗？显而易见吗？</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>45</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>9</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-word2vec-%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 第一章  Word2Vec 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C-min-%E6%93%8D%E4%BD%9C"><span class="toc-text"> 1. 如何进行 min 操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F-o-%E5%92%8C-c"><span class="toc-text"> 2. 如何获取随机变量 O 和 C？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E6%A6%82%E7%8E%87%E7%9A%84%E8%B4%9F%E5%AF%B9%E6%95%B0"><span class="toc-text"> 3. 为什么使用概率的负对数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E5%85%B1%E7%8E%B0%E8%AE%A1%E6%95%B0%E6%96%B9%E6%B3%95%E5%A5%BD"><span class="toc-text"> 4. 为什么比共现计数方法好？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B9%B6%E9%9D%9E%E6%89%80%E6%9C%89%E7%9A%84-poc-%E5%88%86%E5%B8%83%E9%83%BD%E8%83%BD%E8%A2%AB%E8%BF%99%E4%B8%AA%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%A4%BA"><span class="toc-text"> 5. 为什么并非所有的 ( p(o|c) ) 分布都能被这个模型表示？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%BF%99%E6%98%AF%E5%A5%BD%E7%9A%84%E5%90%97%E5%9D%8F%E7%9A%84%E5%90%97%E4%BB%A4%E4%BA%BA%E6%83%8A%E8%AE%B6%E5%90%97%E6%98%BE%E8%80%8C%E6%98%93%E8%A7%81%E5%90%97"><span class="toc-text"> 6. 这是好的吗？坏的吗？令人惊讶吗？显而易见吗？</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">7</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">19</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          机器学习
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-word2vec-%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 第一章  Word2Vec 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C-min-%E6%93%8D%E4%BD%9C"><span class="toc-text"> 1. 如何进行 min 操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F-o-%E5%92%8C-c"><span class="toc-text"> 2. 如何获取随机变量 O 和 C？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E6%A6%82%E7%8E%87%E7%9A%84%E8%B4%9F%E5%AF%B9%E6%95%B0"><span class="toc-text"> 3. 为什么使用概率的负对数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E5%85%B1%E7%8E%B0%E8%AE%A1%E6%95%B0%E6%96%B9%E6%B3%95%E5%A5%BD"><span class="toc-text"> 4. 为什么比共现计数方法好？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B9%B6%E9%9D%9E%E6%89%80%E6%9C%89%E7%9A%84-poc-%E5%88%86%E5%B8%83%E9%83%BD%E8%83%BD%E8%A2%AB%E8%BF%99%E4%B8%AA%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%A4%BA"><span class="toc-text"> 5. 为什么并非所有的 ( p(o|c) ) 分布都能被这个模型表示？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%BF%99%E6%98%AF%E5%A5%BD%E7%9A%84%E5%90%97%E5%9D%8F%E7%9A%84%E5%90%97%E4%BB%A4%E4%BA%BA%E6%83%8A%E8%AE%B6%E5%90%97%E6%98%BE%E8%80%8C%E6%98%93%E8%A7%81%E5%90%97"><span class="toc-text"> 6. 这是好的吗？坏的吗？令人惊讶吗？显而易见吗？</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-11</div>
+        <a href="/2024/10/11/self-learning/"><div class="recent-posts-item-content">华罗庚《论自修》【转载】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-08</div>
+        <a href="/2024/10/08/baoyan-experience-4/"><div class="recent-posts-item-content">我的青春保研物语一定有问题【完结</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-07</div>
+        <a href="/2024/10/07/baoyan-experience-3/"><div class="recent-posts-item-content">我的青春保研物语一定有问题【其三</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-05</div>
+        <a href="/2024/10/05/baoyan-experience-2/"><div class="recent-posts-item-content">我的青春保研物语一定有问题【其二</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2024
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
