@@ -45,7 +45,7 @@
         content="2024-10-15">
       <meta 
         property="og:article:modified_time" 
-        content="2024-10-23">
+        content="2024-10-25">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -295,7 +295,7 @@
     
     
       <span class="dot"></span>
-      <span>130 字</span>
+      <span>901 字</span>
     
   </div>
   
@@ -306,8 +306,8 @@
     <ul>
 <li>我们有很多参数的模型，正则化！ 一个完整的损失函数包括所有参数的正则化，例如 L2 正则化。
 <ul>
-<li>过去：当我们有很多特征（或后来一个非常强大/深入的模型等）时，正则化可以防止过拟合；</li>
-<li>现在：当我们有一个大模型时，正则化产生的模型可以很好地泛化；
+<li><strong>机器学习时代</strong>：当我们有很多特征（或后来一个非常强大/深入的模型等）时，正则化可以防止过拟合；</li>
+<li><strong>大模型时代</strong>：当我们有一个大模型时，正则化产生的模型可以很好地泛化；
 <ul>
 <li>我们不在乎我们的模型在训练数据上过拟合， 即使他们非常过分，因为：</li>
 </ul>
@@ -316,6 +316,41 @@
 </li>
 </ul>
 <p><img src="/image-20241023112402862.png" alt="image-20241023112402862" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/image-20241023112402862.png" class="lozad post-image"></p>
+<br>
+<ul>
+<li><strong>权重初始化</strong>：通常在神经网络中，我们会将权重初始化为较小的随机值，而不是零矩阵。原因是，使用零值初始化会导致对称性问题；</li>
+<li><strong>优化器（Optimizers）</strong>：<code>Adagrad</code> 是最简单的自适应优化器之一，它会根据各个参数的历史梯度来调整每个参数的学习率；<code>Adam</code> 是一种常用且表现较好的优化器，它结合了 RMSprop 和动量（momentum）更新的优点；</li>
+</ul>
+<p>第九页的内容提到了“语言建模”（Language Modeling），是自然语言处理中的一个核心任务。这一页的重点是：</p>
+<ol>
+<li><strong>任务定义</strong>：语言建模的任务是预测下一个词。比如句子“The students opened their ______”，一个语言模型的目标就是去预测填入这个空格的词语。可能的答案可以是“books”“laptops”等等。</li>
+<li><strong>形式化定义</strong>：给定一个单词序列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><msub><mi>w</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>w</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(w_1, w_2, \dots, w_{t-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，语言模型会计算下一个词 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>w</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">w_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的概率分布 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>w</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>w</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(w_t|w_1, w_2, \dots, w_{t-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。简单来说，这个模型要基于上下文来预测接下来的单词的可能性。</li>
+<li><strong>模型的应用</strong>：这样的模型可以理解为给一段文字分配一个概率，这样便能根据其可能性评估该段文字。例如，句子 “The cat sat on the mat” 有一个概率 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mtext>The cat sat on the mat</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(\text{The cat sat on the mat})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord text"><span class="mord">The cat sat on the mat</span></span><span class="mclose">)</span></span></span></span>，用来表征该段文本出现的自然程度。</li>
+</ol>
+<ul>
+<li>
+<p>过去的语言模型都用的是 “n-gram 词袋模型”，假设当前单词仅由前 n 个词决定，感觉有点落后了。</p>
+<ul>
+<li><strong>上下文限制</strong>：n-gram 模型仅考虑固定数量的前 n 个词，这使得它无法捕捉到更长的上下文信息。许多语言现象需要更广泛的上下文才能正确理解，比如歧义、长距离依赖关系等。</li>
+<li><strong>稀疏性问题</strong>：随着 n 的增加，可能的 n-gram 组合数量会迅速增长，导致模型在训练数据中遇到许多未见过的组合（即稀疏性问题）。这使得模型难以泛化到新数据上。</li>
+<li><strong>缺乏语义理解</strong>：n-gram 模型通常依赖于表面形式的统计特征，而忽略了词汇之间的语义关系。它们无法捕捉同义词、反义词等语义信息。</li>
+</ul>
+</li>
+<li>
+<p>RNN 呢？序列模型，梯度消失，很难学会在许多时间步长中保留信息。</p>
+</li>
+<li>
+<p>LSTM 缓解了问题，但序列模型就是慢。</p>
+</li>
+<li>
+<p><strong>我们为什么应该关心语言建模？</strong></p>
+<ul>
+<li>语言建模是一项基准任务（Benchmark），可帮助我们衡量预测语言使用的进展 ；</li>
+<li>语言建模是许多 NLP 任务的子任务，尤其是那些涉及生成文本或估计文本概率的任务；</li>
+</ul>
+</li>
+</ul>
+<pre class="highlight"><code class="hljs plaintext">torchrun --nproc_per_node=2 finetune_qwen.py --model_path &quot;&quot; \<br>                                             --data_path $YOUR_DATA_FOLDER_PATH \<br>                                             --datasets both <br></code></pre>
 <!-- flag of hidden posts -->
   </div>
   <div>
@@ -411,19 +446,19 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>47</span>
+    <span>48</span>
     <span>文章</span>
   </a>
   <a 
     class="author-categories-count" 
     href="/categories">
-    <span>6</span>
+    <span>5</span>
     <span>分类</span>
   </a>
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>11</span>
+    <span>12</span>
     <span>标签</span>
   </a>
 </div>
@@ -498,17 +533,10 @@
         </div>
       </a>
     
-      <a href="/categories/%E7%A3%95%E7%9B%90%E5%AD%A6%E4%B9%A0/">
-        <div class="categories-list-item">
-          磕盐学习
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           科研学习
-          <span class="categories-list-item-badge">3</span>
+          <span class="categories-list-item-badge">6</span>
         </div>
       </a>
     
@@ -561,6 +589,12 @@
         href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
         title="字符串">
         <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
       </a>
     
       <a 
@@ -632,6 +666,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-10-28</div>
+        <a href="/2024/10/28/parallel-training-survey/"><div class="recent-posts-item-content">【转载】用通俗易懂的方式讲解大模型分布式训练并行技术：概述</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2024-10-22</div>
         <a href="/2024/10/22/rl-1/"><div class="recent-posts-item-content">《动手学强化学习》学习笔记【一】</div></a>
       </div>
@@ -644,11 +683,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2024-10-11</div>
         <a href="/2024/10/11/self-learning/"><div class="recent-posts-item-content">华罗庚《论自修》【转载】</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2024-10-08</div>
-        <a href="/2024/10/08/baoyan-experience-4/"><div class="recent-posts-item-content">我的青春保研物语一定有问题【完结</div></a>
       </div>
     
   </div>
