@@ -49,7 +49,7 @@
         content="2024-11-12">
       <meta 
         property="og:article:modified_time" 
-        content="2024-11-12">
+        content="2024-11-19">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -303,7 +303,7 @@
     
     
       <span class="dot"></span>
-      <span>2.4k 字</span>
+      <span>2.5k 字</span>
     
   </div>
   
@@ -353,12 +353,14 @@
 <li><strong>开放性任务没有标准答案：</strong> 比如编写故事并没有一个“正确”的答案，可以有无数种创意和情节发展，每种都是独特的，对于这类人物的评估也有一定困难。</li>
 <li>即使进行了指令微调，<strong>语言模型的目标与满足人类偏好的目标之间仍然存在不匹配</strong>。语言模型通常被优化以生成在统计上可能的输出，而不是那些最能符合人类期望和偏好的输出。</li>
 </ol>
+<p>此外，其实指令微调的数据也并非需要很多 — — 研究表明大型语言模型中的几乎所有知识都是在预训练期间学习的，并且只需要有限的指令调优数据来教模型产生高质量的输出。</p>
+<p><img src="image-20241112183540281.png" alt="image-20241112183540281" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20241112183540281.png" class="lozad post-image"></p>
 <br>
 <h3 id="人类反馈强化学习rlhf"><a class="markdownIt-Anchor" href="#人类反馈强化学习rlhf"></a> 人类反馈强化学习（RLHF）</h3>
 <p>为了对齐人类期望，我们引入了强化学习的概念。具体来说，对于语言模型（LM）生成的样本 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>，我们假设有一种方法可以获得人类对这个样本的奖励 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>R</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">R_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，数值越高表示越好。我们的目标是最大化从语言模型中抽取的样本的预期奖励 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo stretchy="false">[</mo><mi>R</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">E[R(s)]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mclose">]</span></span></span></span>。这意味着我们可以直接从人类那里获得关于模型输出质量的反馈。</p>
 <p>将 RL 与 LM 结合是一个比较新的领域，得益于新的RL算法的发展，特别是那些适用于大型神经网络模型的算法（例如PPO，由Schulman等人在2017年提出）。</p>
 <p>为了最大化预期奖励 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo stretchy="false">[</mo><mi>R</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">E[R(s)]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mclose">]</span></span></span></span>，我们可以使用<strong>梯度上升</strong>的方法更新模型参数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">θ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span> ：</p>
-<p class='katex-block katex-error' title='Error: Font metrics not found for font: .'>𝜃_{t+1}≔𝜃_t+𝛼∇_{\theta_t} 𝔼_{\hat s\sim p_{\theta_t}(s)} [R(\hat s)]
+<p class='katex-block katex-error' title='Error: Font metrics not found for font: .'>𝜃_{t+1}=𝜃_t+𝛼∇_{\theta_t} 𝔼_{\hat s\sim p_{\theta_t}(s)} [R(\hat s)]
 </p>
 <p>解释一下就是，对于当前模型（参数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span>）生成的一个样本 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>s</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault">s</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;">^</span></span></span></span></span></span></span></span></span>（或者说是 response）。我们想最大化人类奖励的期望 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span></span></span></span>，于是朝着梯度上升的方向更新 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span> .</p>
 <p>最简单的方式是通过 <strong>蒙特卡洛采样</strong> 得到若干条样本，并更新参数，使得奖励高的样本更容易出现。</p>
@@ -398,7 +400,7 @@
 <p>**人类偏好也有可能是不可靠的。**人类反馈可能会受到个人偏见、情绪状态或当时情境的影响，导致反馈结果不稳定或不一致。</p>
 </li>
 <li>
-<p><strong>“奖励黑客”（Reward Hacking）</strong> 也是一个常见问题。它指的是模型可能会学会奖励系统的偏好性，生成一些看似符合人类偏好但实际上并不有用的输出，以获得更高的奖励但不能真正提高其性能。</p>
+<p><strong>“奖励黑客”（Reward Hacking）</strong> 也是一个常见问题。它指的是模型可能会学会奖励系统的偏好性，生成一些看似符合人类偏好但实际上没用的输出，以获得更高的奖励，但不能真正提高其性能。</p>
 </li>
 <li>
 <p><strong>RLHF 的训练过程十分繁琐。</strong> 首先我们得让模型生成若干样本，然后再用 Reward Model 对其打分，打完分之后再优化 LM 的生成策略并不断迭代，这样做会使得过程非常冗杂，并且会产生上述“奖励黑客”的问题。</p>
@@ -406,7 +408,7 @@
 </ul>
 <p><img src="image-20241112172517487.png" alt="image-20241112172517487" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20241112172517487.png" class="lozad post-image"></p>
 <br>
-<p>因此我们提出了 DPO（Direct Preference Optimization），旨在直接优化模型输出以符合人类的偏好。</p>
+<p>因此我们提出了 DPO（Direct Preference Optimization），旨在直接优化模型输出以符合人类的偏好。具体怎么实现的看隔壁 RL 笔记。</p>
 <p><img src="image-20241112173459799.png" alt="image-20241112173459799" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20241112173459799.png" class="lozad post-image"></p>
 <br>
 <h3 id="whats-next"><a class="markdownIt-Anchor" href="#whats-next"></a> What’s Next……</h3>
