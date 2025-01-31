@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>日麻牌效率理论札记【其一】</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="日麻牌效率理论札记【其一】">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/01/30/Mahjong-1/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;科学麻将死路一条。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-01-30">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-02-01">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="日麻">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      日麻牌效率理论札记【其一】
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-01-30T12:10:57.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-01-30</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/" 
+          class="post-meta-link">
+          生活分享
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%97%A5%E9%BA%BB/" 
+            class="post-meta-link">
+            日麻
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>科学麻将死路一条。</p>
+<span id="more"></span>
+<h2 id="前言参考资料"><a class="markdownIt-Anchor" href="#前言参考资料"></a> 前言（参考资料）</h2>
+<ul>
+<li>主要参考的是 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1yU4y1b7bs/?share_source=copy_web&amp;vd_source=1ca14b6ebd2a27e76cc716e8df9176d7">星野 Poteto 的日麻牌效率系列（共十三讲）</a> ；</li>
+<li>拓展资料 <a target="_blank" rel="noopener" href="https://www.bilibili.com/opus/614434752904604248">《麻将学习·牌效率》前言·目录</a> ，包含一些案例分析。</li>
+</ul>
+<br>
+<h2 id="第一讲面子搭子数牌"><a class="markdownIt-Anchor" href="#第一讲面子搭子数牌"></a> 第一讲：面子，搭子，数牌</h2>
+<h3 id="1-一些概念"><a class="markdownIt-Anchor" href="#1-一些概念"></a> 1. 一些概念</h3>
+<ul>
+<li>牌效率：组牌技术，如何在摸打/鸣牌的过程中，尽可能高效（又快又好）地凑出胡牌型。
+<ul>
+<li>日麻处于对役的要求，需要谨慎鸣牌；</li>
+<li>门清与鸣牌：鸣牌速度快、门清点数大。</li>
+</ul>
+</li>
+<li>雀头：一个对子。</li>
+<li>面子：分为顺子（ABC）、刻子（DDD）、刻子（DDDD）。
+<ul>
+<li><strong>一般来说，做顺子比刻子容易！</strong> 一般做牌会以顺子为主要考虑方向。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-对子与搭子"><a class="markdownIt-Anchor" href="#2-对子与搭子"></a> 2. <strong>对子与搭子</strong></h3>
+<ul>
+<li>
+<p>对子：两张一样的牌，可以作为<strong>雀头</strong>或组成<strong>刻子</strong>。</p>
+</li>
+<li>
+<p>搭子：可以组成顺子的两张牌，分为三种情况：</p>
+<ul>
+<li>边张（12，89）；</li>
+<li>坎张（35，68）；</li>
+<li>两面（23，56）；</li>
+</ul>
+</li>
+<li>
+<p>一般来说，搭子效率的规律如下：</p>
+<ul>
+<li><strong>两面 &gt;&gt; 坎张 &gt; 边张</strong>；</li>
+<li>靠中间的坎张（46）会比靠边的坎张（68）要好；</li>
+</ul>
+</li>
+<li>
+<p>单张：不与其他牌组成对子或搭子的数牌。</p>
+<ul>
+<li><strong>有效牌</strong>：可以与单张组成对子和搭子的牌；如单张 1s，摸 1s（对子）2s（边张）3s（坎张）</li>
+<li>不难发现规律：<strong>19单张的有效牌数只有3个，28单张有4个，3-7有5种有效牌数；</strong></li>
+<li>这意味着当出现单张数牌时，从牌效率的角度看，应该尽量保留3-7的数牌（除非你做国士）；</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="第二讲字牌序盘处理"><a class="markdownIt-Anchor" href="#第二讲字牌序盘处理"></a> 第二讲：字牌，序盘处理</h2>
+<h3 id="1-字牌东西南北中发白"><a class="markdownIt-Anchor" href="#1-字牌东西南北中发白"></a> 1. 字牌：东西南北中发白</h3>
+<ul>
+<li>字牌只能组成对子、刻子、杠子，在组成面子的能力上不如数牌。</li>
+<li>然而，字牌可以组成<strong>役牌</strong>：三元、场风、自风。
+<ul>
+<li>既是场风又是自风，则成为连风牌（2番）；</li>
+<li>于是，客风在字牌中价值最低，<strong>连风牌&gt;役牌&gt;客风牌</strong>；</li>
+</ul>
+</li>
+<li>字牌价值会随着<strong>已现的张数</strong>增加快速下降！
+<ul>
+<li>经常出现这种情况：上家打了个客风，于是你也把手里的单张客风打掉了；</li>
+<li>当然，如果手里缺役，还是可以留一下的；</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-序盘阶段找出价值最低的单张然后打掉"><a class="markdownIt-Anchor" href="#2-序盘阶段找出价值最低的单张然后打掉"></a> 2. 序盘阶段：找出价值最低的单张，然后打掉</h3>
+<p><img src="/51536f7baa86fa124b65f01173cfb574de908364.jpg@690w_!web-note.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/51536f7baa86fa124b65f01173cfb574de908364.jpg@690w_!web-note.webp" class="lozad post-image"></p>
+<ul>
+<li>边张、坎张：也被叫做<strong>愚型</strong>搭子。上面的牌留役牌可以利好愚型搭子，吃牌不怕没役。</li>
+<li><strong>1</strong>4 与 6<strong>9</strong>：当4或6出现了，则19的留存价值就几乎没有了——因为能1的有效牌被4覆盖了！
+<ul>
+<li>例如，摸到2s可以与1s组成边张，但也可以和4s组成坎张，而坎张&gt;边张；</li>
+<li>甚至如果你摸1s组成对子，说穿了也就和客风对子一回事，没啥卵用。</li>
+<li>这种情况被称为<strong>有效牌重复</strong>；除了是宝牌/混老头等役种。</li>
+</ul>
+</li>
+<li><strong>筋</strong>：1-4-7，2-5-8，3-6-9；同一条筋上的数牌，刚好没法组成面子，有效牌重复。</li>
+</ul>
+<br>
+<h2 id="第三讲对子处理"><a class="markdownIt-Anchor" href="#第三讲对子处理"></a> 第三讲：对子处理</h2>
+<ul>
+<li>
+<p>对子比起面子，非常容易做出来。</p>
+<ul>
+<li>当手牌13张都不一样时，摸一张牌可以组成对子的概率约为1/3；</li>
+<li>因此，做牌型的时候有个一般的法则为<strong>面子优先</strong>！</li>
+<li>就算做到最后听牌了都没有雀头，也可以故意拆牌，单骑听牌！</li>
+</ul>
+</li>
+<li>
+<p>对子的有效牌（2张）比两面的有效牌（8张）差了不是一点啊！</p>
+</li>
+<li>
+<p>但对子有两条路可以走：进张一个牌，<strong>组成刻子</strong>；保留不动，<strong>成为雀头</strong>。</p>
+</li>
+<li>
+<p>因此诞生一种牌型（<strong>双碰</strong>）：任意两副对子即可。</p>
+<ul>
+<li>这种牌型的有效牌有4张，摸任何一边都能组出刻子和雀头。</li>
+<li>这样，双碰的成牌效率就不输给愚型搭子了！</li>
+</ul>
+</li>
+<li>
+<p>但是，三对子的情况就不一样了……</p>
+<ul>
+<li>考虑你的机会成本，例如：手上13s摸3s，看起来赚了个对子，但其实是建立在损失坎张的情况下做的。</li>
+<li>这样的话，本来有效牌4张2s，现在只剩下2张3s了（虽然也考虑可以碰的情况）</li>
+</ul>
+</li>
+<li>
+<p>更多对子…… 可以考虑七对子，或者兼顾一般型。</p>
+</li>
+</ul>
+<br>
+<h2 id="第四讲向听数-有效牌-五种听牌型"><a class="markdownIt-Anchor" href="#第四讲向听数-有效牌-五种听牌型"></a> 第四讲：向听数、有效牌、五种听牌型</h2>
+<h3 id="1-基础概念"><a class="markdownIt-Anchor" href="#1-基础概念"></a> 1. 基础概念</h3>
+<ul>
+<li>向听数：描述一副手牌至少还要摸进几张牌才可以听牌。
+<ul>
+<li>是一个用来衡量手牌好坏的重要指标；</li>
+<li>一副手牌最烂可以六向听，其实五向听就很烂了；</li>
+</ul>
+</li>
+<li>进张：能让向听数减一的摸牌。
+<ul>
+<li>例如 67m 摸 5m 或 8m，都可以进张；</li>
+<li>向听数越小进张数越少，越难前进；</li>
+<li>有些牌并不能减少向听数，但可以提高当前的进张数量，称其为改良。</li>
+<li>改良 + 进张 = <strong>有效牌</strong>；</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-听牌型"><a class="markdownIt-Anchor" href="#2-听牌型"></a> 2. 听牌型</h3>
+<ul>
+<li>
+<p>五种听牌类型：</p>
+<p><img src="/c69ccb35e95ba02d72871f05875e7b3f041a696d.jpg@690w_!web-note.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/c69ccb35e95ba02d72871f05875e7b3f041a696d.jpg@690w_!web-note.webp" class="lozad post-image"></p>
+<ul>
+<li>可以听牌最多的为<strong>两面听</strong>，可以听至多八张；</li>
+<li>可以听牌最少的为<strong>单骑听</strong>，至多只能听三张；
+<ul>
+<li>但另一方面，单骑听也是最为灵活的听牌类型；</li>
+</ul>
+</li>
+<li>顺子复合型也是双面听（如2345s 听 25s， 2234s 听 25s）</li>
+<li>暗刻也可以组成复合型（如6777s 听 58s，还可听 6s 做雀头）</li>
+<li>三面听牌型有三种11张牌可以胡。
+<ul>
+<li>如 23456s，听 147s；</li>
+<li>要注意，12345s 是没这个待遇的；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="第五讲三张复合型"><a class="markdownIt-Anchor" href="#第五讲三张复合型"></a> 第五讲：三张复合型</h2>
+<h3 id="1-复合型"><a class="markdownIt-Anchor" href="#1-复合型"></a> 1. 复合型</h3>
+<ul>
+<li>由若干基本型组成的牌型称为<strong>复合型</strong>；
+<ul>
+<li>但某些复合型是无意义的（如134s，1s 有效牌重复）</li>
+<li>对子复合型：如 223s，668m</li>
+<li>坎张复合型：如 135s，468p</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-对子复合型"><a class="markdownIt-Anchor" href="#2-对子复合型"></a> 2. 对子复合型</h3>
+<ul>
+<li>
+<p><strong>对子复合型</strong>根据搭子的不同也分为三类。</p>
+<ul>
+<li>当摸到一张牌可以形成对子复合型时，<strong>进张数会增加</strong>；</li>
+<li>因此这张牌可以称为对子复合型的<strong>补强牌</strong>（如 244s 的 4s）；</li>
+</ul>
+</li>
+<li>
+<p>复习一下：<strong>一副牌在两幅对子的情况下是最赚的</strong>；</p>
+<p><img src="/f0b2eee0a14f357107743e1a16eea22eaa945ef0.jpg@690w_!web-note.webp" alt="img" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/f0b2eee0a14f357107743e1a16eea22eaa945ef0.jpg@690w_!web-note.webp" class="lozad post-image"></p>
+</li>
+<li>
+<p>对于AB两副牌，虽然仅差了一张牌，但处理方式完全不一样：</p>
+<ul>
+<li>对于 A 来说，有两副对子，只需把较弱的对子复合型拆掉就行（6s）；</li>
+<li>对于 B 来说，有三副对子，最好从对子里拆掉一个形成双碰：
+<ul>
+<li>3s 不好拆，因为拆完就一个单张了；</li>
+<li>6p 和 8s 拆哪个？考虑到 56p 的进牌能力更强，听牌是双面听；而拆 8s 只是一个坎张听牌，效率很低；</li>
+<li>所以结论是打掉 6p 比较好，即拆掉强搭的补强牌；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>因此，补强牌应该留在较弱的搭子上（如122s，688s）：</p>
+<ul>
+<li>口诀：<strong>两对拆弱搭（A），两搭拆强搭（B）！</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-坎张复合型两坎"><a class="markdownIt-Anchor" href="#3-坎张复合型两坎"></a> 3. 坎张复合型（两坎）</h3>
+<ul>
+<li>
+<p>坎张复合型其实是一个不错的牌型。</p>
+<ul>
+<li>如 135s，有 24s 两种八张的进张；</li>
+<li>相较于坎张，几乎翻了一倍；</li>
+<li>相较于两面，在仅多出一张牌的前提下进张数一样；</li>
+</ul>
+</li>
+<li>
+<p>然而也存在一些缺点：</p>
+<ul>
+<li>首先就是<strong>减少了一张牌的空间</strong>，本来可以留安全牌或补强牌的；</li>
+<li>其次，如果最后两坎要听牌了，还是得拆一张，做<strong>坎张听牌</strong>；</li>
+<li>两坎很容易看漏！（如 3 567 78s，也可 357s, 678s，听 <strong>4</strong>69s）；</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/01/30/Mahjong-1/">
+            https://tzturtle.moe/2025/01/30/Mahjong-1/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2025/02/01/Mahjong-2/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">日麻牌效率理论札记【其二】 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2024/11/20/rl-3/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">《动手学强化学习》学习笔记【三】 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text"> 前言（参考资料）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E8%AE%B2%E9%9D%A2%E5%AD%90%E6%90%AD%E5%AD%90%E6%95%B0%E7%89%8C"><span class="toc-text"> 第一讲：面子，搭子，数牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 一些概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E4%B8%8E%E6%90%AD%E5%AD%90"><span class="toc-text"> 2. 对子与搭子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AE%B2%E5%AD%97%E7%89%8C%E5%BA%8F%E7%9B%98%E5%A4%84%E7%90%86"><span class="toc-text"> 第二讲：字牌，序盘处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%97%E7%89%8C%E4%B8%9C%E8%A5%BF%E5%8D%97%E5%8C%97%E4%B8%AD%E5%8F%91%E7%99%BD"><span class="toc-text"> 1. 字牌：东西南北中发白</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BA%8F%E7%9B%98%E9%98%B6%E6%AE%B5%E6%89%BE%E5%87%BA%E4%BB%B7%E5%80%BC%E6%9C%80%E4%BD%8E%E7%9A%84%E5%8D%95%E5%BC%A0%E7%84%B6%E5%90%8E%E6%89%93%E6%8E%89"><span class="toc-text"> 2. 序盘阶段：找出价值最低的单张，然后打掉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AE%B2%E5%AF%B9%E5%AD%90%E5%A4%84%E7%90%86"><span class="toc-text"> 第三讲：对子处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AE%B2%E5%90%91%E5%90%AC%E6%95%B0-%E6%9C%89%E6%95%88%E7%89%8C-%E4%BA%94%E7%A7%8D%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 第四讲：向听数、有效牌、五种听牌型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 基础概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 2. 听牌型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AE%B2%E4%B8%89%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 第五讲：三张复合型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 1. 复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 2. 对子复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9D%8E%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B%E4%B8%A4%E5%9D%8E"><span class="toc-text"> 3. 坎张复合型（两坎）</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>54</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>14</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text"> 前言（参考资料）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E8%AE%B2%E9%9D%A2%E5%AD%90%E6%90%AD%E5%AD%90%E6%95%B0%E7%89%8C"><span class="toc-text"> 第一讲：面子，搭子，数牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 一些概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E4%B8%8E%E6%90%AD%E5%AD%90"><span class="toc-text"> 2. 对子与搭子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AE%B2%E5%AD%97%E7%89%8C%E5%BA%8F%E7%9B%98%E5%A4%84%E7%90%86"><span class="toc-text"> 第二讲：字牌，序盘处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%97%E7%89%8C%E4%B8%9C%E8%A5%BF%E5%8D%97%E5%8C%97%E4%B8%AD%E5%8F%91%E7%99%BD"><span class="toc-text"> 1. 字牌：东西南北中发白</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BA%8F%E7%9B%98%E9%98%B6%E6%AE%B5%E6%89%BE%E5%87%BA%E4%BB%B7%E5%80%BC%E6%9C%80%E4%BD%8E%E7%9A%84%E5%8D%95%E5%BC%A0%E7%84%B6%E5%90%8E%E6%89%93%E6%8E%89"><span class="toc-text"> 2. 序盘阶段：找出价值最低的单张，然后打掉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AE%B2%E5%AF%B9%E5%AD%90%E5%A4%84%E7%90%86"><span class="toc-text"> 第三讲：对子处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AE%B2%E5%90%91%E5%90%AC%E6%95%B0-%E6%9C%89%E6%95%88%E7%89%8C-%E4%BA%94%E7%A7%8D%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 第四讲：向听数、有效牌、五种听牌型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 基础概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 2. 听牌型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AE%B2%E4%B8%89%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 第五讲：三张复合型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 1. 复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 2. 对子复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9D%8E%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B%E4%B8%A4%E5%9D%8E"><span class="toc-text"> 3. 坎张复合型（两坎）</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">24</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">6</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text"> 前言（参考资料）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E8%AE%B2%E9%9D%A2%E5%AD%90%E6%90%AD%E5%AD%90%E6%95%B0%E7%89%8C"><span class="toc-text"> 第一讲：面子，搭子，数牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 一些概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E4%B8%8E%E6%90%AD%E5%AD%90"><span class="toc-text"> 2. 对子与搭子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%AE%B2%E5%AD%97%E7%89%8C%E5%BA%8F%E7%9B%98%E5%A4%84%E7%90%86"><span class="toc-text"> 第二讲：字牌，序盘处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%97%E7%89%8C%E4%B8%9C%E8%A5%BF%E5%8D%97%E5%8C%97%E4%B8%AD%E5%8F%91%E7%99%BD"><span class="toc-text"> 1. 字牌：东西南北中发白</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BA%8F%E7%9B%98%E9%98%B6%E6%AE%B5%E6%89%BE%E5%87%BA%E4%BB%B7%E5%80%BC%E6%9C%80%E4%BD%8E%E7%9A%84%E5%8D%95%E5%BC%A0%E7%84%B6%E5%90%8E%E6%89%93%E6%8E%89"><span class="toc-text"> 2. 序盘阶段：找出价值最低的单张，然后打掉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%AE%B2%E5%AF%B9%E5%AD%90%E5%A4%84%E7%90%86"><span class="toc-text"> 第三讲：对子处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%AE%B2%E5%90%91%E5%90%AC%E6%95%B0-%E6%9C%89%E6%95%88%E7%89%8C-%E4%BA%94%E7%A7%8D%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 第四讲：向听数、有效牌、五种听牌型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-text"> 1. 基础概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%AC%E7%89%8C%E5%9E%8B"><span class="toc-text"> 2. 听牌型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%AE%B2%E4%B8%89%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 第五讲：三张复合型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 1. 复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E5%AD%90%E5%A4%8D%E5%90%88%E5%9E%8B"><span class="toc-text"> 2. 对子复合型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9D%8E%E5%BC%A0%E5%A4%8D%E5%90%88%E5%9E%8B%E4%B8%A4%E5%9D%8E"><span class="toc-text"> 3. 坎张复合型（两坎）</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-02-01</div>
+        <a href="/2025/02/01/Mahjong-2/"><div class="recent-posts-item-content">日麻牌效率理论札记【其二】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-01-30</div>
+        <a href="/2025/01/30/Mahjong-1/"><div class="recent-posts-item-content">日麻牌效率理论札记【其一】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-11-20</div>
+        <a href="/2024/11/20/rl-3/"><div class="recent-posts-item-content">《动手学强化学习》学习笔记【三】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-11-12</div>
+        <a href="/2024/11/12/cs224n-2/"><div class="recent-posts-item-content">CS224N 学习随笔【二】</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
