@@ -50,7 +50,7 @@
         content="2025-03-08">
       <meta 
         property="og:article:modified_time" 
-        content="2025-03-08">
+        content="2025-04-28">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -173,7 +173,7 @@
   
     <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
   
-<meta name="generator" content="Hexo 5.4.0"></head>
+<meta name="generator" content="Hexo 5.4.0"><script src="/assets/js/DPlayer.min.js"></script></head>
 
   <body>
     <div class="wrapper">
@@ -304,7 +304,7 @@
     
     
       <span class="dot"></span>
-      <span>298 字</span>
+      <span>2.3k 字</span>
     
   </div>
   
@@ -334,16 +334,62 @@
     <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
 <p>这个想法其实已经在脑海里酝酿很久了，但是今天决定开个博客记录一下整个思考的过程，不然额也不知道会拖到什么时候才去做这个。</p>
 <span id="more"></span>
-<p>想做这个 tiny project 主要原因是我觉得我强化学习学的依托史，只是在表面肤浅地学习一些概念和算法，然后假模假样地看看代码，就当是学过了，实际完全没有实践过。</p>
-<p>本来想做强化学习麻将的，但是调研了一下，发现可供参考的资料太少了，于是还是从兼具趣味性与教学性的《超级马里奥》入手，开始探索一下如何真正将强化学习应用在实践中。</p>
+<p>想做这个 tiny project 的主要原因是我觉得我强化学习学的依托史，只是在肤浅地学习一些概念和算法，然后假模假样地看看代码，就当是学过了，实际上完全没有实践过。</p>
+<p>一开始本来想做强化学习麻将的，但是调研了一下发现可供参考的资料太少了，于是还是先从兼具趣味性与教学性的《超级马里奥》入手，开始探索一下如何真正将强化学习应用在实践中。</p>
 <p><strong>本项目期望目标如下：</strong></p>
 <ol>
-<li>采用 DQN/PPO 算法，搭建马里奥强化学习框架（环境采用 gym 提供的 super-mario-bros）</li>
+<li>采用 DQN/PPO 算法，搭建强化学习框架 (Based on gym-super-mario-bros)</li>
 <li>搭建或部署训练过程的可视化工具（这样直观 也具有趣味性）</li>
 <li>最终目标是让我们训出来的AI马里奥可以通关游戏！</li>
 </ol>
-<p>先占个坑，感兴趣欢迎在评论区催更。</p>
+<p><img src="image-20250428105634069.png" alt="image-20250428105634069" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250428105634069.png" class="lozad post-image"></p>
 <br>
+<h2 id="概念"><a class="markdownIt-Anchor" href="#概念"></a> 概念</h2>
+<p><a target="_blank" rel="noopener" href="https://pytorch.org/tutorials/intermediate/mario_rl_tutorial.html">PyTorch Docs</a> 中有一个基于 DQN 的教程，基于马里奥这个项目简单回顾了一下强化学习的组成元素：</p>
+<ul>
+<li><strong>智能体</strong>：当然是马里奥大叔；</li>
+<li><strong>环境</strong>：每个游戏关卡都可以看作环境，由砖块，蘑菇，管道组成；</li>
+<li><strong>动作</strong>：左右移动和跳跃。事实上为了通关第一关的话，只需要向右移动和跳跃两个动作就行了；</li>
+<li><strong>状态</strong>：我们可以把每一帧游戏画面当做是一个状态，比方说如果前面是一个管道，那我们就应该执行跳跃动作；为了压缩空间，我们还会对游戏画面做一些预处理操作。</li>
+<li><strong>奖励</strong>：我们可以拿马里奥向前走的距离 (x_position) 作为奖励函数，走得越远说明离目标越近。当然还有一些其他因素（如通关时间，吃到金币数等）。</li>
+</ul>
+<p>简单思考之后，我们来深入细节展开分析一下。</p>
+<br>
+<h2 id="1-环境与包装器"><a class="markdownIt-Anchor" href="#1-环境与包装器"></a> 1. 环境与包装器</h2>
+<p>我们直接采用 gym 里面的马里奥搭建环境 env，OpenAI Gym 提供了一个标准化的环境接口，能够创建、测试和比较不同的强化学习代理。有了这个，我们就可以很容易定义环境、动作空间等概念。当马里奥采取动作时，Gym 环境会返回下一个状态、奖励和其他信息。</p>
+<pre class="highlight"><code class="hljs py"><span class="hljs-comment"># Initialize Super Mario environment (in v0.26 change render mode to &#x27;human&#x27; to see results on the screen)</span><br><span class="hljs-keyword">if</span> gym.__version__ &lt; <span class="hljs-string">&#x27;0.26&#x27;</span>:<br>    env = gym_super_mario_bros.make(<span class="hljs-string">&quot;SuperMarioBros-1-1-v0&quot;</span>, new_step_api=<span class="hljs-literal">True</span>)<br><span class="hljs-keyword">else</span>:<br>    env = gym_super_mario_bros.make(<span class="hljs-string">&quot;SuperMarioBros-1-1-v0&quot;</span>, render_mode=<span class="hljs-string">&#x27;rgb&#x27;</span>, apply_api_compatibility=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Limit the action-space to</span><br><span class="hljs-comment">#   0. walk right</span><br><span class="hljs-comment">#   1. jump right</span><br>env = JoypadSpace(env, [[<span class="hljs-string">&quot;right&quot;</span>], [<span class="hljs-string">&quot;right&quot;</span>, <span class="hljs-string">&quot;A&quot;</span>]])<br><br>env.reset()<br>next_state, reward, done, trunc, info = env.step(action=<span class="hljs-number">0</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">&#123;next_state.shape&#125;</span>,\n <span class="hljs-subst">&#123;reward&#125;</span>,\n <span class="hljs-subst">&#123;done&#125;</span>,\n <span class="hljs-subst">&#123;info&#125;</span>&quot;</span>)<br></code></pre>
+<p>返回的状态是一个 256*256 像素的 RGB 游戏画面，但显然里面很多信息是可以省略的（如颜色不是那么有用，也没必要把每一帧都抽出来）。因此我们可以用**包装器（Wrappers）**对状态在发送给智能体之前对其进行预处理。</p>
+<ol>
+<li><strong>SkipFrame</strong>：继承自 <code>gym.Wrapper</code> 并实现了 <code>step()</code> 函数。由于连续帧变化不大，我们可以跳过 n 个中间帧而不会丢失太多信息。第 n 帧聚合了每个跳过帧累积的奖励，规定每隔 n 帧才处理一次观测和动作，可以加快训练速度的同时，保持游戏的连续性。</li>
+<li><strong>GrayScaleObservation</strong>：将RGB彩色图像转换为灰度图像，仍然保留了游戏的主要视觉特征，同时降低了输入数据的维度（从 3 通道减少到 1 通道），加速训练过程。</li>
+<li><strong>ResizeObservation</strong>：将图像缩放到指定的大小（默认84x84），统一输入尺寸，便于神经网络处理，同时降低了计算复杂度。</li>
+<li><strong>NormalizeObservation</strong>：将像素值从 [0, 255] 归一化到 [0, 1] 范围，有助于神经网络的训练稳定性，防止数值过大导致梯度问题。</li>
+<li><strong>FrameStack</strong>：堆叠最近的几帧（默认4帧）从而将环境的连续帧压缩成一个单一的观察点，以馈送到我们的学习模型。这样，我们可以根据马里奥在之前几个帧中的移动方向来判断他是着陆还是跳跃，使智能体能够感知时间信息和动作效果。</li>
+</ol>
+<p>最终观察空间的形状变成了(4, 84, 84)，这对于一个 CNN 来说就很方便了。</p>
+<br>
+<h2 id="2-奖励函数"><a class="markdownIt-Anchor" href="#2-奖励函数"></a> 2. 奖励函数</h2>
+<p>Agent 跟环境交互后，可以根据环境状态获得额外的奖励值。例如前进奖励：通过比较坐标，每前进1个单位，获得0.1的额外奖励、根据时间剩余给予奖励（鼓励速度）、收集金币奖励等。</p>
+<br>
+<h2 id="3-网络建模"><a class="markdownIt-Anchor" href="#3-网络建模"></a> 3. 网络建模</h2>
+<p>普通的 Q 网络就是先搭一个 CNN 去捕捉画面的特征信息，再套一个 MLP 对 特征进行 K 分类（K 是智能体的所有动作）。对于 <code>DuelingDQN</code>，我们将 Q 函数建模为：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><mi>V</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mi>a</mi><mo stretchy="false">)</mo><mo>−</mo><mn>1</mn><mi mathvariant="normal">/</mi><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mo>∗</mo><mi>s</mi><mi>u</mi><mi>m</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><msup><mi>a</mi><mo mathvariant="normal">′</mo></msup><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Q(s,a) = V(s) + (A(s,a) - 1/|A| * sum(A(s,a&#x27;)))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">Q</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">a</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">A</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">a</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">/</span><span class="mord">∣</span><span class="mord mathdefault">A</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">u</span><span class="mord mathdefault">m</span><span class="mopen">(</span><span class="mord mathdefault">A</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span> ，即分别计算状态函数价值函数，以及（状态，动作）的优势函数，从而更好捕捉与动作关联较小的状态。此事在 <a href="https://tzturtle.moe/2024/11/20/rl-3/#2-dueling-dqn">学习笔记【三】</a> 中亦有记载。</p>
+<p>对于 <code>PPO</code> 来说，底层采用的是Actor-Critic 架构。Actor 基于 Critic 的评价选取下一轮的动作，Critic 给 Actor 的动作进行打分。对于 Mario-RL 项目，我们采用一个共享的卷积神经网络（CNN）提取特征。Actor 进行一个 K 分类任务输出动作概率，Critic 进行回归预测输出值函数。</p>
+<p>Model 层算是整个结构中的底层，之后我们基于 Model 搭建强化学习的智能体，实现 RL 算法的核心逻辑。</p>
+<br>
+<h2 id="4-agent-建模"><a class="markdownIt-Anchor" href="#4-agent-建模"></a> 4. Agent 建模</h2>
+<p>DQN 的核心就是双网络结构，一套策略网络正常采样动作更新参数，一套目标网络计算Q值，实现更好的稳定性。同时我们也创建一个<strong>经验回放缓冲区</strong>，用以存储和采样过去的经验。选择动作时，使用 Epsilon-Greedy 策略：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">ϵ</span></span></span></span> 低于某个值时随机采样，否则采用当前策略网络采样最优动作。优化模型时，先从 buffer 采样一批数据。根据当前状态和动作，通过策略网络计算 <code>q_value</code>，再根据 <code>next_state</code> 通过目标网络计算 <code>next_q_value</code>，计算二者之间的 Loss.</p>
+<p>对于 <code>PPOAgent</code>，我们使用一个网络 <code>PPONetwork</code> 同时实现Actor和Critic功能。我们先根据 Critic 提供的状态价值计算TD误差、构建Actor的优势函数；在根据优势函数计算 Actor 的策略损失。采用了一个 PPO 截断的策略，此事在 <a href="https://tzturtle.moe/2025/02/14/rl-4/#dpo">学习笔记【四】</a> 亦有记载。</p>
+<p>值得注意的是，PPO 是在线学习算法，这意味着其策略更新是基于当前策略的经验进行的。因此<code>PPOAgent</code> 不应采用 <code>ReplayBuffer</code>，而采用自己的 <code>PPOMemory</code>存取数据。具体来讲，<code>PPOMemory</code> 存储的是一次“完整的轨迹”数据（状态、动作、奖励、状态值等），并且会 <strong>在策略更新期间一次性使用这些数据</strong>，以保证它在策略优化时使用的样本是和当前策略相关的；第二，PPO使用 <strong>重要性采样</strong> 来计算新旧策略之间的比率，如果二者之间差距过大，不利于训练的稳定性；此外，PPO在每次训练时需要对<strong>整个轨迹</strong>的数据进行更新，这是因为PPO的目标函数基于优势函数，其计算依赖于完整轨迹，以计算其长期累积奖励（Returns）。</p>
+<br>
+<h2 id="6-训练和评估"><a class="markdownIt-Anchor" href="#6-训练和评估"></a> 6. 训练和评估</h2>
+<p><code>Train.py</code> 包含了有关 DQN 和 PPO 的训练流程。先创建对应的关卡环境，创建DQN或PPO智能体，调用各自的训练函数：<code>train_dqn</code> 函数实现了一个 <strong>off-policy</strong> 算法，使用经验回放从过去收集的经验中随机采样进行学习。以 PPO 算法为例，模型一共会训练 N steps ( N一般会很大 )，因为 PPO 是 on-policy 算法，每个 episode 会连续训练一轮完整的游戏（对于 DQN 而言，则是利用 Replay Buffer）。</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 选择动作</span><br>action, log_prob, value = agent.select_action(state)<br></code></pre>
+<p>首先，Agent 会根据当前状态（即环境）获取一个动作（Actor 给出）及其对应的评分（Critic 给出）。</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 执行动作</span><br>next_state, reward, terminated, truncated, info = env.step(action)<br>done = terminated <span class="hljs-keyword">or</span> truncated<br></code></pre>
+<p>其次，Agent 执行该动作与环境交互，环境给出下一个状态、环境给出的奖励、是否终止等信息。</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 存储经验</span><br>agent.store_transition(state, action, log_prob, value, reward, done)<br>...<br><br><span class="hljs-comment"># 达到n_steps或回合结束时更新策略</span><br><span class="hljs-keyword">if</span> step_count % n_steps == <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> done:<br>    loss_info = agent.learn()<br></code></pre>
+<p>最后，Agent 暂存这次动作学习的经验，用以本轮的训练中。</p>
+<div id="dplayer0" class="dplayer hexo-tag-dplayer-mark" style="margin-bottom: 20px;"></div><p>no url specified, no dplayer _(:3」∠)_</p>
 
   </div>
   <div>
@@ -436,7 +482,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text"> 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8"><span class="toc-text"> 1. 环境与包装器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 奖励函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BD%91%E7%BB%9C%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 3. 网络建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-agent-%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 4. Agent 建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%AD%E7%BB%83%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="toc-text"> 6. 训练和评估</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -504,7 +550,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text"> 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8"><span class="toc-text"> 1. 环境与包装器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 奖励函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BD%91%E7%BB%9C%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 3. 网络建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-agent-%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 4. Agent 建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%AD%E7%BB%83%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="toc-text"> 6. 训练和评估</span></a></li></ol>
       </div>
     </article>
   
@@ -519,13 +565,6 @@
   </div>
   <div class="categories-list">
     
-      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
-        <div class="categories-list-item">
-          生活分享
-          <span class="categories-list-item-badge">8</span>
-        </div>
-      </a>
-    
       <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
         <div class="categories-list-item">
           算法竞赛
@@ -537,6 +576,13 @@
         <div class="categories-list-item">
           专业学习
           <span class="categories-list-item-badge">26</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">8</span>
         </div>
       </a>
     
@@ -569,15 +615,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/%E9%9A%8F%E7%AC%94/" 
-        title="随笔">
-        <div class="tags-list-item">随笔</div>
-      </a>
-    
-      <a 
         href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
         title="计算机组成原理">
         <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
       </a>
     
       <a 
@@ -593,15 +639,15 @@
       </a>
     
       <a 
-        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
-        title="线性基">
-        <div class="tags-list-item">线性基</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%97%A5%E9%BA%BB/" 
         title="日麻">
         <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
       <a 
@@ -635,15 +681,15 @@
       </a>
     
       <a 
-        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
-        title="分布式">
-        <div class="tags-list-item">分布式</div>
-      </a>
-    
-      <a 
         href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
         title="强化学习">
         <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
       </a>
     
       <a 
@@ -670,7 +716,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text"> 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8"><span class="toc-text"> 1. 环境与包装器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0"><span class="toc-text"> 2. 奖励函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BD%91%E7%BB%9C%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 3. 网络建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-agent-%E5%BB%BA%E6%A8%A1"><span class="toc-text"> 4. Agent 建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%AD%E7%BB%83%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="toc-text"> 6. 训练和评估</span></a></li></ol>
     </article>
   
   
