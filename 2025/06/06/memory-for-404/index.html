@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>缅怀我第一位逝去的朋友</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="缅怀我第一位逝去的朋友">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/06/06/memory-for-404/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;小 s 是在2025年6月4日那天的早上八点走的，等我知道这件事的时候已经过去一天了。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-06-06">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-06-06">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      缅怀我第一位逝去的朋友
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-06-05T16:39:04.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-06-06</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/" 
+          class="post-meta-link">
+          生活分享
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.3k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>小 s 是在2025年6月4日那天的早上八点走的，等我知道这件事的时候已经过去一天了。</p>
+<span id="more"></span>
+<p>r君不是最先发现他去世的，他是从w君那里得到的消息，说是实验室里的师兄发现小s躺在椅子上一动不动，本来以为是睡觉，结果过了好久回来发现小s还维持着一样的姿势，发现是不对劲了。等到r君赶到实验楼，早已被急救车警察车刑侦车围了个水泄不通。据说医生刚上去抢救，发现小s的尸体上都已经长出尸斑了。</p>
+<p>由于小s的抑郁症状一直很严重，本来打算是读完这个大三下学期就休学一年调养，为此他的母亲也来到北京，在酒店租了个房子陪伴他。据 jc 所说，小s前天晚上还回酒店休息了一阵子，大清早只身来到实验室，不知道服用了什么药物或毒物自杀了。临终前的他什么也没留下，只在推特上留下一首《哀乐》，以及一段文字。</p>
+<blockquote>
+<p>我等着一阵风 吹过来 吹响着 木扳机</p>
+<p>送走所有白字</p>
+<p>最后轮到自己了吗</p>
+</blockquote>
+<p>r 君隔天早上将这件事情告诉我，他是一个月以来和小s交流最多的人之一，因此当天被 jc 拉去谈了很多话，抽出身的时候已经是晚上了，他本来想晚上把这件事告诉我，却被小a拦下来：“晚上还是别和龟说了吧，不然估计他晚上要睡不着了。” 只能说他想的不无道理，现在的笔者已经起开一瓶强爽，翻看着和小s的聊天记录，脑海里不由得回忆起来了。</p>
+<hr />
+<p>初见小s应该是在沙河的操场上，当时漫社第一次组织小团体夜跑活动，大家来的都很积极。他们当时还没有进牢子，没有变成 xnn，也没有抑郁服药自杀。小s也在他们里头。</p>
+<p>初次相见小s给我留下的印象就是：死正经。感觉就像是《日常》里的麻衣，平日里板着脸，做事滴水不漏，猜不透他的心思，但背地里是在玩什么烂梗的闷骚男。事实上我的猜测也对了大半，小s平日里近乎严苛地要求自己，大一就帮我们办了很多活动，平日里也经常和我们在教室里一起自习；大一下，小s也组起了自己的乐队，作为键盘手在社庆的舞台上活跃着。听说小s曾经担任过播音主持，我们也把晚会主持这份活儿交付于他，当时的他为了兼顾乐队和学业，估计付出了不少心血去准备这些事，就结果来看，做的都还不错。</p>
+<p>当时我们的关系更多还是前辈后辈的关系，我就觉得：这小孩儿不错，我喜欢他那股责任心，也喜欢他那种认真的语气中透露出的闷骚，但我又时常会感到顾虑：<strong>他实在太把事儿当回事儿了</strong>。因为这简直是我大一大二的翻版：当时的我初遇高考失利，满脑子都想着稳绩点，拿保研名额，不能出岔子，可以说大一过得很累。大二担任事务组组长兼代理社长更是如此，满脑子都想的是活动不能锅，得把可能出事的点都排查一遍，保证活动万无一失。但最后随着社庆结束，我也发现了 “把事儿太当回事儿” 很累，反而是顺其自然、把自己事儿办好，剩下听天由命 活的更舒服些。为了传递这个想法，我便想着让小s去当事务组组长，让他自己悟一悟。</p>
+<p>事实证明，小s当事务组组长做得还不错，但我把这担子交给他似乎是一件错误的决定。我让他当事务组组长这件事本身似乎就是在强调 “把事儿当事儿” 的属性，因此上任之后小s进一步压力自己，无形中又给他增添很多责任。“那时的他会快乐吗？” 现在的我也不由得会问起自己，但我还是愿意相信他在漫社的时光是快乐的。结束任期后，我跟他打了个电话，聊了很多，他也问了我许多问题，更多的是在问自己做的是否称职，是否达到了我的“期待”。当时我怎么回复的？我已经记不清了。只记得我把我让他当事务组组长的初衷告诉他，询问到：“换届也结束了，你现在有没有一种释怀、顺其自然的感觉？” 他回答说：“我不清楚。”</p>
+<hr />
+<p>尽管w老师一再强调，社团里的学长学姐对学弟学妹们不承担任何教育责任，但我还是觉得在他们面前得树立一些榜样，因为他们是从高中刚刚走出来，踏入大学这个 “小社会”，在社团里玩得比较多的可能更多是照他们熟悉的学长的样子画瓢，因此无形之中我也承担了某种 “责任感”。但现实告诉我的就是我的责任感是一坨稀烂。22 级接连发生的事情似乎总是无情地鞭笞我，让我对生者有愧、对“逝者”悔过。小 s 似乎也将我这无用的 “责任感” 尽学了去，因此他也曾问我，若当时我们做了什么，致使那件事或是那件事没有发生，他会是怎样？我们又会是怎样？</p>
+<p>我又如何知道呢？只好摸着他的头，让他不要做这些无用的假设。斯人已去，生者亦当前行。</p>
+<p>他点了点头，不再说话，可谁知现在轮到我了。</p>
+<hr />
+<p>小 s 被诊断出抑郁症应该是在大三上学期，当时的他正在做一个大创项目，但觉得这个项目很难推进，于是来问我和 sy 的想法。我听完这个项目的 idea，觉得应该是可行的，便建议他去看看相关的论文，我觉得应该有不少成熟的 idea，在他们的基础上改改说不定项目就成了。</p>
+<p>现在回想起来，小 s 应该听的似乎不是这些建议，因为担任项目组长的他继续在压力自己，并且顺道在对话中给队友释放了不少重力，导致整个项目组的氛围很僵。我们之后也告诉他，没有必要给自己这么多压力，大创这个项目就是有很大几率是做不出来真东西的，也是有几率会烂尾的（我本人就有一个项目烂尾了）。但他似乎仍然陷在自己无力将项目推进下去的挫败感中，以至于最后不得已跟项目导师请求更换组长或者解散。我不知道这是否是导致小 s 抑郁的直接原因，但一系列挫折最终击垮了他，我印象中有责任感并坚强的他。</p>
+<p>直至那时我发现，他的坚强似乎并非真的是坚强。</p>
+<hr />
+<p>没良心的是，他患抑郁症这件事情似乎并未在我的心中激起太多波澜。一是之前种种症状已经明显，二是我的身边患抑郁症的人群也不占少数：我的父亲也曾在我初中时罹患抑郁。当时的他夜里抱着我的头，告诉我如果有一天他走了，让我不要担心，务必把他的骨埋回他的老家。我吓得一时不知道说什么话，只得狠狠地抓着他，哭嚷着叫着你别走……但似乎也是很久远的记忆，当时的我更有可能是什么也没说。</p>
+<p>但没有激起波澜的根本原因是我认为 “抑郁症尽管很痛苦很可怕，但并不会有生命风险”。这一滑稽的结论自然也是采样自我身边的抑郁症患者们，我的父亲在接受心理医生治疗后逐渐康复，并在事后告诉我那件致使其患病的事情 “想想也没啥可怕的”；而其他同学虽也有过轻生念头，但最后结果仍是平安无事，这让我对这一病症逐渐放松了警惕。</p>
+<p>但抑郁的可怕之处便在于，如果一个人太把事当回事，走不出那个环，那这份痛苦将会持续折磨着他，每一件小事都会让痛苦进一步放大，直至事情难以收尾。而小s这份责任感，这份我曾欣赏的责任感，正是导致一切的源头。</p>
+<p>我没有权利去评价他的家庭，我没有权利去评价他的同学、他的班级、他的宿舍。我只是在不同的场景下、不同的境遇下、不同的事件下、不同的立场下偶尔会想，如果我做了什么，致使那件事或者那件事没有发生，他会是怎样？尽管这一切已经发生？尽管这将引向我的覆灭？</p>
+<hr />
+<p>我过去也曾幼稚地想过，我应当在某些领域中出人头地，我应当做一些有价值而利好社会的东西，以博得大家的赞许，以赢取一些荣誉和佳名，为后世传颂。至少，我不应死而无名。</p>
+<p>而小 s 最后为我上了一课，我们翻阅了他的背包里所有的书籍、破译了他电脑的密码、翻看了其中的文件，但并为找到任何可以被称为 “遗书” 的物品 — — 浏览器中最后的聊天记录甚至停留在他的课程大作业，就在他去世的前夜。</p>
+<p>第二天早上，他如同任何平常的一天般，起床、刷牙、穿衣、出门、来到自习的实验室，悄无声息地迎来了他的死亡。</p>
+<p>当我们检索半天徒劳无功后，我内心里是在责备小 s 的，责备他的噤声、责备他的软弱、责备他的死而无名。可我们又有什么资格去指责他的软弱，当他已经做出一生中最为大胆的决定？我们又有什么资格去指责他的噤声，当他已经向世界呐喊过了无数次？我们又有什么资格去指责他的无名，当他的身影已经铭刻在我们的脑海中？</p>
+<p>若是他留下了一份遗书，那上面会写点什么呢？他的生与死、他的笑与泪、他的悔与狠……他会写下他的一生吗？他会写下我吗？可是，多么让人悔耻的想法，提及一位缄默的看客。</p>
+<p>他并非死而无名，至少我坚信他不会是。</p>
+<hr />
+<p>总言而之，小 s 的死未对世界产生太多波澜，我透过实验室的窗户向外看，今天是顶好的天气，走在校园里的学生们聊着八卦和日常，宿舍里的学生打着游戏，地球依然旋转，太阳将在明天继续升起。但我却实在地感受到这个学校已经和昨天的不一样了，我看见月亮被挖空了一角、天空响彻着五彩斑斓的黑、校长在呕吐。</p>
+<p>我没能见到小 s 最后一面，但是他们都说他已经去世了。我们尝试联系他的父母，想见他最后一面，但是他的父母正处于丧子的极度悲痛中，没有答应我们的请求，只是一昧地感谢我们如此关心小 s 。</p>
+<p>因此，我没能见到小 s 最后一面，但他确乎大概已经是去世了。</p>
+<p>小 s 选择安静地步入那个良夜，而我要当那个敲钟的人吗？我要吹响唢呐，响彻世界，替他再留下一些存在过的痕迹吗？我应当这样做，但这会是小 s 想要的吗？我会知道他的想法吗？我会猜到他的想法吗？但我认为我理应这样做。</p>
+<p>于是我先起开一瓶强爽，留下了这些文字，缅怀我第一位逝去的朋友。他理应存在并且继续存在。既然世人说他不在了，我们便应连携着他的那一份继续活着，漂亮地活着、坚强地活着。</p>
+<p>直到他在某一天播通我的电话，到那时在对他说出那些没能说出的话吧。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/06/06/memory-for-404/">
+            https://tzturtle.moe/2025/06/06/memory-for-404/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2025/05/07/llm-architecture/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">深入浅出：现代大模型架构 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>58</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>6</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>15</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">26</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">6</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">
+        <div class="categories-list-item">
+          大模型架构
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/Architecture/" 
+        title="Architecture">
+        <div class="tags-list-item">Architecture</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-06-06</div>
+        <a href="/2025/06/06/memory-for-404/"><div class="recent-posts-item-content">缅怀我第一位逝去的朋友</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-05-07</div>
+        <a href="/2025/05/07/llm-architecture/"><div class="recent-posts-item-content">深入浅出：现代大模型架构</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-03-08</div>
+        <a href="/2025/03/08/rl-mario/"><div class="recent-posts-item-content">强化学习实战：用PPO算法通关超级马里奥兄弟</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-02-14</div>
+        <a href="/2025/02/14/rl-4/"><div class="recent-posts-item-content">《动手学强化学习》学习笔记【四】</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
