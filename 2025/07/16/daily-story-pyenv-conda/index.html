@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>【实验室小品一则】什么是pyenv，什么是miniconda</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="【实验室小品一则】什么是pyenv，什么是miniconda">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/07/16/daily-story-pyenv-conda/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;表演者：我，Claude-Sonnet-4.&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-07-16">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-07-16">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      【实验室小品一则】什么是pyenv，什么是miniconda
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-07-16T12:01:12.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-07-16</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/" 
+          class="post-meta-link">
+          生活分享
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.8k 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>表演者：我，Claude-Sonnet-4.</p>
+<span id="more"></span>
+<p>事情的起因是我在实验室的服务器上配环境，在不知情的情况下被 Claude 塞了一个 pyenv 进去。我自己出于惯性，顺手往服务器上配了个 miniconda。结果就是我今天部署 LlamaFactory 的时候就出事儿了。</p>
+<p><strong>我：</strong><code>ModuleNotFoundError: No module named '_bz2'</code></p>
+<p>**Claude：**这个错误是因为你的 Python 环境缺少 <code>_bz2</code> 模块，这通常发生在使用 pyenv 编译的 Python 时缺少某些系统依赖。**解决方案：**安装系统依赖并重新编译 Python。</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 安装必要的系统依赖</span><br>sudo apt-get update<br>sudo apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev libssl-dev<br><br><span class="hljs-comment"># 重新安装 Python 3.11.10</span><br>pyenv uninstall <span class="hljs-number">3.11</span><span class="hljs-number">.10</span><br>pyenv install <span class="hljs-number">3.11</span><span class="hljs-number">.10</span><br></code></pre>
+<hr />
+<p>行吧，由于我不是服务器的root用户，还特意去麻烦了别人帮我执行了这几行命令。听说我在跑 LlamaFactory，他感到很疑惑，因为他也在服务器上跑过这个，没遇上这些问题。</p>
+<p>装完这个模块重新运行，结果很快啊很快：</p>
+<p><strong>我：</strong><code>ModuleNotFoundError: No module named '_lzma'</code></p>
+<p><strong>Claude：</strong> 这个错误是因为你的 Python 环境缺少 <code>_lzma</code> 模块。这是系统编译 Python 时缺少依赖导致的。需要重新安装 Python 或使用其他方案。解决方案：重新编译 Python（推荐）</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 安装所有必要的系统依赖</span><br>sudo apt-get update<br>sudo apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev libssl-dev liblzma-dev libffi-dev<br><br><span class="hljs-comment"># 重新安装 Python</span><br>pyenv uninstall <span class="hljs-number">3.11</span><span class="hljs-number">.10</span><br>pyenv install <span class="hljs-number">3.11</span><span class="hljs-number">.10</span><br></code></pre>
+<hr />
+<p>**我（急了）：**为什么我的python环境一直在缺少模块？和我的miniconda有关吗？其他人都没有这种情况。</p>
+<p><strong>Claude：</strong> 你的问题确实和环境管理有关。从错误信息可以看出，你混合使用了 <code>pyenv</code> 和 <code>miniconda</code>，这会导致环境冲突和模块缺失。</p>
+<p><strong>问题分析：</strong></p>
+<ol>
+<li><strong>pyenv 编译的 Python 缺少系统依赖</strong>
+<ul>
+<li>你使用 pyenv 安装的 Python 3.11.10 在编译时缺少 <code>liblzma-dev</code>、<code>libbz2-dev</code> 等系统库</li>
+<li>导致 [_lzma](vscode-file://vscode-app/c:/Works/Microsoft VS Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html)、<code>_bz2</code> 等 C 扩展模块缺失</li>
+</ul>
+</li>
+<li><strong>环境管理工具冲突</strong>
+<ul>
+<li>pyenv 和 conda 同时存在可能导致 PATH 和环境变量冲突</li>
+<li>不同工具管理的 Python 版本可能不完整</li>
+</ul>
+</li>
+</ol>
+<p><strong>为什么别人没有这个问题：</strong></p>
+<ol>
+<li><strong>大多数人使用 conda</strong>：conda 预编译的 Python 包含所有标准库模块</li>
+<li><strong>或者使用完整的系统 Python</strong>：Ubuntu/Debian 的 python3 包已包含所有依赖</li>
+<li><strong>你使用了不完整的 pyenv Python</strong>：编译时缺少系统依赖</li>
+</ol>
+<hr />
+<p><strong>我（疑惑）：</strong> 我又使用了 pyenv，又使用了miniconda，这两者有什么区别？我是一个小白，请用通俗易懂的话跟我解释。</p>
+<p><strong>Claude：</strong></p>
+<p>好的，我用通俗易懂的方式来解释 <code>pyenv</code> 和 [miniconda](vscode-file://vscode-app/c:/Works/Microsoft VS Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html) 的区别：</p>
+<p><strong>简单类比</strong>，想象你在管理不同版本的软件：</p>
+<ul>
+<li><strong>pyenv</strong> = 手工作坊：你自己从源代码编译各种版本的 Python，就像自己组装电脑</li>
+<li><strong>miniconda</strong> = 品牌电脑店：给你预装好的完整 Python 环境，开箱即用</li>
+</ul>
+<p><strong>具体区别：</strong></p>
+<h3 id="pyenvpython-版本管理器"><a class="markdownIt-Anchor" href="#pyenvpython-版本管理器"></a> pyenv（Python 版本管理器）</h3>
+<pre class="highlight"><code class="hljs plaintext">- 只管理 Python 版本，不管包<br>- 需要从源代码编译 Python<br>- 如果系统缺少依赖库，编译出来的 Python 就不完整<br>- 更轻量，但需要你懂更多技术细节<br></code></pre>
+<h3 id="minicondaconda环境管理器"><a class="markdownIt-Anchor" href="#minicondaconda环境管理器"></a> miniconda/conda（环境管理器）</h3>
+<pre class="highlight"><code class="hljs plaintext">- 管理 Python 版本 + 所有包<br>- 提供预编译好的完整 Python<br>- 包含所有标准库模块<br>- 自动解决包依赖冲突<br>- 更适合数据科学和机器学习<br></code></pre>
+<p><strong>为什么混用会出问题？</strong></p>
+<pre class="highlight"><code class="hljs bash"><span class="hljs-comment"># 可能的冲突：</span><br><span class="hljs-built_in">echo</span> <span class="hljs-variable">$PATH</span><br><span class="hljs-comment"># 输出可能是：</span><br>/home/tzxu/.pyenv/shims:/home/tzxu/miniconda3/bin:/usr/bin<br><br><span class="hljs-comment"># 系统不知道该用哪个 Python！</span><br><span class="hljs-built_in">which</span> python  <span class="hljs-comment"># 可能指向 pyenv 的不完整版本</span><br><span class="hljs-built_in">which</span> conda   <span class="hljs-comment"># 指向 conda</span><br></code></pre>
+<p><strong>我的建议</strong>：对于小白用户，强烈建议只用 conda，因为：</p>
+<ol>
+<li><strong>开箱即用</strong>：conda 的 Python 环境是完整的</li>
+<li><strong>依赖管理更好</strong>：特别适合机器学习项目</li>
+<li><strong>社区支持好</strong>：大部分教程都基于 conda</li>
+<li><strong>避免编译问题</strong>：不需要担心系统依赖</li>
+</ol>
+<hr />
+<p>**我（继续懵逼）：**为啥我只有 miniconda 就不会再有模块缺失的问题了</p>
+<p><strong>Claude：</strong> 很好的问题！让我解释为什么 miniconda 不会有模块缺失问题：</p>
+<h2 id="pyenv-vs-miniconda-的根本区别"><a class="markdownIt-Anchor" href="#pyenv-vs-miniconda-的根本区别"></a> pyenv vs miniconda 的根本区别</h2>
+<h3 id="pyenv-的工作方式会出问题"><a class="markdownIt-Anchor" href="#pyenv-的工作方式会出问题"></a> pyenv 的工作方式（会出问题）</h3>
+<pre class="highlight"><code class="hljs markdown"><span class="hljs-section"># pyenv 从源代码编译 Python</span><br><span class="hljs-bullet">1.</span> 下载 Python 源代码<br><span class="hljs-bullet">2.</span> 在你的机器上编译<br><span class="hljs-bullet">3.</span> 如果系统缺少某些库，编译出来的 Python 就缺少对应模块<br><br><span class="hljs-section"># 你的情况：</span><br>系统缺少 liblzma-dev → 编译的 Python 缺少 <span class="hljs-emphasis">_lzma 模块</span><br><span class="hljs-emphasis">系统缺少 libbz2-dev  → 编译的 Python 缺少 _</span>bz2 模块<br></code></pre>
+<p>很好的问题！让我解释为什么 miniconda 不会有模块缺失问题：</p>
+<h2 id="pyenv-vs-miniconda-的根本区别-2"><a class="markdownIt-Anchor" href="#pyenv-vs-miniconda-的根本区别-2"></a> pyenv vs miniconda 的根本区别</h2>
+<h3 id="pyenv-的工作方式会出问题-2"><a class="markdownIt-Anchor" href="#pyenv-的工作方式会出问题-2"></a> pyenv 的工作方式（会出问题）</h3>
+<pre class="highlight"><code class="hljs markdown"><span class="hljs-section"># pyenv 从源代码编译 Python</span><br><span class="hljs-bullet">1.</span> 下载 Python 源代码<br><span class="hljs-bullet">2.</span> 在你的机器上编译<br><span class="hljs-bullet">3.</span> 如果系统缺少某些库，编译出来的 Python 就缺少对应模块<br><br><span class="hljs-section"># 你的情况：</span><br>系统缺少 liblzma-dev → 编译的 Python 缺少 <span class="hljs-emphasis">_lzma 模块</span><br><span class="hljs-emphasis">系统缺少 libbz2-dev  → 编译的 Python 缺少 _</span>bz2 模块<br></code></pre>
+<h3 id="miniconda-的工作方式不会出问题"><a class="markdownIt-Anchor" href="#miniconda-的工作方式不会出问题"></a> miniconda 的工作方式（不会出问题）</h3>
+<pre class="highlight"><code class="hljs markdown"><span class="hljs-section"># miniconda 提供预编译的 Python</span><br><span class="hljs-bullet">1.</span> Anaconda 公司在完整环境中编译好 Python<br><span class="hljs-bullet">2.</span> 包含所有标准库模块<br><span class="hljs-bullet">3.</span> 直接下载二进制文件，不需要在你机器上编译<br><span class="hljs-bullet">4.</span> 保证完整性<br></code></pre>
+<p><strong>总结</strong>：miniconda 给你的是&quot;工厂制造的完整产品&quot;，而 pyenv 是&quot;DIY 组装可能缺零件&quot;。这就是为什么 conda 更适合普通用户！</p>
+<hr />
+<p><strong>我（？？？）：</strong> 我草，我听不懂，能不能再讲详细一点？</p>
+<p><strong>Claude：</strong> 哈哈，我讲得太技术化了！让我用更简单的话重新解释：</p>
+<h2 id="用做饭来比喻"><a class="markdownIt-Anchor" href="#用做饭来比喻"></a> 用做饭来比喻</h2>
+<h3 id="pyenv-你自己做饭"><a class="markdownIt-Anchor" href="#pyenv-你自己做饭"></a> pyenv = 你自己做饭</h3>
+<pre class="highlight"><code class="hljs plaintext">你想吃红烧肉：<br>1. 去菜市场买猪肉 ✅<br>2. 买生抽 ✅  <br>3. 买老抽 ❌ (菜市场没有，你就不买了)<br>4. 回家做菜<br><br>结果：做出来的红烧肉没颜色，因为缺老抽<br></code></pre>
+<h3 id="miniconda-点外卖"><a class="markdownIt-Anchor" href="#miniconda-点外卖"></a> miniconda = 点外卖</h3>
+<pre class="highlight"><code class="hljs plaintext">你想吃红烧肉：<br>1. 打开美团<br>2. 点一份红烧肉<br>3. 外卖送到家<br><br>结果：红烧肉是完整的，因为餐厅什么调料都有<br></code></pre>
+<h2 id="回到你的问题"><a class="markdownIt-Anchor" href="#回到你的问题"></a> 回到你的问题</h2>
+<h3 id="你用-pyenv-时发生了什么"><a class="markdownIt-Anchor" href="#你用-pyenv-时发生了什么"></a> 你用 pyenv 时发生了什么：</h3>
+<pre class="highlight"><code class="hljs plaintext">pyenv 想给你装 Python：<br>1. 下载 Python 源代码 ✅<br>2. 需要 lzma 库来编译 ❌ (你电脑没有)<br>3. 需要 bz2 库来编译 ❌ (你电脑也没有)<br>4. 算了，不要这些功能了，继续装<br><br>结果：Python 装好了，但缺少压缩功能<br>当程序需要解压文件时 → 报错！<br></code></pre>
+<h3 id="你用-miniconda-时"><a class="markdownIt-Anchor" href="#你用-miniconda-时"></a> 你用 miniconda 时：</h3>
+<pre class="highlight"><code class="hljs plaintext">miniconda：<br>&quot;我直接给你一个完整的 Python，什么功能都有&quot;<br><br>结果：Python 什么功能都能用，不会报错<br></code></pre>
+<h2 id="为什么你的电脑缺这些库"><a class="markdownIt-Anchor" href="#为什么你的电脑缺这些库"></a> 为什么你的电脑缺这些库？</h2>
+<p>你的 Linux 是&quot;精简版&quot;，就像：</p>
+<ul>
+<li>买了个毛坯房（基础 Linux）</li>
+<li>没装修（没有开发库）</li>
+<li>pyenv 想装修，发现没材料</li>
+<li>miniconda 直接给你精装房</li>
+</ul>
+<h2 id="为什么别人没这问题"><a class="markdownIt-Anchor" href="#为什么别人没这问题"></a> 为什么别人没这问题？</h2>
+<ol>
+<li><strong>别人用 conda</strong> → 直接精装房</li>
+<li><strong>别人电脑装了开发库</strong> → 毛坯房有装修材料</li>
+<li><strong>你既用毛坯房又缺材料</strong> → 所以出问题</li>
+</ol>
+<p>简单说：<strong>pyenv = 自己装修（可能装不好），conda = 买精装房（肯定没问题）</strong></p>
+<p>现在明白了吗？😄</p>
+<hr />
+<h2 id="claude-大师我悟了"><a class="markdownIt-Anchor" href="#claude-大师我悟了"></a> Claude 大师！我悟了！</h2>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/07/16/daily-story-pyenv-conda/">
+            https://tzturtle.moe/2025/07/16/daily-story-pyenv-conda/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2025/06/06/memory-for-404/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">缅怀我第一位逝去的朋友 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenvpython-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> pyenv（Python 版本管理器）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minicondaconda%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> miniconda&#x2F;conda（环境管理器）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB-2"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98-2"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%B8%8D%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> miniconda 的工作方式（不会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E5%81%9A%E9%A5%AD%E6%9D%A5%E6%AF%94%E5%96%BB"><span class="toc-text"> 用做饭来比喻</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E4%BD%A0%E8%87%AA%E5%B7%B1%E5%81%9A%E9%A5%AD"><span class="toc-text"> pyenv &#x3D; 你自己做饭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%82%B9%E5%A4%96%E5%8D%96"><span class="toc-text"> miniconda &#x3D; 点外卖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E5%88%B0%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text"> 回到你的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-pyenv-%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text"> 你用 pyenv 时发生了什么：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-miniconda-%E6%97%B6"><span class="toc-text"> 你用 miniconda 时：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E7%9A%84%E7%94%B5%E8%84%91%E7%BC%BA%E8%BF%99%E4%BA%9B%E5%BA%93"><span class="toc-text"> 为什么你的电脑缺这些库？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%AB%E4%BA%BA%E6%B2%A1%E8%BF%99%E9%97%AE%E9%A2%98"><span class="toc-text"> 为什么别人没这问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#claude-%E5%A4%A7%E5%B8%88%E6%88%91%E6%82%9F%E4%BA%86"><span class="toc-text"> Claude 大师！我悟了！</span></a>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>58</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>14</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenvpython-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> pyenv（Python 版本管理器）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minicondaconda%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> miniconda&#x2F;conda（环境管理器）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB-2"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98-2"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%B8%8D%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> miniconda 的工作方式（不会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E5%81%9A%E9%A5%AD%E6%9D%A5%E6%AF%94%E5%96%BB"><span class="toc-text"> 用做饭来比喻</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E4%BD%A0%E8%87%AA%E5%B7%B1%E5%81%9A%E9%A5%AD"><span class="toc-text"> pyenv &#x3D; 你自己做饭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%82%B9%E5%A4%96%E5%8D%96"><span class="toc-text"> miniconda &#x3D; 点外卖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E5%88%B0%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text"> 回到你的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-pyenv-%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text"> 你用 pyenv 时发生了什么：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-miniconda-%E6%97%B6"><span class="toc-text"> 你用 miniconda 时：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E7%9A%84%E7%94%B5%E8%84%91%E7%BC%BA%E8%BF%99%E4%BA%9B%E5%BA%93"><span class="toc-text"> 为什么你的电脑缺这些库？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%AB%E4%BA%BA%E6%B2%A1%E8%BF%99%E9%97%AE%E9%A2%98"><span class="toc-text"> 为什么别人没这问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#claude-%E5%A4%A7%E5%B8%88%E6%88%91%E6%82%9F%E4%BA%86"><span class="toc-text"> Claude 大师！我悟了！</span></a>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">26</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">6</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenvpython-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> pyenv（Python 版本管理器）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#minicondaconda%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text"> miniconda&#x2F;conda（环境管理器）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pyenv-vs-miniconda-%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%8C%BA%E5%88%AB-2"><span class="toc-text"> pyenv vs miniconda 的根本区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98-2"><span class="toc-text"> pyenv 的工作方式（会出问题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%B8%8D%E4%BC%9A%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-text"> miniconda 的工作方式（不会出问题）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E5%81%9A%E9%A5%AD%E6%9D%A5%E6%AF%94%E5%96%BB"><span class="toc-text"> 用做饭来比喻</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pyenv-%E4%BD%A0%E8%87%AA%E5%B7%B1%E5%81%9A%E9%A5%AD"><span class="toc-text"> pyenv &#x3D; 你自己做饭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#miniconda-%E7%82%B9%E5%A4%96%E5%8D%96"><span class="toc-text"> miniconda &#x3D; 点外卖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E5%88%B0%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text"> 回到你的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-pyenv-%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text"> 你用 pyenv 时发生了什么：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E7%94%A8-miniconda-%E6%97%B6"><span class="toc-text"> 你用 miniconda 时：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E7%9A%84%E7%94%B5%E8%84%91%E7%BC%BA%E8%BF%99%E4%BA%9B%E5%BA%93"><span class="toc-text"> 为什么你的电脑缺这些库？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%AB%E4%BA%BA%E6%B2%A1%E8%BF%99%E9%97%AE%E9%A2%98"><span class="toc-text"> 为什么别人没这问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#claude-%E5%A4%A7%E5%B8%88%E6%88%91%E6%82%9F%E4%BA%86"><span class="toc-text"> Claude 大师！我悟了！</span></a>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-16</div>
+        <a href="/2025/07/16/daily-story-pyenv-conda/"><div class="recent-posts-item-content">【实验室小品一则】什么是pyenv，什么是miniconda</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-06-06</div>
+        <a href="/2025/06/06/memory-for-404/"><div class="recent-posts-item-content">缅怀我第一位逝去的朋友</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-03-08</div>
+        <a href="/2025/03/08/rl-mario/"><div class="recent-posts-item-content">强化学习实战：用PPO算法通关超级马里奥兄弟</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-02-14</div>
+        <a href="/2025/02/14/rl-4/"><div class="recent-posts-item-content">《动手学强化学习》学习笔记【四】</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
