@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>RL 实验复现随笔</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="RL 实验复现随笔">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/07/21/Rl-reproduce/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;一些在复现强化学习相关论文时摩擦产生的 idea .&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-07-21">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-07-30">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="强化学习">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      RL 实验复现随笔
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-07-21T07:32:49.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-07-21</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          科研学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>6.8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+            class="post-meta-link">
+            强化学习
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>一些在复现强化学习相关论文时摩擦产生的 idea .</p>
+<span id="more"></span>
+<h2 id="limr-核心思想"><a class="markdownIt-Anchor" href="#limr-核心思想"></a> LIMR 核心思想</h2>
+<h3 id="limr的核心思想与训练流程"><a class="markdownIt-Anchor" href="#limr的核心思想与训练流程"></a> LIMR的核心思想与训练流程</h3>
+<ul>
+<li><strong>核心思想</strong>: LIMR（Less is More for RL Scaling）的核心论点是，在强化学习中，训练数据的<strong>质量远比数量重要</strong>。通过其提出的“学习影响测量”（LIM）方法，从8,523个问题的完整数据集中筛选出仅1,389个高价值样本，便能达到甚至超过使用完整数据集的训练效果。</li>
+<li><strong>训练流程</strong>:
+<ol>
+<li><strong>数据筛选 (LIM)</strong>: 首先通过初步训练，追踪每个样本的奖励变化，并计算其与“平均奖励曲线”的对齐分数 。根据一个阈值（如 <code>θ=0.6</code>）筛选出高分数的样本，组成LIMR数据集 4。</li>
+<li><strong>强化学习 (RL)</strong>: 使用筛选出的LIMR数据集，通过PPO算法对<code>Qwen2.5-Math-7B</code>基础模型进行全参数微调。</li>
+</ol>
+</li>
+</ul>
+<h3 id="ppo算法与critic的作用"><a class="markdownIt-Anchor" href="#ppo算法与critic的作用"></a> PPO算法与Critic的作用</h3>
+<ul>
+<li><strong>PPO训练设置</strong>:
+<ul>
+<li><strong>框架</strong>: OpenRLHF 6。</li>
+<li><strong>探索阶段</strong>: <code>rollout batch size</code>为1,024，每个提示生成8个多样性样本（<code>temperature=1.2</code>） 7。</li>
+<li><strong>训练阶段</strong>: <code>batch size</code>为256，Actor学习率<code>5e-7</code>，Critic学习率<code>9e-6</code>，KL系数<code>0.01</code> 8。</li>
+</ul>
+</li>
+<li><strong>为何需要Critic</strong>: Critic通过学习一个状态的<strong>期望值 <code>V(s)</code></strong>，提供了一个稳定的“基线”。它帮助将原始奖励信号转化为更有效的<strong>优势信号 <code>A</code></strong>（<code>A ≈ 实际奖励 - 期望值</code>），解决了高方差问题。同时，它在每一步都提供价值预测，为解决奖励稀疏问题提供了稠密的学习信号和“远见”。</li>
+</ul>
+<h3 id="为什么要考察响应长度"><a class="markdownIt-Anchor" href="#为什么要考察响应长度"></a> 为什么要考察响应长度</h3>
+<ul>
+<li><strong>诊断工具</strong>: 在LIMR的训练中，响应长度被用作一个诊断工具，以衡量<strong>推理效率</strong>和<strong>训练稳定性</strong>。</li>
+<li><strong>曲线分析</strong>: 论文中的图3(b)显示 9：
+<ul>
+<li>使用<strong>完整数据集</strong>训练时，响应长度曲线<strong>不稳定</strong>，暗示模型的推理策略混乱。</li>
+<li>使用<strong>LIMR数据集</strong>训练时，曲线呈现“<strong>先下降后平稳上升</strong>”的趋势，这被解读为模型先学习到“简洁高效”，之后随着能力增强，能稳定地进行更长、更复杂的推理。</li>
+</ul>
+</li>
+</ul>
+<h3 id="附如何深度复现与学习"><a class="markdownIt-Anchor" href="#附如何深度复现与学习"></a> 附：如何深度复现与学习</h3>
+<p>当被老师要求复现此工作时，仅仅跑通脚本是不够的。为了真正地学习，建议采取以下步骤：</p>
+<ol>
+<li><strong>深度理解</strong>: 剖析代码，将论文中的公式、超参数和核心逻辑（如LIM打分、PPO循环）与代码实现一一对应。</li>
+<li><strong>实验与验证</strong>:
+<ul>
+<li>亲手复现论文中的“失败”案例，比如使用**随机数据集（RAND）**进行训练，验证其效果确实更差。</li>
+<li>进行<strong>消融研究</strong>，例如调整LIM的筛选阈值<code>θ</code>或修改奖励函数，观察其对模型性能的影响。</li>
+</ul>
+</li>
+<li><strong>探索与创新</strong>: 将LIM方法应用到新的数据集或模型上，测试其泛化能力，或者尝试对LIM方法本身进行改进。</li>
+<li><strong>总结与沉淀</strong>: 将所有理解、实验和发现整理成一份详尽的复现报告，将知识体系化。</li>
+</ol>
+<hr />
+<h2 id="ppo-训练流程以-openrlhf-为例"><a class="markdownIt-Anchor" href="#ppo-训练流程以-openrlhf-为例"></a> PPO 训练流程（以 OpenRLHF 为例）</h2>
+<p>这些日志清晰地展示了 PPO 算法用于对齐大语言模型的两个核心阶段：<strong>经验收集 (Experience Generation / Rollout)</strong> 和 <strong>模型优化 (Model Optimization)</strong>。整个过程是一个循环，不断重复这两个阶段来迭代提升模型表现。</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>J</mi><mrow><mi>P</mi><mi>P</mi><mi>O</mi></mrow></msub><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="double-struck">E</mi><mo stretchy="false">[</mo><mi>q</mi><mo>∼</mo><mi>P</mi><mo stretchy="false">(</mo><mi>Q</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>o</mi><mo>∼</mo><msub><mi>π</mi><msub><mi>θ</mi><mrow><mi>a</mi><mi>d</mi><mi>d</mi></mrow></msub></msub><mo stretchy="false">(</mo><mi>O</mi><mi mathvariant="normal">∣</mi><mi>q</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo><mfrac><mn>1</mn><mrow><mi mathvariant="normal">∣</mi><mi>o</mi><mi mathvariant="normal">∣</mi></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi mathvariant="normal">∣</mi><mi>o</mi><mi mathvariant="normal">∣</mi></mrow></munderover><mi>min</mi><mo>⁡</mo><mrow><mo fence="true">[</mo><mfrac><mrow><msub><mi>π</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><msub><mi>π</mi><msub><mi>θ</mi><mrow><mi>o</mi><mi>d</mi><mi>d</mi></mrow></msub></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac><msub><mi>A</mi><mi>t</mi></msub><mo separator="true">,</mo><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">p</mi></mrow><mrow><mo fence="true">(</mo><mfrac><mrow><msub><mi>π</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><msub><mi>π</mi><msub><mi>θ</mi><mrow><mi>o</mi><mi>d</mi><mi>d</mi></mrow></msub></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac><mo separator="true">,</mo><mn>1</mn><mo>−</mo><mi>ε</mi><mo separator="true">,</mo><mn>1</mn><mo>+</mo><mi>ε</mi><mo fence="true">)</mo></mrow><msub><mi>A</mi><mi>t</mi></msub><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">J_{PPO}(\theta)=\mathbb{E}[q\sim P(Q),o\sim\pi_{\theta_{add}}(O|q)]\frac{1}{|o|}\sum_{t=1}^{|o|}\min\left[\frac{\pi_\theta(o_t|q,o_{&lt;t})}{\pi_{\theta_{odd}}(o_t|q,o_{&lt;t})}A_t,\mathrm{clip}\left(\frac{\pi_\theta(o_t|q,o_{&lt;t})}{\pi_{\theta_{odd}}(o_t|q,o_{&lt;t})},1-\varepsilon,1+\varepsilon\right)A_t\right]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.09618em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">O</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathbb">E</span></span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault">Q</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">o</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.2281180000000003em;vertical-align:-1.267113em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999985em;"><span style="top:-2.55em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.02778em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.25586em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="mclose">]</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">∣</span><span class="mord mathdefault">o</span><span class="mord">∣</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.9610050000000003em;"><span style="top:-1.882887em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.386005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣</span><span class="mord mathdefault mtight">o</span><span class="mord mtight">∣</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.267113em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">min</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999985em;"><span style="top:-2.55em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.02778em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.25586em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17737em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17737em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.94186em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathrm">c</span><span class="mord mathrm">l</span><span class="mord mathrm">i</span><span class="mord mathrm">p</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999985em;"><span style="top:-2.55em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.02778em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.25586em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17737em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17737em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.94186em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">ε</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">ε</span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
+<h3 id="阶段一经验收集-rollout-phase"><a class="markdownIt-Anchor" href="#阶段一经验收集-rollout-phase"></a> 阶段一：经验收集 (Rollout Phase) 📝</h3>
+<p>这是 PPO 训练的第一步。在这个阶段，系统使用当前的 <strong>策略模型 (Old Policy Model)</strong> 来针对一批输入的提示 (Prompts) 生成回复。</p>
+<p><strong>日志分析:</strong></p>
+<ol>
+<li>
+<p><strong>加载数据 (Adding requests):</strong></p>
+<p>代码段</p>
+<pre class="highlight"><code class="hljs plaintext">(LLMRayActor pid=106270) <br>Adding requests: 100%|██████████| 4096/4096 [00:00&lt;00:00, 7268.82it/s]<br></code></pre>
+<ul>
+<li><strong>含义</strong>: 系统正在加载用于生成回复的 prompts。这里的 <code>LLMRayActor</code> 是一个并行的工作单元（Actor），<code>pid=106270</code> 是它的进程ID。</li>
+<li><strong>例子</strong>: 日志显示，这个 Actor 加载了 <code>4096</code> 个 prompts。OpenRLHF 使用 Ray 框架进行分布式训练，所以你可能会看到多个 <code>LLMRayActor</code> 同时在工作（如 <code>pid=106272</code>）。</li>
+</ul>
+</li>
+<li>
+<p><strong>生成回复 (Processed prompts):</strong></p>
+<p>代码段</p>
+<pre class="highlight"><code class="hljs plaintext">(LLMRayActor pid=106270) <br>Processed prompts: 100%|██████████| 4096/4096 [06:09&lt;00:00,  2.88it/s, est. speed input: 1273.07 toks/s, output: 12289.95 toks/s]<br></code></pre>
+<ul>
+<li><strong>含义</strong>: 策略模型 (Policy Model) 正在对加载的 4096 个 prompts 生成回复。这是一个非常耗时的步骤。</li>
+<li><strong>例子</strong>: 这个过程花费了 <code>06:09</code>（6分9秒）。日志还提供了生成速度 <code>output: 12289.95 toks/s</code>（每秒生成约12k个 token），这表明了模型的推理性能。</li>
+</ul>
+</li>
+<li>
+<p><strong>完成一轮收集:</strong></p>
+<p>代码段</p>
+<pre class="highlight"><code class="hljs plaintext">(PPOTrainer pid=113377) <br>Episode [1/10000]: 100%|██████████| 1/1 [06:17&lt;00:00, 377.16s/it]<br>(PPOTrainer pid=785634) INFO ... 🚀 Starting experience making with 8192 samples<br></code></pre>
+<ul>
+<li><strong>含义</strong>: 这标志着一轮完整的经验收集（一个 Episode）已经完成。</li>
+<li><strong>例子</strong>: 系统总共收集了 <code>8192</code> 个样本（<code>4096 * 2</code> 个并行 Actor）。现在，它准备用这些新鲜出炉的 “经验” 数据来训练模型。</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h3 id="阶段二计算优势与数据处理-advantage-calculation"><a class="markdownIt-Anchor" href="#阶段二计算优势与数据处理-advantage-calculation"></a> 阶段二：计算优势与数据处理 (Advantage Calculation) 📊</h3>
+<p>在收集完 &lt;prompt, response&gt; 数据对之后，系统需要评估这些 response 的好坏（包括回答本身的 reward，以及 critic model 给的评分），并为后续的优化做准备。</p>
+<p><strong>日志分析:</strong></p>
+<p>代码段</p>
+<pre class="highlight"><code class="hljs plaintext">(PolicyModelActor pid=106271) forward: 100%|██████████| 1024/1024 [03:44&lt;00:00,  4.57it/s]<br>(CriticModelActor pid=108638) forward: 100%|██████████| 1024/1024 [03:25&lt;00:00,  4.99it/s]<br>(ReferenceModelActor pid=106942) forward: 100%|██████████| 1024/1024 [03:40&lt;00:00,  4.65it/s]<br>(PPOTrainer pid=785634) INFO ... ✨ Experience making completed in 0:07:31<br></code></pre>
+<ul>
+<li>
+<p><strong>含义</strong>: 这一步涉及三个模型的<strong>前向传播 (forward pass)</strong>，目的是计算后续优化所需的关键指标：</p>
+<ol>
+<li><strong><code>PolicyModelActor</code> (策略模型)</strong>: 计算刚才生成的 response 中每个 token 的概率（log-probabilities）。</li>
+<li><strong><code>CriticModelActor</code> (价值/评论家模型)</strong>: 评估生成的 response 中每个 token 的<strong>价值 (Value)</strong>。这个价值代表了从当前状态（token）出发，未来能获得多大总奖励的期望。</li>
+<li><strong><code>ReferenceModelActor</code> (参考模型)</strong>: 通常是一个未经 PPO 训练的 SFT 模型。它也计算 response 中每个 token 的概率，用于后续计算 <strong>KL 散度 (KL Divergence)</strong>。KL 散度是一个惩罚项，用于防止策略模型在优化过程中“走火入魔”，与原始的、安全的模型偏离太远。</li>
+</ol>
+<p>PPO 的核心更新公式依赖于一个非常重要的比率：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mrow><msub><mi>π</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><msub><mi>π</mi><msub><mi>θ</mi><mrow><mi>o</mi><mi>d</mi><mi>d</mi></mrow></msub></msub><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>q</mi><mo separator="true">,</mo><msub><mi>o</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{\pi_\theta(o_t|q,o_{&lt;t})}{\pi_{\theta_{odd}}(o_t|q,o_{&lt;t})}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.6356799999999998em;vertical-align:-0.6256799999999999em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3448em;margin-left:-0.02778em;margin-right:0.1em;"><span class="pstrut" style="height:2.69444em;"></span><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34963999999999995em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4009714285714285em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.29634285714285713em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">q</span><span class="mpunct mtight">,</span><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.29634285714285713em;"><span style="top:-2.3569999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17092857142857143em;"><span></span></span></span></span></span></span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.29634285714285713em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">q</span><span class="mpunct mtight">,</span><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.29634285714285713em;"><span style="top:-2.3569999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17092857142857143em;"><span></span></span></span></span></span></span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.6256799999999999em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> ，但 Reference Model 和这里的 Old Model 是两回事。简单来讲 Reference Model 是在一个 Step 内完成的。即 PPO 里的重要性采样。虽然模型在 “经验收集” 阶段已经生成了这些 response，但当时我们只关心生成了<em>哪个</em> token，并没有把每个 token 的<em>生成概率</em>都精确地记录下来并储存。因此，我们需要一个专门的步骤来完成这件事。</p>
+<h4 id="policy-model-forward-到底在做什么"><a class="markdownIt-Anchor" href="#policy-model-forward-到底在做什么"></a> “Policy model forward” 到底在做什么？</h4>
+<ol>
+<li><strong>输入 (Input)</strong>: 将“经验收集”阶段产生的所有数据对 <code>(prompt, response)</code> 作为输入。对于模型来说，就是将 <code>prompt</code> 和 <code>response</code> 的 token 序列拼接起来。</li>
+<li><strong>计算 (Computation)</strong>: 模型对这个拼接后的序列进行一次完整的前向传播 (forward pass)。</li>
+<li><strong>输出 (Output)</strong>: 这次 forward 的核心目标不是生成新的文本，而是计算出在 <code>response</code> 部分，<strong>每一个 token 在当时被生成时的对数概率 (log-probabilities)</strong>。这个对数概率就是我们需要的 log(πθ_old(a∣s))。</li>
+</ol>
+</li>
+<li>
+<p><strong>例子</strong>: 日志显示，这三个模型分别对数据进行了前向计算。整个数据预处理和计算过程耗时 <code>0:07:31</code>。至此，所有用于优化的数据（经验）都已准备就绪。</p>
+</li>
+</ul>
+<hr />
+<h3 id="阶段三模型优化-optimization-phase"><a class="markdownIt-Anchor" href="#阶段三模型优化-optimization-phase"></a> 阶段三：模型优化 (Optimization Phase) 🧠</h3>
+<p>这是 PPO 算法的核心。系统利用上一步计算好的数据（特别是奖励、价值和 KL 散度），通过反向传播来更新**策略模型 (Policy Model)<strong>和</strong>价值模型 (Critic Model)**的参数。</p>
+<p><strong>日志分析:</strong></p>
+<pre class="highlight"><code class="hljs plaintext">(PolicyModelActor pid=778441) <br>Train epoch [1/1]:   3%|▎| 26/1024 [00:35&lt;... act_loss=0.186, reward=-0.188, kl=0, ... ]<br>(CriticModelActor pid=782178) <br>Train epoch [1/1]:   2%|▏| 17/1024 [00:24&lt;... critic_loss=0.39, values=-0.0112, ... ]<br></code></pre>
+<ul>
+<li><strong>含义</strong>: 系统正在分批次（mini-batch）地对模型进行训练。日志显示了两个并行的训练过程：
+<ul>
+<li><strong>策略模型更新 (<code>PolicyModelActor</code>)</strong>:
+<ul>
+<li><code>act_loss</code> (Actor Loss): 这是 PPO 的核心损失函数。它的目标是<strong>最大化</strong>那些带来高“优势”（Advantage，即实际奖励比预期价值高）的 action (token) 的概率。因此，这个 loss 通常是负数，或者在优化过程中向负值方向移动。</li>
+<li><code>reward</code>: 从奖励模型（或者规则）中获得的平均奖励。这个分数越高，说明生成的回复越符合人类偏好。</li>
+<li><code>kl</code>: 策略模型与参考模型之间的 KL 散度，作为正则化项，防止策略偏离过远。</li>
+</ul>
+</li>
+<li><strong>价值模型更新 (<code>CriticModelActor</code>)</strong>:
+<ul>
+<li><code>critic_loss</code> (Critic Loss): 通常是均方误差损失。它衡量了价值模型预测的 <code>values</code> 与实际回报（ discounted rewards-to-go）之间的差距。这个 loss 越小，说明价值模型对未来奖励的预测越准。</li>
+<li><code>values</code>: 价值模型对当前批次数据预测的平均价值。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>例子</strong>:
+<ul>
+<li>在 <code>PolicyModelActor</code> 的日志中，<code>reward=-0.188</code> 表示当前批次的生成内容获得的奖励是负的，<code>act_loss=0.186</code> 是策略损失。模型会调整参数，试图让 <code>reward</code> 变高，让 <code>act_loss</code> 变小（或更负）。</li>
+<li>在 <code>CriticModelActor</code> 的日志中，<code>critic_loss=0.39</code>。模型会调整参数，让这个损失值不断下降。</li>
+</ul>
+</li>
+</ul>
+<h3 id="训练循环"><a class="markdownIt-Anchor" href="#训练循环"></a> 训练循环 🔁</h3>
+<p>整个流程可以总结为一个循环：</p>
+<ol>
+<li><strong>Rollout</strong>: 用当前策略模型 pi_theta 生成一批经验数据 $ D = {(s, a, r, s’)} $。</li>
+<li><strong>Calculate</strong>: 对数据 D 计算优势 A(s,a) 和价值 $ V(s) $。</li>
+<li><strong>Optimize</strong>: 使用这批数据 $ D $，通过梯度下降同时优化策略模型 pi_theta 和价值模型 $ V_{\phi} $。</li>
+<li><strong>Repeat</strong>: 回到第 1 步，使用更新后的策略模型 pi_theta_new 开始新一轮的经验收集。</li>
+</ol>
+<p><img src="image-20250724151842025.png" alt="image-20250724151842025" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250724151842025.png" class="lozad post-image"></p>
+<hr />
+<h2 id="torl框架核心思想"><a class="markdownIt-Anchor" href="#torl框架核心思想"></a> TORL框架核心思想</h2>
+<p><strong>TORL (Tool-Integrated Reinforcement Learning)</strong> 是一种新颖的框架，旨在通过<strong>强化学习（RL）</strong>，直接在<strong>基础语言模型</strong>上训练其自主使用代码解释器等外部工具的能力，以解决复杂的数学问题。它的核创新在于，不同于依赖“监督微调”（SFT）让模型模仿固定的工具使用模式，TORL通过奖励驱动的<strong>自由探索</strong>，让模型自己发现最高效、最合理的工具使用策略 2222。</p>
+<h3 id="torl工作流程"><a class="markdownIt-Anchor" href="#torl工作流程"></a> TORL工作流程</h3>
+<p>TORL的流程是一个将<strong>推理、编码、执行、反馈</strong>融为一体的自动化循环 3333：</p>
+<ol>
+<li>
+<p><strong>启动与生成</strong>：模型接收问题后，开始生成混合了自然语言推理和代码块的解决方案 4。</p>
+</li>
+<li>
+<p><strong>暂停与调用</strong>：当模型生成一个特殊的代码结束标志时，系统会暂停文本生成，并自动提取最新的代码块 55。</p>
+</li>
+<li>
+<p><strong>执行与反馈</strong>：代码被发送到隔离的<strong>代码解释器</strong>（如Sandbox Fusion）中执行 6。执行结果，无论是成功输出还是错误信息，都会被格式化后插回到模型的上下文中，作为即时反馈。</p>
+</li>
+<li>
+<p><strong>迭代与学习</strong>：模型根据这个反馈继续推理，重复此循环，直到给出最终答案 8。整个解答过程会根据最终答案的正确性被赋予一个<strong>最终奖励</strong>，用于更新模型参数 99。</p>
+</li>
+</ol>
+<h3 id="奖励机制"><a class="markdownIt-Anchor" href="#奖励机制"></a> 奖励机制</h3>
+<p>奖励是在整个解答过程结束后，进行的一次性评估，而非在每次迭代中累加 1010。</p>
+<ul>
+<li>
+<p><strong>主要奖励</strong>：基于最终答案的正确性。答案正确，奖励为<code>+1</code>；答案错误，奖励为<code>-1</code>。</p>
+</li>
+<li>
+<p><strong>可选惩罚</strong>：研究人员还试验了对代码可执行性的惩罚。如果解答过程中有任何代码无法执行，最终奖励会被额外扣除<code>0.5</code>。但实验发现，这个惩罚项不能提升模型性能。</p>
+</li>
+</ul>
+<h3 id="实验对比模型详解"><a class="markdownIt-Anchor" href="#实验对比模型详解"></a> 实验对比模型详解</h3>
+<p>为了验证TORL框架的有效性，研究设置了多个对比模型：</p>
+<ul>
+<li>
+<p><strong>TORL-1.5B/7B</strong>：论文提出的主角。它是在 <code>Qwen2.5-Math-Base</code> 基础模型上，应用TORL框架和特定语料进行强化学习微调得到的模型 。</p>
+</li>
+<li>
+<p><strong>Baseline (基线模型)</strong>：这是实验的<strong>核心控制组</strong>。它与TORL模型使用完全相同的起点、训练方法和数据，但被<strong>明确禁止使用代码解释器工具</strong> 15151515。它代表了不使用工具的纯强化学习的性能上限。</p>
+</li>
+<li>
+<p><strong>Qwen2.5-Math-Instruct</strong>：这是Qwen官方的<strong>指令微调模型</strong>，代表不使用工具的基准。</p>
+</li>
+<li>
+<p><strong>Qwen2.5-Math-Instruct-TIR</strong>：这不是一个新模型，而是将<code>Qwen-Instruct</code>模型放在<strong>允许使用工具的环境</strong>中进行测试，以观察未经特定工具训练的模型在能使用工具时的表现。</p>
+</li>
+<li>
+<p><strong>rStar-Math-7B</strong>：这是一个用<strong>SFT方法</strong>训练的模型，用于和TORL的RL方法进行对比。</p>
+</li>
+</ul>
+<h3 id="主要结论与发现"><a class="markdownIt-Anchor" href="#主要结论与发现"></a> 主要结论与发现</h3>
+<ul>
+<li>
+<p><strong>性能卓越</strong>：TORL模型在所有数学基准测试中，均显著优于所有对比模型（包括Baseline、Instruct版和SFT模型）。</p>
+</li>
+<li>
+<p><strong>涌现认知能力</strong>：通过TORL训练，模型自发学会了多种高级认知行为，如根据代码执行的反馈<strong>修正错误</strong>、用代码<strong>验证自己的推理</strong>，并在不同策略间进行选择.</p>
+</li>
+<li>
+<p><strong>调用频率的权衡</strong>：增加模型调用工具的最大次数可以提升性能，但会显著降低训练效率，需要在性能和成本之间做出权衡 21。</p>
+<hr />
+</li>
+</ul>
+<h3 id="q-为什么选择-verl不选择-openrlhf"><a class="markdownIt-Anchor" href="#q-为什么选择-verl不选择-openrlhf"></a> Q: 为什么选择 veRL，不选择 OpenRLHF?</h3>
+<p>虽然论文中只提到了选用veRL，没有直接与OpenRLHF进行比较，但通过分析TORL框架的独特需求和两个框架各自的公开特性，我们可以推断出选择veRL的几个核心原因，主要在于<strong>灵活性</strong>和对<strong>复杂任务的支持</strong>。</p>
+<p>简单来说，TORL的训练流程太“不标准”了，需要一个像veRL这样高度灵活的框架来支持其特殊操作。</p>
+<h4 id="1-对复杂智能体任务agentic-tasks的卓越支持"><a class="markdownIt-Anchor" href="#1-对复杂智能体任务agentic-tasks的卓越支持"></a> 1. 对复杂“智能体任务”（Agentic Tasks）的卓越支持 🤖</h4>
+<ul>
+<li><strong>TORL的需求</strong>：TORL不仅仅是在进行简单的文本偏好学习，它实际上是把语言模型变成一个<strong>智能体（Agent）</strong>。这个智能体需要与外部工具（代码解释器）进行多轮交互，动态地暂停、执行、接收反馈、再继续思考。这是一个复杂的“智能体任务”。</li>
+<li><strong>veRL的优势</strong>：veRL明确将**“支持工具调用和多轮交互的智能体任务”**作为其核心功能之一。它的设计哲学就是为了应对这类复杂的训练流程。</li>
+<li><strong>OpenRLHF的侧重</strong>：OpenRLHF虽然性能强大，但其核心设计更侧重于<strong>标准的RLHF流程</strong>，即在固定的偏好数据集上进行高效的PPO、DPO等算法训练。对于TORL这种需要实时与外部环境交互的非标准流程，可能需要更多的定制开发。</li>
+</ul>
+<h4 id="2-框架的灵活性与可扩展性-️"><a class="markdownIt-Anchor" href="#2-框架的灵活性与可扩展性-️"></a> 2. 框架的灵活性与可扩展性 🛠️</h4>
+<ul>
+<li><strong>TORL的需求</strong>：TORL的流程需要一个能轻松定义**“非线性”数据流**的框架。例如，“生成代码→调用外部API→将API结果作为新输入→继续生成”这个循环，对框架的编程模型要求很高。</li>
+<li><strong>veRL的优势</strong>：veRL基于其名为<strong>HybridFlow</strong>的编程模型，核心优势就是<strong>灵活性</strong>。它允许研究人员像搭积木一样，轻松地表示和执行复杂的Post-Training数据流。TORL中使用的GRPO算法，以及更复杂的DAPO等，veRL都原生支持，并且扩展新算法也相对容易。</li>
+<li><strong>OpenRLHF的侧重</strong>：OpenRLHF的设计目标之一是**“简单易用”**和清晰的代码结构。这使得它在标准任务上非常高效，但这种为特定流程优化的“简单”，有时也意味着在面对TORL这种高度定制化的需求时，灵活性可能会受限。</li>
+</ul>
+<h4 id="3-对自定义奖励verifiable-reward的支持-️"><a class="markdownIt-Anchor" href="#3-对自定义奖励verifiable-reward的支持-️"></a> 3. 对自定义奖励（Verifiable Reward）的支持 ⚖️</h4>
+<ul>
+<li><strong>TORL的需求</strong>：TORL的奖励信号并非来自一个预先训练好的奖励模型，而是来自一个**“可验证”的外部逻辑**——代码执行是否成功，最终答案是否正确。</li>
+<li><strong>veRL的优势</strong>：veRL明确提到支持**“基于函数的奖励（verifiable reward）”**，这完美契合了数学、代码类任务的需求。</li>
+<li><strong>OpenRLHF的侧重</strong>：OpenRLHF同样支持可验证奖励（RLVR），但veRL将此作为与智能体任务、工具调用并列的核心应用场景，显示出其在该方向上的设计倾斜和优化。</li>
+</ul>
+<p>总而言之，虽然OpenRLHF是一个非常优秀且高效的RLHF框架，但它的核心优势在于<strong>将标准的RLHF流程做得更快、更易用</strong>。</p>
+<p>而TORL项目所做的事情，已经超出了标准RLHF的范畴，进入了更复杂的**“智能体学习”<strong>领域。因此，他们选择了一个在设计之初就充分考虑了</strong>灵活性、可扩展性以及对工具调用等复杂交互场景**支持的框架——<strong>veRL</strong>，这是一个更自然、更匹配的选择。</p>
+<hr />
+<h3 id="q-为什么选择-grpo而非-ppo"><a class="markdownIt-Anchor" href="#q-为什么选择-grpo而非-ppo"></a> Q: 为什么选择 GRPO，而非 PPO？</h3>
+<p>好的，这是一个非常深入的技术问题。选择GRPO（Generalized Reward and Punishment Optimization）而非更常见的PPO（Proximal Policy Optimization）是基于TORL任务特性和奖励信号所做出的精准决策。</p>
+<p>简单来说，<strong>GRPO更像是为“考试拿高分”这类目标设计的算法，而PPO则更通用。</strong> 以下是详细的原因分析：</p>
+<h4 id="1-对非黑即白的奖励信号处理更直接"><a class="markdownIt-Anchor" href="#1-对非黑即白的奖励信号处理更直接"></a> 1. 对“非黑即白”的奖励信号处理更直接</h4>
+<ul>
+<li>
+<p><strong>TORL的奖励机制</strong>：TORL的奖励信号非常稀疏和二元化：最终答案正确，奖励为<code>+1</code>；答案错误，奖励为<code>-1</code> 1。这种奖励模式就像判断题，只有对错，没有中间状态。</p>
+</li>
+<li>
+<p><strong>PPO的局限性</strong>：PPO通过计算“优势函数”（Advantage Function）来指导模型更新，即评估一个行为比当前状态的平均行为好多少。在只有<code>+1</code>和<code>-1</code>的稀疏奖励下，这个“优势”信号可能不够清晰或稳定。PPO可能难以学到“正确”与“错误”路径之间质的区别。</p>
+</li>
+<li>
+<p><strong>GRPO的优势</strong>：<strong>GRPO是专门为处理这类二元反馈（或更广泛的偏好对）而设计的</strong>。它不计算复杂的优势函数，而是直接将“好样本”（奖励为<code>+1</code>的解答过程）和“坏样本”（奖励为<code>-1</code>的过程）进行对比。其优化目标是<strong>直接拉大模型生成好样本和坏样本的概率差距</strong>。这对于TORL的任务来说，是一个更直接、更强力的学习信号。</p>
+</li>
+</ul>
+<h4 id="2-优化目标与任务目标更契合"><a class="markdownIt-Anchor" href="#2-优化目标与任务目标更契合"></a> 2. 优化目标与任务目标更契合</h4>
+<ul>
+<li><strong>TORL的任务目标</strong>：最终目标是最大化“正确解答”的比例，让模型学会如何稳定地解决问题。</li>
+<li><strong>GRPO的优化目标</strong>：GRPO的目标是<strong>最大化好坏样本之间的对数概率差</strong>。这与“提升正确率、降低错误率”的任务目标在数学上是高度一致的。它在教模型一个非常清晰的概念：“多做对的事，少做错的事”。</li>
+<li><strong>PPO的优化目标</strong>：PPO的目标是最大化“累积期望奖励”，这是一个更通用的目标。对于TORL这种最终结果决定一切的任务，GRPO的“分类式”优化方法可能比PPO的“回归式”优化方法更有效。</li>
+</ul>
+<h4 id="3-可能的实现简洁性和稳定性"><a class="markdownIt-Anchor" href="#3-可能的实现简洁性和稳定性"></a> 3. 可能的实现简洁性和稳定性</h4>
+<ul>
+<li><strong>PPO的复杂性</strong>：一个完整的PPO实现通常需要策略网络（Policy Network）和价值网络（Value Network），并且涉及到优势函数计算、泛化优势估计（GAE）等多个需要仔细调整的组件。</li>
+<li><strong>GRPO的简洁性</strong>：GRPO借鉴了DPO（Direct Preference Optimization）的思想，通常不需要一个独立的价值网络，也省去了优势计算。它直接在策略模型上操作，这在某些情况下可以减少需要调整的超参数，并可能带来更好的训练稳定性。</li>
+</ul>
+<h4 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h4>
+<p>总而言之，研究人员之所以选择GRPO 2，是因为TORL框架下的数学解题任务具有<strong>结果导向强、奖励信号二元化</strong>的显著特点。在这种场景下，<strong>GRPO提供了一种比PPO更专门、更直接、可能也更稳定的优化路径</strong>，能够更有效地引导模型学会区分正确和错误的解题策略。</p>
+<h2 id="附录怎么-debug讲师gemini-25-pro"><a class="markdownIt-Anchor" href="#附录怎么-debug讲师gemini-25-pro"></a> 附录：怎么 Debug？（讲师：Gemini-2.5-pro）</h2>
+<p>当然可以！你已经通过实践接触到了 Debugging 的核心，这比任何理论都重要。我所做的，其实就是遵循一套系统性的方法，像个侦探一样去分析线索。</p>
+<p>你完全可以掌握这套方法。下面我把它总结成“道”和“术”两部分，希望能帮你成为一个出色的“代码侦探” 🕵️。</p>
+<h3 id="调试的道核心心态与哲学"><a class="markdownIt-Anchor" href="#调试的道核心心态与哲学"></a> 调试的“道”：核心心态与哲学</h3>
+<p>这是最重要的部分，是所有技巧的基础。</p>
+<ol>
+<li><strong>保持冷静，接受现实 (Stay Calm &amp; Embrace the Bug)</strong>
+<ul>
+<li><strong>现实</strong>：程序出错是正常的，是编程的一部分，不是你的失败。顶级程序员也会写出有 Bug 的代码。</li>
+<li><strong>心态</strong>：把 Bug 看作一个待解决的谜题，而不是一个麻烦。这个心态转变能让你从沮丧变为专注。</li>
+</ul>
+</li>
+<li><strong>大胆假设，小心求证 (Boldly Hypothesize, Carefully Verify)</strong>
+<ul>
+<li>这是科学方法的核心，也是 Debugging 的灵魂。根据看到的“证据”（报错信息），提出一个最可能的“猜想”（问题原因），然后设计一个小“实验”（比如打印一个变量、检查一个文件路径）去验证这个猜想。</li>
+<li>我们之前的 <code>FileNotFoundError</code> 就是一个完美案例：
+<ul>
+<li><strong>证据</strong>：报错说在远程节点上找不到 <code>data</code> 目录。</li>
+<li><strong>假设</strong>：<code>data</code> 目录根本就没被发送到远程节点。</li>
+<li><strong>验证</strong>：检查 <code>ray job submit</code> 命令，发现 <code>working_dir</code> 只指定了 <code>openrlhf</code> 目录，验证了假设。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>相信报错信息 (Trust the Error, But Verify)</strong>
+<ul>
+<li>报错信息是你的<strong>头号线索</strong>。95% 的情况下，它都直接或间接地指明了问题所在。<strong>永远不要忽略报错信息</strong>，一定要逐字逐句地阅读它。</li>
+<li>但是，有时候报错信息也可能具有误导性（比如我们遇到的“循环导入”），所以你需要结合上下文来理解它真正的含义。</li>
+</ul>
+</li>
+</ol>
+<h3 id="调试的术具体步骤与技巧"><a class="markdownIt-Anchor" href="#调试的术具体步骤与技巧"></a> 调试的“术”：具体步骤与技巧</h3>
+<p>这是你可以每次都遵循的实战流程。</p>
+<h4 id="第一步仔细阅读找到根本原因"><a class="markdownIt-Anchor" href="#第一步仔细阅读找到根本原因"></a> 第一步：仔细阅读，找到“根本原因”</h4>
+<p>当看到满屏的红色错误日志时，别慌。你的目标是找到最初的、最根本的那个错误。</p>
+<ul>
+<li><strong>从下往上读</strong>：Python 的错误追踪（Traceback）信息是倒序的，<strong>最下面的一行通常就是最直接的错误类型和描述</strong>。
+<ul>
+<li><code>FileNotFoundError</code>: 文件找不到。</li>
+<li><code>ImportError</code>: 模块导入问题。</li>
+<li><code>KeyError</code>: 字典里没有这个键。</li>
+<li><code>AttributeError</code>: 对象没有这个属性或方法。</li>
+</ul>
+</li>
+<li><strong>关注你的代码</strong>：在 Traceback 中，找到与你自己项目代码相关的文件路径。报错信息会像一条线索链，展示函数是如何一步步调用的。找到你熟悉的文件名，就能更好地定位问题。</li>
+</ul>
+<h4 id="第二步理解上下文context-is-king"><a class="markdownIt-Anchor" href="#第二步理解上下文context-is-king"></a> <strong>第二步：理解上下文（Context is King）</strong></h4>
+<p>搞清楚错误是在什么情况下发生的。</p>
+<ul>
+<li><strong>它在哪里运行？</strong>
+<ul>
+<li>是在你的本地机器上，还是像 Ray 一样在远程节点上？（这决定了文件路径、IP地址等是否和你本地一致）。</li>
+<li>在 Ray 的日志里，注意看行首的 <code>(pid=...)</code> 或 <code>(ActorName pid=...)</code>，这能告诉你“是谁”在报错。</li>
+</ul>
+</li>
+<li><strong>它在做什么？</strong>
+<ul>
+<li>是在加载数据？还是在模型计算？或是在保存结果？这能帮你缩小排查范围。</li>
+<li>查看报错代码行的<strong>上一行和下一行</strong>，理解它的“意图”。</li>
+</ul>
+</li>
+</ul>
+<h4 id="第三步收集更多线索gather-more-clues"><a class="markdownIt-Anchor" href="#第三步收集更多线索gather-more-clues"></a> <strong>第三步：收集更多线索（Gather More Clues）</strong></h4>
+<p>如果直接的报错信息还不够，你需要主动去收集更多证据来验证你的假设。</p>
+<ul>
+<li><strong>打印大法 (<code>print</code> debugging)</strong>
+<ul>
+<li>这是最简单、最通用、最强大的工具。在你怀疑有问题的代码行前后，打印出相关的变量、路径、配置等。</li>
+<li>例如，怀疑路径不对？<code>print(f&quot;Attempting to load data from: &#123;absolute_path&#125;&quot;)</code>。</li>
+<li>怀疑配置没传对？<code>print(f&quot;My config is: &#123;args&#125;&quot;)</code>。</li>
+</ul>
+</li>
+<li><strong>隔离问题（Isolate the Problem）</strong>
+<ul>
+<li>尝试创建一个<strong>最小可复现样本 (Minimal Reproducible Example)</strong>。把出问题的代码块复制到一个新的、简单的脚本里，去掉所有不相关的依赖，看看问题是否还能重现。这个过程往往能让你自己就发现问题所在。</li>
+</ul>
+</li>
+<li><strong>使用调试器 (Use a Debugger)</strong>
+<ul>
+<li>当逻辑非常复杂时，可以使用 <code>pdb</code> (Python’s built-in debugger) 或 IDE（如 VS Code, PyCharm）自带的图形化调试器。</li>
+<li>它允许你<strong>设置断点</strong>，让程序在某一行停下来，然后你可以逐行执行，并实时查看所有变量的值。</li>
+</ul>
+</li>
+</ul>
+<h4 id="第四步善用搜索引擎"><a class="markdownIt-Anchor" href="#第四步善用搜索引擎"></a> <strong>第四步：善用搜索引擎</strong></h4>
+<ul>
+<li><strong>精确复制粘贴</strong>：把最关键的报错信息（例如 <code>ImportError: cannot import name 'interleave_datasets' from partially initialized module 'datasets' (most likely due to a circular import)</code>）直接复制到 Google 或 Stack Overflow。</li>
+<li><strong>添加关键词</strong>：在报错信息后加上你使用的库的名称，如 <code>ray</code>, <code>pytorch</code>, <code>openrlhf</code>。</li>
+</ul>
+<p>你遇到的问题，99% 的可能别人也遇到过。</p>
+<h3 id="总结你的个人调试清单"><a class="markdownIt-Anchor" href="#总结你的个人调试清单"></a> 总结：你的个人调试清单 ✅</h3>
+<p>每次遇到 Bug，都可以拿出这个清单来问自己：</p>
+<ol>
+<li><strong>[ ] 心态</strong>：我冷静下来了吗？</li>
+<li><strong>[ ] 阅读</strong>：我从下到上读完整个 Traceback 了吗？最根本的错误是什么？</li>
+<li><strong>[ ] 上下文</strong>：这段代码在哪里运行（本地/远程）？它想干什么？</li>
+<li><strong>[ ] 假设</strong>：根据错误，我猜问题最可能出在哪里？</li>
+<li><strong>[ ] 验证</strong>：我能加一个 <code>print</code> 或者做一个小实验来验证我的猜测吗？</li>
+<li><strong>[ ] 搜索</strong>：我把关键报错信息拿去搜索了吗？</li>
+</ol>
+<p>把 Debugging 变成一个固定的、理性的流程，你就会发现它不再可怕，反而充满了挑战和乐趣。祝你“抓虫”愉快！🐛</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/07/21/Rl-reproduce/">
+            https://tzturtle.moe/2025/07/21/Rl-reproduce/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2025/07/16/daily-story-pyenv-conda/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">【实验室小品一则】什么是pyenv，什么是miniconda </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#limr-%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> LIMR 核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#limr%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3%E4%B8%8E%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="toc-text"> LIMR的核心思想与训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ppo%E7%AE%97%E6%B3%95%E4%B8%8Ecritic%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text"> PPO算法与Critic的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%80%83%E5%AF%9F%E5%93%8D%E5%BA%94%E9%95%BF%E5%BA%A6"><span class="toc-text"> 为什么要考察响应长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%A6%82%E4%BD%95%E6%B7%B1%E5%BA%A6%E5%A4%8D%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 附：如何深度复现与学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ppo-%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B%E4%BB%A5-openrlhf-%E4%B8%BA%E4%BE%8B"><span class="toc-text"> PPO 训练流程（以 OpenRLHF 为例）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%E7%BB%8F%E9%AA%8C%E6%94%B6%E9%9B%86-rollout-phase"><span class="toc-text"> 阶段一：经验收集 (Rollout Phase) 📝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%E8%AE%A1%E7%AE%97%E4%BC%98%E5%8A%BF%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-advantage-calculation"><span class="toc-text"> 阶段二：计算优势与数据处理 (Advantage Calculation) 📊</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#policy-model-forward-%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text"> “Policy model forward” 到底在做什么？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96-optimization-phase"><span class="toc-text"> 阶段三：模型优化 (Optimization Phase) 🧠</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%BE%AA%E7%8E%AF"><span class="toc-text"> 训练循环 🔁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#torl%E6%A1%86%E6%9E%B6%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> TORL框架核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#torl%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text"> TORL工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%9C%BA%E5%88%B6"><span class="toc-text"> 奖励机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text"> 实验对比模型详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="toc-text"> 主要结论与发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-verl%E4%B8%8D%E9%80%89%E6%8B%A9-openrlhf"><span class="toc-text"> Q: 为什么选择 veRL，不选择 OpenRLHF?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E5%A4%8D%E6%9D%82%E6%99%BA%E8%83%BD%E4%BD%93%E4%BB%BB%E5%8A%A1agentic-tasks%E7%9A%84%E5%8D%93%E8%B6%8A%E6%94%AF%E6%8C%81"><span class="toc-text"> 1. 对复杂“智能体任务”（Agentic Tasks）的卓越支持 🤖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A1%86%E6%9E%B6%E7%9A%84%E7%81%B5%E6%B4%BB%E6%80%A7%E4%B8%8E%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7-%EF%B8%8F"><span class="toc-text"> 2. 框架的灵活性与可扩展性 🛠️</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%A5%96%E5%8A%B1verifiable-reward%E7%9A%84%E6%94%AF%E6%8C%81-%EF%B8%8F"><span class="toc-text"> 3. 对自定义奖励（Verifiable Reward）的支持 ⚖️</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-grpo%E8%80%8C%E9%9D%9E-ppo"><span class="toc-text"> Q: 为什么选择 GRPO，而非 PPO？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E9%9D%9E%E9%BB%91%E5%8D%B3%E7%99%BD%E7%9A%84%E5%A5%96%E5%8A%B1%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E6%9B%B4%E7%9B%B4%E6%8E%A5"><span class="toc-text"> 1. 对“非黑即白”的奖励信号处理更直接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E4%B8%8E%E4%BB%BB%E5%8A%A1%E7%9B%AE%E6%A0%87%E6%9B%B4%E5%A5%91%E5%90%88"><span class="toc-text"> 2. 优化目标与任务目标更契合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%B4%81%E6%80%A7%E5%92%8C%E7%A8%B3%E5%AE%9A%E6%80%A7"><span class="toc-text"> 3. 可能的实现简洁性和稳定性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E6%80%8E%E4%B9%88-debug%E8%AE%B2%E5%B8%88gemini-25-pro"><span class="toc-text"> 附录：怎么 Debug？（讲师：Gemini-2.5-pro）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E9%81%93%E6%A0%B8%E5%BF%83%E5%BF%83%E6%80%81%E4%B8%8E%E5%93%B2%E5%AD%A6"><span class="toc-text"> 调试的“道”：核心心态与哲学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E6%9C%AF%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-text"> 调试的“术”：具体步骤与技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BB%94%E7%BB%86%E9%98%85%E8%AF%BB%E6%89%BE%E5%88%B0%E6%A0%B9%E6%9C%AC%E5%8E%9F%E5%9B%A0"><span class="toc-text"> 第一步：仔细阅读，找到“根本原因”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E7%90%86%E8%A7%A3%E4%B8%8A%E4%B8%8B%E6%96%87context-is-king"><span class="toc-text"> 第二步：理解上下文（Context is King）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E6%94%B6%E9%9B%86%E6%9B%B4%E5%A4%9A%E7%BA%BF%E7%B4%A2gather-more-clues"><span class="toc-text"> 第三步：收集更多线索（Gather More Clues）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E5%96%84%E7%94%A8%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="toc-text"> 第四步：善用搜索引擎</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%BD%A0%E7%9A%84%E4%B8%AA%E4%BA%BA%E8%B0%83%E8%AF%95%E6%B8%85%E5%8D%95"><span class="toc-text"> 总结：你的个人调试清单 ✅</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>59</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>14</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#limr-%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> LIMR 核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#limr%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3%E4%B8%8E%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="toc-text"> LIMR的核心思想与训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ppo%E7%AE%97%E6%B3%95%E4%B8%8Ecritic%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text"> PPO算法与Critic的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%80%83%E5%AF%9F%E5%93%8D%E5%BA%94%E9%95%BF%E5%BA%A6"><span class="toc-text"> 为什么要考察响应长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%A6%82%E4%BD%95%E6%B7%B1%E5%BA%A6%E5%A4%8D%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 附：如何深度复现与学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ppo-%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B%E4%BB%A5-openrlhf-%E4%B8%BA%E4%BE%8B"><span class="toc-text"> PPO 训练流程（以 OpenRLHF 为例）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%E7%BB%8F%E9%AA%8C%E6%94%B6%E9%9B%86-rollout-phase"><span class="toc-text"> 阶段一：经验收集 (Rollout Phase) 📝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%E8%AE%A1%E7%AE%97%E4%BC%98%E5%8A%BF%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-advantage-calculation"><span class="toc-text"> 阶段二：计算优势与数据处理 (Advantage Calculation) 📊</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#policy-model-forward-%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text"> “Policy model forward” 到底在做什么？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96-optimization-phase"><span class="toc-text"> 阶段三：模型优化 (Optimization Phase) 🧠</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%BE%AA%E7%8E%AF"><span class="toc-text"> 训练循环 🔁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#torl%E6%A1%86%E6%9E%B6%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> TORL框架核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#torl%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text"> TORL工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%9C%BA%E5%88%B6"><span class="toc-text"> 奖励机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text"> 实验对比模型详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="toc-text"> 主要结论与发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-verl%E4%B8%8D%E9%80%89%E6%8B%A9-openrlhf"><span class="toc-text"> Q: 为什么选择 veRL，不选择 OpenRLHF?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E5%A4%8D%E6%9D%82%E6%99%BA%E8%83%BD%E4%BD%93%E4%BB%BB%E5%8A%A1agentic-tasks%E7%9A%84%E5%8D%93%E8%B6%8A%E6%94%AF%E6%8C%81"><span class="toc-text"> 1. 对复杂“智能体任务”（Agentic Tasks）的卓越支持 🤖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A1%86%E6%9E%B6%E7%9A%84%E7%81%B5%E6%B4%BB%E6%80%A7%E4%B8%8E%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7-%EF%B8%8F"><span class="toc-text"> 2. 框架的灵活性与可扩展性 🛠️</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%A5%96%E5%8A%B1verifiable-reward%E7%9A%84%E6%94%AF%E6%8C%81-%EF%B8%8F"><span class="toc-text"> 3. 对自定义奖励（Verifiable Reward）的支持 ⚖️</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-grpo%E8%80%8C%E9%9D%9E-ppo"><span class="toc-text"> Q: 为什么选择 GRPO，而非 PPO？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E9%9D%9E%E9%BB%91%E5%8D%B3%E7%99%BD%E7%9A%84%E5%A5%96%E5%8A%B1%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E6%9B%B4%E7%9B%B4%E6%8E%A5"><span class="toc-text"> 1. 对“非黑即白”的奖励信号处理更直接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E4%B8%8E%E4%BB%BB%E5%8A%A1%E7%9B%AE%E6%A0%87%E6%9B%B4%E5%A5%91%E5%90%88"><span class="toc-text"> 2. 优化目标与任务目标更契合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%B4%81%E6%80%A7%E5%92%8C%E7%A8%B3%E5%AE%9A%E6%80%A7"><span class="toc-text"> 3. 可能的实现简洁性和稳定性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E6%80%8E%E4%B9%88-debug%E8%AE%B2%E5%B8%88gemini-25-pro"><span class="toc-text"> 附录：怎么 Debug？（讲师：Gemini-2.5-pro）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E9%81%93%E6%A0%B8%E5%BF%83%E5%BF%83%E6%80%81%E4%B8%8E%E5%93%B2%E5%AD%A6"><span class="toc-text"> 调试的“道”：核心心态与哲学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E6%9C%AF%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-text"> 调试的“术”：具体步骤与技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BB%94%E7%BB%86%E9%98%85%E8%AF%BB%E6%89%BE%E5%88%B0%E6%A0%B9%E6%9C%AC%E5%8E%9F%E5%9B%A0"><span class="toc-text"> 第一步：仔细阅读，找到“根本原因”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E7%90%86%E8%A7%A3%E4%B8%8A%E4%B8%8B%E6%96%87context-is-king"><span class="toc-text"> 第二步：理解上下文（Context is King）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E6%94%B6%E9%9B%86%E6%9B%B4%E5%A4%9A%E7%BA%BF%E7%B4%A2gather-more-clues"><span class="toc-text"> 第三步：收集更多线索（Gather More Clues）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E5%96%84%E7%94%A8%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="toc-text"> 第四步：善用搜索引擎</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%BD%A0%E7%9A%84%E4%B8%AA%E4%BA%BA%E8%B0%83%E8%AF%95%E6%B8%85%E5%8D%95"><span class="toc-text"> 总结：你的个人调试清单 ✅</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">26</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">7</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#limr-%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> LIMR 核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#limr%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3%E4%B8%8E%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="toc-text"> LIMR的核心思想与训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ppo%E7%AE%97%E6%B3%95%E4%B8%8Ecritic%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text"> PPO算法与Critic的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%80%83%E5%AF%9F%E5%93%8D%E5%BA%94%E9%95%BF%E5%BA%A6"><span class="toc-text"> 为什么要考察响应长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%A6%82%E4%BD%95%E6%B7%B1%E5%BA%A6%E5%A4%8D%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 附：如何深度复现与学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ppo-%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B%E4%BB%A5-openrlhf-%E4%B8%BA%E4%BE%8B"><span class="toc-text"> PPO 训练流程（以 OpenRLHF 为例）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%E7%BB%8F%E9%AA%8C%E6%94%B6%E9%9B%86-rollout-phase"><span class="toc-text"> 阶段一：经验收集 (Rollout Phase) 📝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%E8%AE%A1%E7%AE%97%E4%BC%98%E5%8A%BF%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-advantage-calculation"><span class="toc-text"> 阶段二：计算优势与数据处理 (Advantage Calculation) 📊</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#policy-model-forward-%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text"> “Policy model forward” 到底在做什么？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96-optimization-phase"><span class="toc-text"> 阶段三：模型优化 (Optimization Phase) 🧠</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%BE%AA%E7%8E%AF"><span class="toc-text"> 训练循环 🔁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#torl%E6%A1%86%E6%9E%B6%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text"> TORL框架核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#torl%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text"> TORL工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%9C%BA%E5%88%B6"><span class="toc-text"> 奖励机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text"> 实验对比模型详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="toc-text"> 主要结论与发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-verl%E4%B8%8D%E9%80%89%E6%8B%A9-openrlhf"><span class="toc-text"> Q: 为什么选择 veRL，不选择 OpenRLHF?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E5%A4%8D%E6%9D%82%E6%99%BA%E8%83%BD%E4%BD%93%E4%BB%BB%E5%8A%A1agentic-tasks%E7%9A%84%E5%8D%93%E8%B6%8A%E6%94%AF%E6%8C%81"><span class="toc-text"> 1. 对复杂“智能体任务”（Agentic Tasks）的卓越支持 🤖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A1%86%E6%9E%B6%E7%9A%84%E7%81%B5%E6%B4%BB%E6%80%A7%E4%B8%8E%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7-%EF%B8%8F"><span class="toc-text"> 2. 框架的灵活性与可扩展性 🛠️</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%A5%96%E5%8A%B1verifiable-reward%E7%9A%84%E6%94%AF%E6%8C%81-%EF%B8%8F"><span class="toc-text"> 3. 对自定义奖励（Verifiable Reward）的支持 ⚖️</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-grpo%E8%80%8C%E9%9D%9E-ppo"><span class="toc-text"> Q: 为什么选择 GRPO，而非 PPO？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AF%B9%E9%9D%9E%E9%BB%91%E5%8D%B3%E7%99%BD%E7%9A%84%E5%A5%96%E5%8A%B1%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E6%9B%B4%E7%9B%B4%E6%8E%A5"><span class="toc-text"> 1. 对“非黑即白”的奖励信号处理更直接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E4%B8%8E%E4%BB%BB%E5%8A%A1%E7%9B%AE%E6%A0%87%E6%9B%B4%E5%A5%91%E5%90%88"><span class="toc-text"> 2. 优化目标与任务目标更契合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%B4%81%E6%80%A7%E5%92%8C%E7%A8%B3%E5%AE%9A%E6%80%A7"><span class="toc-text"> 3. 可能的实现简洁性和稳定性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E6%80%8E%E4%B9%88-debug%E8%AE%B2%E5%B8%88gemini-25-pro"><span class="toc-text"> 附录：怎么 Debug？（讲师：Gemini-2.5-pro）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E9%81%93%E6%A0%B8%E5%BF%83%E5%BF%83%E6%80%81%E4%B8%8E%E5%93%B2%E5%AD%A6"><span class="toc-text"> 调试的“道”：核心心态与哲学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%9A%84%E6%9C%AF%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-text"> 调试的“术”：具体步骤与技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BB%94%E7%BB%86%E9%98%85%E8%AF%BB%E6%89%BE%E5%88%B0%E6%A0%B9%E6%9C%AC%E5%8E%9F%E5%9B%A0"><span class="toc-text"> 第一步：仔细阅读，找到“根本原因”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E7%90%86%E8%A7%A3%E4%B8%8A%E4%B8%8B%E6%96%87context-is-king"><span class="toc-text"> 第二步：理解上下文（Context is King）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E6%94%B6%E9%9B%86%E6%9B%B4%E5%A4%9A%E7%BA%BF%E7%B4%A2gather-more-clues"><span class="toc-text"> 第三步：收集更多线索（Gather More Clues）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E5%96%84%E7%94%A8%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="toc-text"> 第四步：善用搜索引擎</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%BD%A0%E7%9A%84%E4%B8%AA%E4%BA%BA%E8%B0%83%E8%AF%95%E6%B8%85%E5%8D%95"><span class="toc-text"> 总结：你的个人调试清单 ✅</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-21</div>
+        <a href="/2025/07/21/Rl-reproduce/"><div class="recent-posts-item-content">RL 实验复现随笔</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-16</div>
+        <a href="/2025/07/16/daily-story-pyenv-conda/"><div class="recent-posts-item-content">【实验室小品一则】什么是pyenv，什么是miniconda</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-06-06</div>
+        <a href="/2025/06/06/memory-for-404/"><div class="recent-posts-item-content">缅怀我第一位逝去的朋友</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-03-08</div>
+        <a href="/2025/03/08/rl-mario/"><div class="recent-posts-item-content">强化学习实战：用PPO算法通关超级马里奥兄弟</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
