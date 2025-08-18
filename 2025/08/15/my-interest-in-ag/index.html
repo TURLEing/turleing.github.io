@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>现代大模型时代下的情感计算综述</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="现代大模型时代下的情感计算综述">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/08/15/my-interest-in-ag/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-08-15">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-08-18">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="情感计算">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      现代大模型时代下的情感计算综述
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-08-15T07:57:21.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-08-15</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          科研学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>4.6k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+            class="post-meta-link">
+            情感计算
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>今天在实验室出人意料地把活干完了，于是抓紧让 Gemini 调研了一堆情感计算（Affective Compute）的论文，饶有兴趣地了解起这个我或许会感兴趣的方向。</p>
+<!--mroe-->
+<h2 id="introduce历史视角下的情感计算"><a class="markdownIt-Anchor" href="#introduce历史视角下的情感计算"></a> Introduce：历史视角下的情感计算</h2>
+<p>LLM 是一个迭代很快的领域，所以 25 年年初之前的论文其实都可以归类于 “历史视角” 的范畴了。这里以综述 <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2408.04638">Affective Computing in the Era of Large Language Models: A Survey from the NLP Perspective</a> 为例，讲几个比较基础的点。</p>
+<h3 id="11-background-of-ac"><a class="markdownIt-Anchor" href="#11-background-of-ac"></a> 1.1 Background of AC</h3>
+<p>情感计算（AC）包括两个主流任务，即情感理解（AU）和情感生成（AG）。</p>
+<p>针对情感理解任务，微调预训练语言模型 （PLM） 已经取得了相当大的成功。然而，这些模型缺乏泛化能力，需要专门的模型来处理特定任务。此外，传统 PLM 在 AG 中面临挑战，特别是在生成多样化且情感丰富的响应方面。</p>
+<p>而 ChatGPT 系列和 LLaMA 模型等大语言模型 （LLM） 的出现带来了新的机遇和挑战，催化了 AC 的范式转变。大模型拥有上下文学习、常识推理和高级序列生成的能力，借助指令微调和提示工程（即 Prompt 方法）就能取得不错的结果。对于指令调优，我们讨论了全参微调和参数高效微调（PEFT）的方法（如 LoRA）。在提示工程中，我们研究了 AU 和 AG 的零样本、少量、思维链 （CoT） 和 Agent-Based 方法。</p>
+<p>最后，我们总结了现有的基准和评估方法，并从 NLP 的角度讨论了 AG 现有挑战，例如伦理考虑和有效评估。</p>
+<p><img src="image-20250815161642998.png" alt="image-20250815161642998" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250815161642998.png" class="lozad post-image"></p>
+<h3 id="12-情感计算任务"><a class="markdownIt-Anchor" href="#12-情感计算任务"></a> 1.2 情感计算任务</h3>
+<p><strong>情感理解</strong> 有很多传统任务，比如极性分类（2 分类）和情感分类（n 分类）。除了对情绪标签的分析以外，还涉及了情绪强度的量化，即情绪强度检测（EID）。私以为这些方向均属于 PLM-solved 了，没啥研究价值。</p>
+<p>此外，考虑到人类情感并不总是在文本中明确表达，研究人员提出了内隐情感分析（ISA）的任务，旨在识别和分析文本中未通过明确情感词汇或表达传达的隐含情感。当然，情感也可以通过文本以外的模态进行传递，因此引入了多模态情感分析（MSA）任务，该任务整合了文本、视觉和听觉信息。这个或许还是有价值的。</p>
+<p>仅仅是分类（Classification）可能对情感的理解不够深刻，因此借助自然语言文本分析是有必要的。主观文本分析 （STA） 可更深入地了解用户体验和观点的细微差别。STA涵盖了多种任务，如人格评估[86]、自杀倾向检测[87]、毒性检测、讽刺检测[88]、幸福感评估[89]。这些任务比较 specific，做起来可能 lack of generalization.</p>
+<p><strong>情感生成</strong> 的主要任务之一就是情感对话生成，旨在增强系统响应和 engage with emotion 的能力。一方面是对话应该具有同理心（Empathy），另一方面是需要有明显的情感倾向。这个方向和传统的 Dialogue Benchmark 还不太一样，有待后续调研。</p>
+<h3 id="13-情感计算方法"><a class="markdownIt-Anchor" href="#13-情感计算方法"></a> 1.3 情感计算方法</h3>
+<p>一句话，过去的过去都是在预训练模型（Bert, T5 之流）上全参微调，而过去（24年之前）是在 LLM 上用 prompt-based 或者 SFT/PEFT 做的。然而在一些特定的任务上，LLM 表现还不如 PLM. 我觉得这个要么是参数量不够大，要么是任务太 specific 了，SFT 学不到对应的能力，RL 来了全秒了。</p>
+<h3 id="14-情感计算-benchmark"><a class="markdownIt-Anchor" href="#14-情感计算-benchmark"></a> 1.4 情感计算 Benchmark</h3>
+<p><code>ESConv</code> 是非常经典的 Benchmark，可以了解一下。其他的可以简单看下 <code>EQ-Bench</code>，<code>EmoBench</code> 之类的，以外的都是看论文用了什么 Benchmark 查漏补缺。<code>IEMCOP</code> 之流的就很古早了。整体来说，对于 AC 任务的有效评估手段还是缺乏的。</p>
+<p>“探索如何训练一个能够有效感知情感和评估性能的 LLM 仍然至关重要。在训练专门用于 AC 任务的 LLM 时，研究人员面临的挑战不仅要保留模型的原始能力，如指令理解和推理，还要加强新的能力，比如情感感知（perception）和认知（cognitive）。在评估方面，在 LLM 出现之前进行的研究提出了各种衡量模型性能的指标，例如 Accuracy、BLEU 和 ROUGE。然而，这些指标不足以充分评估 LLM 的能力。建立全面有效的评估标准仍然是一个亟待解决的问题。”</p>
+<br>
+<h2 id="towards-emotional-support-dialog-systems-datasets"><a class="markdownIt-Anchor" href="#towards-emotional-support-dialog-systems-datasets"></a> Towards Emotional Support Dialog Systems (Datasets)</h2>
+<p>由于缺乏精心设计的任务和有效的情感支持对话语料库，将情感支持构建到对话系统中的研究稀缺。这篇论文有如下几个贡献点：1）定义了情感支持对话任务；2）构建了一个具有丰富注释（尤其是支持策略）的对话数据集（<code>ESConv</code>）；3）我们评估了最先进的对话模型提供情感支持的能力。（虽然都是 PLM）</p>
+<blockquote>
+<p>Without further Exploration，Supporter 不太可能理解 Help-seeker 的经历和感受，因此，如果 Supporter 在没有深入了解的情况下给出不相关的建议，例如“你可以去散步放松一下”，这可能是冒犯性的，甚至是有害的。在了解 Help-seeker 的情况时， Supporter 可能会表达理解和同理心，通过各种技巧（例如自我表露、反思感受等）来缓解 Help-seeker 的挫败感。</p>
+<p>在了解 Help-seeker 的问题后， Supporter 可能会提出建议，帮助 Help-seeker 解决问题。如果 Supporter 只是安慰 Help-seeker ，而没有任何改变行动的建议，那么 Supporter 可能无法有效地帮助情绪改善。最后，在这个示例对话的数据收集过程中， Help-seeker 报告说他们的情绪强度从 5 下降到 2（情绪强度在我们的语料库中被标记），这表明 Supporter 提供的 Emotion Support 的有效性。</p>
+</blockquote>
+<ul>
+<li>ESC 框架提出了三个阶段（探索、安慰和行动），每个阶段包含多种支持策略（或技能）。我们将 ESC 框架建立在希尔的 <strong>帮助技能理论</strong> 的基础上，并使其更适合对话系统设置，旨在通过社交互动（如同龄人、朋友或家人之间的互动）提供支持，而不仅仅是专业咨询。</li>
+<li>情感支持<strong>旨在减少用户的情绪困扰，并帮助他们克服这些挑战</strong>，因此 Help-seeker 会首先标注一个情感强度，通过对话使情感强度降低。Supporter 会采用不同的策略（如提问、情感反射、自我暴露等，都挺心理学的）。</li>
+<li>最后总共收集到了1,053 条对话数据。实验是在 <code>dialogGPT</code> 和 <code>BlenderBot</code> 两个 PLM 上做 SFT，要求 PLM 在生成 response 前，先选择一个策略，再生成对应策略下的 response. 感觉数据有点年代感了，固定策略的 Response 也缺乏自由度。</li>
+</ul>
+<br>
+<h2 id="emobench-evaluating-the-emotional-intelligence-of-large-language-models"><a class="markdownIt-Anchor" href="#emobench-evaluating-the-emotional-intelligence-of-large-language-models"></a> EmoBench: Evaluating the Emotional Intelligence of Large Language Models</h2>
+<p>现有的针对情感智能 (EI) 系统的研究主要集中于传统的情绪识别，忽视了情绪调节和通过情绪理解促进推理等关键 EI 能力。<code>EmoBench</code> 是一个基于成熟心理学理论的全面EI基准测试，包含情感理解和情感应用的400个精心设计的问题，旨在通过更全面和具有挑战性的基准测试，推动LLMs在理解、推理和导航个体心理状态方面的能力。</p>
+<p>如下图例子所示：物体的感知价值与人的情绪及其强度直接相关。这种作为情感原因的感知价值应该从上下文中隐含推理得到，而非直接从上下文提取。这也符合大模型的发展需求，需要有更难的 Benchmark 对大模型的 EI 能力进行测试。</p>
+<h4 id="image-20250815190138219"><a class="markdownIt-Anchor" href="#image-20250815190138219"></a> <img src="image-20250815190138219.png" alt="image-20250815190138219" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250815190138219.png" class="lozad post-image"></h4>
+<br>
+<p>我们评估 LLM 理解场景中个人情绪及其原因的能力 （EU）。我们还评估他们是否可以适当地应用这种理解 （EA） 来促进他们的思考和情绪管理，并在情绪困境中确定最有效的解决方案。我们的实验结果凸显了现有大模型与人类的 EI 能力之间存在相当大的差距，表现最好的大模型 （GPT-4） 达不到普通人的表现。非常 Make Sense.</p>
+<p>在心理学中，情商评估主要分为特质和能力测量（Ashkanasy 和 Daus，2005）。特质测量通常通过自我报告问卷进行评估，旨在探索个人如何回应这些情绪化的场景，但作者认为这种 self-report assessment 不适合评估大模型。能力测量设计一套多项选择题以评价个人的情感理解和表现，并提供更理论化的情商观点。</p>
+<blockquote>
+<p>We believe EI benchmarks should be comprehensive and transcend general patterns while necessitating deep reasoning and understanding.</p>
+</blockquote>
+<p>我们最初提示 GPT-4（OpenAI，2023）生成示例场景，但很快发现这些数据缺少情感深度，包含了显式的情感标签。最后基于这些合成数据，邀请人类标注者手动设计具有情感挑战性的场景，并注释情绪标签和原因。鉴于这是视为一项主观任务，我们分配了原来的两名工人和两名新工人来注释每个 MCQ 并确定其标签。使用 Fleiss 的 Kappa（Fleiss 和 Cohen，1973）的注释者间一致性为 κ = 0.852），kappa 值到 0.85 属于非常高了。</p>
+<p>他们测的模型都比较老，没有 25 年具有推理能力的模型，之后可以补测一下。或者看看今年的工作有没有涉及的。反正当年的模型没有回答得比人类好的，可以简单理解为大模型情商都没人类高（bushi</p>
+<br>
+<h2 id="r1-omni-explainable-omni-multimodal-emotion-recognition-with-reinforcement-learning"><a class="markdownIt-Anchor" href="#r1-omni-explainable-omni-multimodal-emotion-recognition-with-reinforcement-learning"></a> R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning</h2>
+<p>简单看了下，就是纯蹭了一下 R1 的红利，把自己原来的工作套一个 RL 的壳硬 train 一发就拿出来了，没啥针对情感识别的特殊设计。因为之前的数据集也是 n 分类问题，所以还挺对齐的。唯一一个比较那什么的点就是做的特别早（3月），感觉在没有成熟框架之前把这个做出来也不容易。</p>
+<br>
+<h2 id="affectgpt-r1-leveraging-reinforcement-learning-for-open-vocabulary-emotion-recognition"><a class="markdownIt-Anchor" href="#affectgpt-r1-leveraging-reinforcement-learning-for-open-vocabulary-emotion-recognition"></a> AffectGPT-R1: Leveraging Reinforcement Learning for Open-Vocabulary Emotion Recognition</h2>
+<p>和上面一篇除了改了改奖励函数，其他都一样。哦还有 Cold Start (PEFT) 数据量更大一点。</p>
+<br>
+<h2 id="sentiment-agent-as-judge"><a class="markdownIt-Anchor" href="#sentiment-agent-as-judge"></a> Sentiment Agent as Judge</h2>
+<blockquote>
+<p>Social cognition is orthogonal to generic helpfulness.</p>
+</blockquote>
+<p>这是 RLVER 框架的前置工作，大致意思就是给出自家评估模型情商能力的方法和指标。大致意思是先给每个 Agent（虽然很怀疑这是否究竟是 agent，还是 prompt-based workflow）给定一个详细的人物设定，对话主题，隐藏意图（即是想发泄情绪？还是想听建议？不同角色会带着不同期待展开对话），和背景故事（即对话场景）。</p>
+<p>他们设计了 100 个场景的支持性对话 Benchmark，利用多轮对话的方式模拟情绪变化，测试 LLM 的高阶社交认知能力，并表明认知分数与既定的以人为本的工具和话语水平的同理心评级密切相关。</p>
+<p>该框架贡献有两点：</p>
+<ul>
+<li>核心是 Sentient Agent，它通过利用 LLM 推理来模拟类人的感受和认知，以可观察的上下文为基础，估计人的感受、情绪变化和下一步行动。<em>基模就是 DS-V3.</em></li>
+<li>搭建了一个开放式交互环境，由广泛的子场景组成，涵盖动态角色、对话背景、个人目标和任务构建等要素。在每个子场景中，agent 交互后的情绪作为评估指标。采用了心理学上的 Barrett-Lennard 关系量表 （BLRI） 分析用户内部想法。</li>
+</ul>
+<blockquote>
+<p>Since emotions arise from many internal and external factors, the Sentient Agent must consider <strong>observable factors</strong> while adhering to its persona and goals for the emotion estimation.</p>
+</blockquote>
+<p>怎么讲呢，Sentiment Agent as Judge 比起 LLM as Judge 来说，肯定是有提升的，搭建环境和任务也是一个可以自动化的框架，选取的指标也是有参考性的，为之后的 RL training 打好基础了。</p>
+<br>
+<h2 id="rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"><a class="markdownIt-Anchor" href="#rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"></a> RLVER: Reinforcement Learning with Verifiable Emotion Rewards for Empathetic Agents</h2>
+<p>公众号：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4R4k4UdW5edN4P-S-IEFYw">https://mp.weixin.qq.com/s/4R4k4UdW5edN4P-S-IEFYw</a></p>
+<p>这个工作是腾讯混元AI数字人团队做的，看上去还挺 solid，也比较符合于我对当前情感计算发展的认知：大型语言模型 （LLM） 擅长逻辑和算法推理，但它们的情商 （EQ） 仍然远远落后于其认知能力。虽然可验证奖励强化学习 （RLVR） 在其他领域取得了进展，但其在对话中的应用——尤其是情商——仍然没有得到充分探索。</p>
+<p>因此，他们团队提出了 RLVER：一个端到端的强化学习框架，可以利用来自模拟用户的可验证情感奖励，培养 LLM 的高阶移情能力。在这个框架内，自洽情感模拟用户（Zhang et al.， 2025a）参与对话展开，并在对话过程中产生确定性情绪分数，作为指导大模型学习的奖励信号。使用 PPO 微调公开可用的 Qwen2.5-7B 模型，将其 Sentient-Benchmark 分数从 13.3 提高到 79.2，同时在很大程度上保留了数学和编码能力。</p>
+<p>有几个 Key Findings：（ii） 思考模型和非思考模型表现出不同的趋势——思考模型在同理心和洞察力方面表现出色，而非思考模型则倾向于行动。（iii） GRPO 通常产生稳定的收益，而 PPO 可以将某些能力推向更高的上限。（iv）  在将 Agent 作为 RL 训练中的环境和奖励来源时，挑战的并不总是更好，温和的可以产生更强的结果。（v） RLVER 可以在社会认知空间中将模型行为从以解决方案为中心的风格转变为真正的移情风格。我们的研究结果表明，具有可验证情绪奖励的 RL 是通往情商和广泛能力的语言代理的实用途径。</p>
+<p>基于 SAGE 这篇论文，RLVER 搭建了其 rollout 环境。在每次对话中，模拟用户在每次 LLM 响应后都会更新其情绪状态，并发出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mi>T</mi></msub><mi mathvariant="normal">/</mi><mn>100</mn></mrow><annotation encoding="application/x-tex">e_T/100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span> 的情绪分数作为奖励。这个情绪分数 is consistent &amp; verifible: 每个都是通过基于用户角色、对话历史、对话上下文和目标的原则性推理步骤确定性地推导出来的。 <strong>通过扩展具有广泛用户行为和对话意图的模拟环境，我们减轻了因同质用户偏好而产生的奖励黑客攻击。</strong></p>
+<p>策略优化算法选择的是 PPO 算法，出于 ”safer exploration of diverse socialemotional strategies and smoother convergence&quot;。值得一提的是他们没有采用 Qwen2.5-7B-Based，而是 Qwen2.5-7B-Instruct，因为他们认为从适度对齐的检查点进行初始化，使用通用对话数据进行预训练，可以建立更强的基线并加速收敛。只要 Instruct FT 阶段没有接受过情感相关的信号，就可以保证 reward-driven 优化，而非采用 pre-encoded 情感知识。</p>
+<p>具体来看，RLVER 同样将 <code>&lt;think&gt;</code> 作为情感推理的重要环节，这和数学/代码/Tool-Use 等其他任务保持一致。并且同样采用了 format reward 去强化这种格式。违反这种输出将受到零奖励的惩罚。他们也测试了不包含这种推理模板下直接推理，做 RL training 的效果（对比实验），说明这种 format 在情感对话人物上同样也是有效的。</p>
+<p>比较神奇的是，这篇工作的 Test Dataset 一个是在自家 Sentiment Benchmark 上做的（域内评估），结果显示 7B 模型实现了 13-&gt;79 的分数提升，和最强的专有模型（Gemini-2.5-Pro）保持在同一水准，说明 RL 增强大模型的共情推理能力是有说法的；并且思考模型比非思考模型表现更好，符合预期；并且对于 SFT 来说，获得这种共情能力很有可能会导致他在其他任务上出现灾难性遗忘，但是通过 RL Training 使得共情推理能力的专业化是在对一般能力影响最小的情况下实现的。</p>
+<br>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>几篇论文看下来，其实发现情感计算这个方向还是在健康发展的，不论是 Dataset、 Benchmark、还是 Training Method，一直都是有人在填补空缺，紧跟 LLM 时代潮流。但是说实话，也只是在跟随潮流出成果，大模型火了就试一试 Prompt-based Methods，试试 SFT，RL 火了就试一试 PPO/GRPO，之间应该有个小半年的“延迟”。</p>
+<p>情感计算领域还有一个特点就是经常 Refer to 一些心理学理论，搞交叉。如果想搞情感计算这块儿，这或许也是之后需要补的知识？唉总之目前 AC 还是属于兴趣范畴，可以平常跟进一下这方面的工作，捉捉虫找不足。希望能在自己感兴趣的科研领域里面做点东西。</p>
+<p>我觉得就像 RLVER 里面说的那样，人类智能 grounded in both IQ and EQ，让模型理解情感、甚至掌握情感表达的能力在将来的某一天也会变得同等重要。工程师专注于当下的需求，而科研从业者应该放眼于未来的需求，并将其变为现实，that’s what matters.</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/08/15/my-interest-in-ag/">
+            https://tzturtle.moe/2025/08/15/my-interest-in-ag/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2025/07/21/Rl-reproduce/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">RL 实验复现随笔【RL+LLM】【Tool Agent】【PPO、GRPO】 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#introduce%E5%8E%86%E5%8F%B2%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97"><span class="toc-text"> Introduce：历史视角下的情感计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-background-of-ac"><span class="toc-text"> 1.1 Background of AC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E4%BB%BB%E5%8A%A1"><span class="toc-text"> 1.2 情感计算任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.3 情感计算方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97-benchmark"><span class="toc-text"> 1.4 情感计算 Benchmark</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#towards-emotional-support-dialog-systems-datasets"><span class="toc-text"> Towards Emotional Support Dialog Systems (Datasets)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#emobench-evaluating-the-emotional-intelligence-of-large-language-models"><span class="toc-text"> EmoBench: Evaluating the Emotional Intelligence of Large Language Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#image-20250815190138219"><span class="toc-text"> </span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#r1-omni-explainable-omni-multimodal-emotion-recognition-with-reinforcement-learning"><span class="toc-text"> R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#affectgpt-r1-leveraging-reinforcement-learning-for-open-vocabulary-emotion-recognition"><span class="toc-text"> AffectGPT-R1: Leveraging Reinforcement Learning for Open-Vocabulary Emotion Recognition</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sentiment-agent-as-judge"><span class="toc-text"> Sentiment Agent as Judge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"><span class="toc-text"> RLVER: Reinforcement Learning with Verifiable Emotion Rewards for Empathetic Agents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>60</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>15</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#introduce%E5%8E%86%E5%8F%B2%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97"><span class="toc-text"> Introduce：历史视角下的情感计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-background-of-ac"><span class="toc-text"> 1.1 Background of AC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E4%BB%BB%E5%8A%A1"><span class="toc-text"> 1.2 情感计算任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.3 情感计算方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97-benchmark"><span class="toc-text"> 1.4 情感计算 Benchmark</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#towards-emotional-support-dialog-systems-datasets"><span class="toc-text"> Towards Emotional Support Dialog Systems (Datasets)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#emobench-evaluating-the-emotional-intelligence-of-large-language-models"><span class="toc-text"> EmoBench: Evaluating the Emotional Intelligence of Large Language Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#image-20250815190138219"><span class="toc-text"> </span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#r1-omni-explainable-omni-multimodal-emotion-recognition-with-reinforcement-learning"><span class="toc-text"> R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#affectgpt-r1-leveraging-reinforcement-learning-for-open-vocabulary-emotion-recognition"><span class="toc-text"> AffectGPT-R1: Leveraging Reinforcement Learning for Open-Vocabulary Emotion Recognition</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sentiment-agent-as-judge"><span class="toc-text"> Sentiment Agent as Judge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"><span class="toc-text"> RLVER: Reinforcement Learning with Verifiable Emotion Rewards for Empathetic Agents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">26</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+        title="情感计算">
+        <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#introduce%E5%8E%86%E5%8F%B2%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97"><span class="toc-text"> Introduce：历史视角下的情感计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-background-of-ac"><span class="toc-text"> 1.1 Background of AC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E4%BB%BB%E5%8A%A1"><span class="toc-text"> 1.2 情感计算任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.3 情感计算方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97-benchmark"><span class="toc-text"> 1.4 情感计算 Benchmark</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#towards-emotional-support-dialog-systems-datasets"><span class="toc-text"> Towards Emotional Support Dialog Systems (Datasets)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#emobench-evaluating-the-emotional-intelligence-of-large-language-models"><span class="toc-text"> EmoBench: Evaluating the Emotional Intelligence of Large Language Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#image-20250815190138219"><span class="toc-text"> </span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#r1-omni-explainable-omni-multimodal-emotion-recognition-with-reinforcement-learning"><span class="toc-text"> R1-Omni: Explainable Omni-Multimodal Emotion Recognition with Reinforcement Learning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#affectgpt-r1-leveraging-reinforcement-learning-for-open-vocabulary-emotion-recognition"><span class="toc-text"> AffectGPT-R1: Leveraging Reinforcement Learning for Open-Vocabulary Emotion Recognition</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sentiment-agent-as-judge"><span class="toc-text"> Sentiment Agent as Judge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"><span class="toc-text"> RLVER: Reinforcement Learning with Verifiable Emotion Rewards for Empathetic Agents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text"> 总结</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-08-15</div>
+        <a href="/2025/08/15/my-interest-in-ag/"><div class="recent-posts-item-content">现代大模型时代下的情感计算综述</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-21</div>
+        <a href="/2025/07/21/Rl-reproduce/"><div class="recent-posts-item-content">RL 实验复现随笔【RL+LLM】【Tool Agent】【PPO、GRPO】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-16</div>
+        <a href="/2025/07/16/daily-story-pyenv-conda/"><div class="recent-posts-item-content">【实验室小品一则】什么是pyenv，什么是miniconda</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-06-06</div>
+        <a href="/2025/06/06/memory-for-404/"><div class="recent-posts-item-content">缅怀我第一位逝去的朋友</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
