@@ -45,7 +45,7 @@
         content="2025-08-15">
       <meta 
         property="og:article:modified_time" 
-        content="2025-08-18">
+        content="2025-08-21">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -299,7 +299,7 @@
     
     
       <span class="dot"></span>
-      <span>4.6k 字</span>
+      <span>5k 字</span>
     
   </div>
   
@@ -376,26 +376,32 @@
 <blockquote>
 <p>Social cognition is orthogonal to generic helpfulness.</p>
 </blockquote>
-<p>这是 RLVER 框架的前置工作，大致意思就是给出自家评估模型情商能力的方法和指标。大致意思是先给每个 Agent（虽然很怀疑这是否究竟是 agent，还是 prompt-based workflow）给定一个详细的人物设定，对话主题，隐藏意图（即是想发泄情绪？还是想听建议？不同角色会带着不同期待展开对话），和背景故事（即对话场景）。</p>
-<p>他们设计了 100 个场景的支持性对话 Benchmark，利用多轮对话的方式模拟情绪变化，测试 LLM 的高阶社交认知能力，并表明认知分数与既定的以人为本的工具和话语水平的同理心评级密切相关。</p>
-<p>该框架贡献有两点：</p>
+<p>这是 RLVER 的前置工作，大致意思就是给出自家评估模型情商能力的方法和指标。他们设计了 100 个场景的支持性对话 Benchmark 和对应的聊天 Agent，利用多轮对话的方式模拟情绪变化，测试 LLM 的高阶社交认知能力。</p>
+<p>这个框架具体是这么运行的：先实例化一个 Agent，给他设置一个详细的人物设定，对话主题，隐藏意图（即是想发泄情绪？还是想听建议？不同角色会带着不同期待展开对话），和背景故事（即对话场景），要求被评估的模型在一个特定场景下和他对话。</p>
+<p>对话会进行多轮，每轮对话后 Agent 会根据被评估模型的回答生成一个 Emotion Score，表示听完这个回复 Agent 的心情变化（是积极的心情变好了，还是听完之后感觉只是在说套话没帮助），以及根据这个心情变化生成的心理活动，最后 Agent 再根据这个心理活动，生成相应的回复。</p>
+<p>在数据构建方面，分为角色设计、场景设计三个方面。Agent Persona 的设计包括年龄、性别、职业、日常习惯、说话风格等。场景设计包含对话背景、对话目标、隐藏意图等。还有一个任务设计，感觉就是基于以上两个方法，合并生成对应契合的任务，但他也没给一个具体构造的例子。最后他采用了心理学上的 Barrett-Lennard 关系量表 （BLRI） 分析用户内部想法，和自己给的 emotion score 分数进行相关性比对，说明框架合理性。</p>
+<p>该论文贡献有两点：</p>
 <ul>
-<li>核心是 Sentient Agent，它通过利用 LLM 推理来模拟类人的感受和认知，以可观察的上下文为基础，估计人的感受、情绪变化和下一步行动。<em>基模就是 DS-V3.</em></li>
-<li>搭建了一个开放式交互环境，由广泛的子场景组成，涵盖动态角色、对话背景、个人目标和任务构建等要素。在每个子场景中，agent 交互后的情绪作为评估指标。采用了心理学上的 Barrett-Lennard 关系量表 （BLRI） 分析用户内部想法。</li>
+<li>核心是 Sentient Agent，它通过利用 LLM 推理来模拟类人的感受和认知，以可观察的上下文为基础，估计人的感受、情绪变化和下一步行动。<em>基模就是 DS-V3.</em> ；搭建了一个开放式交互环境，由广泛的子场景组成，涵盖动态角色、对话背景、个人目标和任务构建等要素。在每个子场景中，agent 交互后的情绪作为评估指标。</li>
+<li>针对当前各家的 SOTA LLM 进行情商评估，并且和知名 Benchmark Arena 对比，证实社会认知情商和模型一般能力是正交的，并且 4o 等模型以低 token 的回复取得高分，说明情商推理不需要以 token 长度为代价。</li>
 </ul>
 <blockquote>
 <p>Since emotions arise from many internal and external factors, the Sentient Agent must consider <strong>observable factors</strong> while adhering to its persona and goals for the emotion estimation.</p>
 </blockquote>
-<p>怎么讲呢，Sentiment Agent as Judge 比起 LLM as Judge 来说，肯定是有提升的，搭建环境和任务也是一个可以自动化的框架，选取的指标也是有参考性的，为之后的 RL training 打好基础了。</p>
+<p>整体来说还是很有意义的工作，推理大模型时代做的比较详实的一个 Benchmark。这一套对话构造/打分的方法也为之后的 RLVER 工作埋伏笔。硬要说的话可能多轮对话不是一个特别直观评估情商的方法，但人家也没说自己是评估情商，而是“高阶社会认知”能力。</p>
+<p><img src="image-20250820151256781.png" alt="image-20250820151256781" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250820151256781.png" class="lozad post-image"></p>
+<br>
 <h2 id="rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"><a class="markdownIt-Anchor" href="#rlver-reinforcement-learning-with-verifiable-emotion-rewards-for-empathetic-agents"></a> RLVER: Reinforcement Learning with Verifiable Emotion Rewards for Empathetic Agents</h2>
 <p>公众号：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4R4k4UdW5edN4P-S-IEFYw">https://mp.weixin.qq.com/s/4R4k4UdW5edN4P-S-IEFYw</a></p>
 <p>这个工作是腾讯混元AI数字人团队做的，看上去还挺 solid，也比较符合于我对当前情感计算发展的认知：大型语言模型 （LLM） 擅长逻辑和算法推理，但它们的情商 （EQ） 仍然远远落后于其认知能力。虽然可验证奖励强化学习 （RLVR） 在其他领域取得了进展，但其在对话中的应用——尤其是情商——仍然没有得到充分探索。</p>
-<p>因此，他们团队提出了 RLVER：一个端到端的强化学习框架，可以利用来自模拟用户的可验证情感奖励，培养 LLM 的高阶移情能力。在这个框架内，自洽情感模拟用户（Zhang et al.， 2025a）参与对话展开，并在对话过程中产生确定性情绪分数，作为指导大模型学习的奖励信号。使用 PPO 微调公开可用的 Qwen2.5-7B 模型，将其 Sentient-Benchmark 分数从 13.3 提高到 79.2，同时在很大程度上保留了数学和编码能力。</p>
+<p>因此，他们团队提出了 RLVER：一个端到端的强化学习框架，可以利用来自模拟用户的可验证情感奖励，培养 LLM 的高阶移情能力。在这个框架内，自洽情感模拟用户（Zhang et al.， 2025a）参与对话展开，并在对话过程中产生确定性情绪分数，作为指导大模型学习的奖励信号。使用 PPO 微调公开可用的 Qwen2.5-7B 模型，将其 Sentient-Benchmark 分数从 13.3 提高到 79.2，同时在很大程度上保留了数学和编码能力。比较搞的一点是，说是提出了一个端到端RL框架，其实就是 SAGE+verl 。</p>
 <p>有几个 Key Findings：（ii） 思考模型和非思考模型表现出不同的趋势——思考模型在同理心和洞察力方面表现出色，而非思考模型则倾向于行动。（iii） GRPO 通常产生稳定的收益，而 PPO 可以将某些能力推向更高的上限。（iv）  在将 Agent 作为 RL 训练中的环境和奖励来源时，挑战的并不总是更好，温和的可以产生更强的结果。（v） RLVER 可以在社会认知空间中将模型行为从以解决方案为中心的风格转变为真正的移情风格。我们的研究结果表明，具有可验证情绪奖励的 RL 是通往情商和广泛能力的语言代理的实用途径。</p>
-<p>基于 SAGE 这篇论文，RLVER 搭建了其 rollout 环境。在每次对话中，模拟用户在每次 LLM 响应后都会更新其情绪状态，并发出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mi>T</mi></msub><mi mathvariant="normal">/</mi><mn>100</mn></mrow><annotation encoding="application/x-tex">e_T/100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span> 的情绪分数作为奖励。这个情绪分数 is consistent &amp; verifible: 每个都是通过基于用户角色、对话历史、对话上下文和目标的原则性推理步骤确定性地推导出来的。 <strong>通过扩展具有广泛用户行为和对话意图的模拟环境，我们减轻了因同质用户偏好而产生的奖励黑客攻击。</strong></p>
+<p>基于 SAGE 这篇论文，RLVER 搭建了其 rollout 环境。在每次对话中，模拟用户在每次 LLM 响应后都会更新其情绪状态，并发出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mi>T</mi></msub><mi mathvariant="normal">/</mi><mn>100</mn></mrow><annotation encoding="application/x-tex">e_T/100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span> 的情绪分数作为奖励。这个情绪分数 is consistent &amp; verifible: 每个都是通过基于用户角色、对话历史、对话上下文和目标的原则性推理步骤确定性地推导出来的。 <strong>通过扩展具有广泛用户行为和对话意图的模拟环境，我们减轻了因同质用户偏好而产生的奖励黑客攻击。</strong> 但我觉得有一点不合适的地方在于，Agent 打分是恒大于 0 的，也就是说奖励是始终大于0，没惩罚措施。如果按照初始分做截断，会不会好一点？</p>
 <p>策略优化算法选择的是 PPO 算法，出于 ”safer exploration of diverse socialemotional strategies and smoother convergence&quot;。值得一提的是他们没有采用 Qwen2.5-7B-Based，而是 Qwen2.5-7B-Instruct，因为他们认为从适度对齐的检查点进行初始化，使用通用对话数据进行预训练，可以建立更强的基线并加速收敛。只要 Instruct FT 阶段没有接受过情感相关的信号，就可以保证 reward-driven 优化，而非采用 pre-encoded 情感知识。</p>
-<p>具体来看，RLVER 同样将 <code>&lt;think&gt;</code> 作为情感推理的重要环节，这和数学/代码/Tool-Use 等其他任务保持一致。并且同样采用了 format reward 去强化这种格式。违反这种输出将受到零奖励的惩罚。他们也测试了不包含这种推理模板下直接推理，做 RL training 的效果（对比实验），说明这种 format 在情感对话人物上同样也是有效的。</p>
-<p>比较神奇的是，这篇工作的 Test Dataset 一个是在自家 Sentiment Benchmark 上做的（域内评估），结果显示 7B 模型实现了 13-&gt;79 的分数提升，和最强的专有模型（Gemini-2.5-Pro）保持在同一水准，说明 RL 增强大模型的共情推理能力是有说法的；并且思考模型比非思考模型表现更好，符合预期；并且对于 SFT 来说，获得这种共情能力很有可能会导致他在其他任务上出现灾难性遗忘，但是通过 RL Training 使得共情推理能力的专业化是在对一般能力影响最小的情况下实现的。</p>
+<p>具体来看，RLVER 同样将 <code>&lt;think&gt;</code> 作为情感推理的重要环节，这和数学 / 代码 / Tool-Use 等其他任务保持一致。并且同样采用了 format reward 去强化这种格式。违反这种输出将受到零奖励的惩罚。他们也测试了不包含这种推理模板下直接推理，做 RL training 的效果（对比实验），说明这种 format 在情感对话人物上同样也是有效的。</p>
+<p>比较神奇的是，这篇工作的 Test Dataset 一个是在自家 Sentiment Benchmark 上做的（域内评估），结果显示 7B 模型实现了 13-&gt;79 的分数提升，和最强的专有模型（Gemini-2.5-Pro）保持在同一水准，说明 RL 增强大模型的共情推理能力是有说法的；并且思考模型比非思考模型表现更好，符合预期；并且对于 SFT 来说，获得这种共情能力很有可能会导致他在其他任务上出现灾难性遗忘，但是通过 RL Training 使得共情推理能力的专业化是在对一般能力影响最小的情况下实现的。但我觉得如果能在测几个其他情商Benchmark（比如EmoBench）会更好，只能说还是太小圈子了。</p>
+<p><img src="image-20250820151404921.png" alt="image-20250820151404921" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250820151404921.png" class="lozad post-image"></p>
+<br>
 <h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
 <p>几篇论文看下来，其实发现情感计算这个方向还是在健康发展的，不论是 Dataset、 Benchmark、还是 Training Method，一直都是有人在填补空缺，紧跟 LLM 时代潮流。但是说实话，也只是在跟随潮流出成果，大模型火了就试一试 Prompt-based Methods，试试 SFT，RL 火了就试一试 PPO/GRPO，之间应该有个小半年的“延迟”。</p>
 <p>情感计算领域还有一个特点就是经常 Refer to 一些心理学理论，搞交叉。如果想搞情感计算这块儿，这或许也是之后需要补的知识？唉总之目前 AC 还是属于兴趣范畴，可以平常跟进一下这方面的工作，捉捉虫找不足。希望能在自己感兴趣的科研领域里面做点东西。</p>
@@ -673,15 +679,15 @@
       </a>
     
       <a 
-        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
-        title="大模型">
-        <div class="tags-list-item">大模型</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
         title="情感计算">
         <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
       </a>
     
       <a 
@@ -691,15 +697,15 @@
       </a>
     
       <a 
-        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
         title="推荐系统">
         <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
       </a>
     
       <a 

@@ -49,7 +49,7 @@
         content="2025-07-21">
       <meta 
         property="og:article:modified_time" 
-        content="2025-08-18">
+        content="2025-08-19">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -303,7 +303,7 @@
     
     
       <span class="dot"></span>
-      <span>8.9k 字</span>
+      <span>9k 字</span>
     
   </div>
   
@@ -380,7 +380,13 @@
 <hr />
 <h3 id="前置芝士-1什么是-ray"><a class="markdownIt-Anchor" href="#前置芝士-1什么是-ray"></a> 前置芝士 1：什么是 Ray?</h3>
 <p>简单来说，<strong>Ray 是一个开源的、统一的计算框架，旨在简化从单机多核到大规模集群的分布式应用程序的构建与扩展。</strong> 它为并行和分布式 Python 提供了一个通用的、高性能的底层框架，并在此之上构建了一套面向 AI/ML 工作流的专用库生态。</p>
-<p>其核心设计哲学是<strong>将分布式计算的复杂性从开发者面前抽象掉</strong>，让开发者能用近似于编写单机程序的体验，来开发能够高效利用大规模计算资源的应用程序。</p>
+<p>其核心设计哲学是<strong>将分布式计算的复杂性从开发者面前抽象掉</strong>，让开发者能用近似于编写单机程 序的体验，来开发能够高效利用大规模计算资源的应用程序。</p>
+<p>详细可以参考以下内容：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1920751852749849692#%E8%AE%AD%E7%BB%83%E4%B8%BB%E5%85%A5%E5%8F%A3%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96">深入浅出理解 verl 源码（Part 1） - 知乎</a>，讲了Ray Actor，Ray Task 和 Ray Worker</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1923349757566388159">深入浅出理解 verl 源码——Rollout - 知乎</a>，如题所述，还讲了 tool-used 下的 rollout，.fit 函数，数据流</li>
+<li>[<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1DZL1zNEN2">veRL] 从原理层面理解训练参数，PPO &amp; GRPO，batch size，kl &amp; entropy_bilibili</a></li>
+</ul>
 <h3 id="前置芝士-2什么是-fsdp-和-megatron"><a class="markdownIt-Anchor" href="#前置芝士-2什么是-fsdp-和-megatron"></a> 前置芝士 2：什么是 FSDP 和 Megatron?</h3>
 <p><strong>FSDP</strong> 和 <strong>Megatron</strong> 都是为了解决同一个根本性挑战而设计的技术：<strong>如何将一个巨大到单张GPU显存无法容纳的神经网络模型，高效地扩展到多张GPU乃至多个服务器上进行训练。</strong> 它们都是顶级的 <strong>大模型分布式训练解决方案</strong> ，但它们解决问题的侧重点和核心技术有所不同。</p>
 <p><strong>FSDP (Fully Sharded Data Parallel) - 全分片数据并行</strong> ，虽然说是数据并行方法，但实质上为了解决传统数据并行的显存瓶颈，借鉴了类似模型并行的“分片 (Sharding)”思想。既然模型太大装不下，那我就<strong>把模型本身也切分（Shard）开</strong>。它不仅切分数据，还把模型的<strong>参数（Parameters）、梯度（Gradients）和优化器状态（Optimizer States）</strong> 这三个最耗显存的部分，全部打碎并均匀地分发给所有参与训练的GPU。</p>
@@ -1088,15 +1094,15 @@
       </a>
     
       <a 
-        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
-        title="大模型">
-        <div class="tags-list-item">大模型</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
         title="情感计算">
         <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
       </a>
     
       <a 
@@ -1106,15 +1112,15 @@
       </a>
     
       <a 
-        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
         title="推荐系统">
         <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
       </a>
     
       <a 
