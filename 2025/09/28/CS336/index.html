@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>CS336 学习笔记 Part 1：从模型架构变体到底层硬件优化</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="CS336 学习笔记 Part 1：从模型架构变体到底层硬件优化">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/2025/09/28/CS336/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;好的，我将扮演一名手写笔记识别专家，对这份《从头开始构建大模型》课程的笔记进行识别、整理和补充。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2025-09-28">
+      <meta 
+        property="og:article:modified_time" 
+        content="2025-09-28">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="大模型">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+      <a 
+        href="/bangumis" 
+        class="navbar-menu-item">
+        
+          番剧
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      CS336 学习笔记 Part 1：从模型架构变体到底层硬件优化
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-09-28T06:39:43.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2025-09-28</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>7.4k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+            class="post-meta-link">
+            大模型
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>好的，我将扮演一名手写笔记识别专家，对这份《从头开始构建大模型》课程的笔记进行识别、整理和补充。</p>
+<span id="more"></span>
+<h3 id="第一页笔记分析与重构"><a class="markdownIt-Anchor" href="#第一页笔记分析与重构"></a> <strong>第一页笔记分析与重构</strong></h3>
+<p>本页笔记核心内容涵盖了大型模型（LLM）的三个基础构建模块：<strong>分词器 (Tokenizer)</strong>、<strong>计算量 (FLOPs)</strong> 的估算，以及训练过程中的 <strong>内存 (Memory)</strong> 与 <strong>计算 (Compute)</strong> 考量。</p>
+<h4 id="1-分词器-tokenizer"><a class="markdownIt-Anchor" href="#1-分词器-tokenizer"></a> <strong>1. 分词器 (Tokenizer)</strong></h4>
+<p>分词是将原始文本字符串转换为模型可以理解的数字序列（Token IDs）的过程。笔记中对比了不同类型的分词策略。</p>
+<ul>
+<li>
+<p><strong>基本概念</strong>:</p>
+<ul>
+<li><strong>词元 (Word-based)</strong>: 直接使用词作为基本单位。
+<ul>
+<li><strong>优点</strong>: 符合人类直觉。</li>
+<li><strong>缺点</strong>: 词汇表规模 (Vocab size) 会非常庞大，无法处理未登录词 (Out-of-Vocabulary, OOV)，且无法体现词根、词缀等关系。笔记中提到 “word - local not given”，可能指基于词的分词无法很好地处理局部或罕见的词汇组合。</li>
+</ul>
+</li>
+<li><strong>字节 (Byte-based)</strong>: 将文本视为原始的字节流进行切分。
+<ul>
+<li><strong>优点</strong>: 词汇表规模小（仅256个），没有OOV问题。</li>
+<li><strong>缺点</strong>: 压缩率低 (compress ratio)，生成的序列非常长，增加了模型处理的负担。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>字节对编码 (Byte Pair Encoding, BPE)</strong> :</p>
+<p>BPE 是一种在词元和字节元之间取得平衡的子词 (subword) 算法，也是现代 LLM（如 GPT 系列）中最主流的分词算法之一。</p>
+<ul>
+<li><strong>核心思想</strong>: 算法从字符/字节级别开始，迭代地将最常出现的相邻子词对合并成一个新的、更大的子词，并将其加入词汇表。</li>
+<li><strong>流程</strong>:
+<ol>
+<li><strong>初始化</strong>: 将词汇表初始化为所有基本字符（例如 UTF-8 的字节）。</li>
+<li><strong>分词</strong>: 将文本切分成字符序列。例如，<code>&quot;hugging&quot;</code> 变为 <code>['h', 'u', 'g', 'g', 'i', 'n', 'g']</code>。</li>
+<li><strong>迭代合并</strong>: 在语料库中找出出现频率最高的相邻子词对，将其合并成一个新的子词。例如，如果 <code>'gg'</code> 出现频率最高，就合并成 <code>'gg'</code>，词汇表增加 <code>'gg'</code>，序列变为 <code>['h', 'u', 'gg', 'i', 'n', 'g']</code>。</li>
+<li><strong>重复</strong>: 不断重复步骤3，直到达到预设的词汇表大小或满足停止条件。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-计算量-flops-估算"><a class="markdownIt-Anchor" href="#2-计算量-flops-估算"></a> <strong>2. 计算量 (FLOPs) 估算</strong></h4>
+<p>FLOPs (Floating Point Operations) 是衡量模型计算复杂度的关键指标。</p>
+<ul>
+<li>
+<p><strong>训练过程中的 FLOPs</strong> : 对于 Decoder-only 的 Transformer 模型（如 GPT），一次完整训练（一次前向传播 + 一次反向传播）所需的总计算量有一个广为接受的估算公式：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mi>L</mi><mi>O</mi><mi>P</mi><mi>s</mi><mo>≈</mo><mn>6</mn><mo>×</mo><msub><mi>N</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>×</mo><msub><mi>N</mi><mrow><mi>t</mi><mi>o</mi><mi>k</mi><mi>e</mi><mi>n</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">FLOPs≈6×N_{params}×N_{tokens}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Where :</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{params}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>: 模型的参数量。</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>t</mi><mi>o</mi><mi>k</mi><mi>e</mi><mi>n</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{tokens}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: 训练数据的总 Token 数量。</li>
+<li><strong>系数 “6” 的来源</strong>: 这是一个工程近似值。
+<ul>
+<li><strong>前向传播</strong>: 大约需要 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mo>×</mo><msub><mi>N</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>×</mo><msub><mi>N</mi><mrow><mi>t</mi><mi>o</mi><mi>k</mi><mi>e</mi><mi>n</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">2×N_{params}×N_{tokens}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> FLOPs。主要来自于矩阵乘法。</li>
+<li><strong>反向传播</strong>: 大约需要 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>4</mn><mo>×</mo><msub><mi>N</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>×</mo><msub><mi>N</mi><mrow><mi>t</mi><mi>o</mi><mi>k</mi><mi>e</mi><mi>n</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">4×N_{params}×N_{tokens}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> FLOPs，通常是前向传播的2倍，因为它不仅要计算梯度，还要处理链式法则。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>矩阵乘法 (MatMul) 的 FLOPs</strong> :</p>
+<p>矩阵乘法是 Transformer 中最主要的计算开销。对于两个矩阵 X∈RM×K 和 W∈RK×N 相乘，其计算量为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mtext>FLOPs</mtext><mtext>MatMul</mtext></msub><mo>≈</mo><mn>2</mn><mo>×</mo><mi>M</mi><mo>×</mo><mi>K</mi><mo>×</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">\text{FLOPs}_\text{MatMul}≈2×M×K×N
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord text"><span class="mord">FLOPs</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">MatMul</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span></span></span></p>
+<ul>
+<li>系数 “2” 是因为每个元素的计算都包含一次乘法和一次加法。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-内存与计算考量"><a class="markdownIt-Anchor" href="#3-内存与计算考量"></a> <strong>3. 内存与计算考量</strong></h4>
+<ul>
+<li>
+<p><strong>模型 FLOPs 利用率 (MFU)</strong> :</p>
+<p>这是一个衡量硬件（如 GPU）计算效率的指标。</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi><mi>F</mi><mi>U</mi><mo>=</mo><mfrac><mtext>Actual FLOPs</mtext><mtext>Theoretical Peak FLOPs</mtext></mfrac></mrow><annotation encoding="application/x-tex">MFU=\frac{\text{Actual FLOPs}}{\text{Theoretical Peak FLOPs}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.05744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.37144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Theoretical Peak FLOPs</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Actual FLOPs</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<ul>
+<li><strong>Actual FLOPs</strong>: 模型在实际运行时达到的 TFLOPs/s。</li>
+<li><strong>Theoretical Peak FLOPs</strong>: 硬件供应商标注的理论峰值 TFLOPs/s。</li>
+<li>MFU 越高，说明对硬件算力的利用越充分。</li>
+</ul>
+</li>
+<li>
+<p><strong>内存占用 (Memory Footprint)</strong>:</p>
+<p>模型训练时，数据需要在不同设备间传递。主要的内存开销来自于张量（Tensor）的存储。一个张量占用的内存由其元素数量和数据精度决定。例如，一个使用 FP32（32位浮点数，即4字节）精度的张量，其内存占用为：元素数量 * 4 bytes.</p>
+<p><strong>数据精度 (Precision)</strong>:</p>
+<ul>
+<li><strong>FP32 (单精度)</strong>: 传统的浮点数格式，精度高但计算和内存开销大。</li>
+<li><strong>FP16 (半精度)</strong>: 精度较低，但能显著减少内存占用和加速计算。缺点是其表示的数值范围（动态范围）有限，容易出现上溢或下溢。</li>
+<li><strong>BFloat16 (BF16)</strong>: 为了弥补 FP16 的不足而设计。它牺牲了一部分尾数精度，以换取和 FP32 一样的指数位。这使得 BF16 拥有与 FP32 几乎相同的动态范围，更适合深度学习训练，能有效避免溢出问题。笔记中提到的 “bfl6 better than fpl6, 增加指数” 正是指这一优势。</li>
+</ul>
+</li>
+</ul>
+<p>好的，我們來詳細解析講義中關於<strong>優化器 (Optimizer)</strong> 的部分。以下內容完全基於您提供的 <code>lecture_02.py</code> 文件。</p>
+<h3 id="優化器的作用-以-adagrad-為例"><a class="markdownIt-Anchor" href="#優化器的作用-以-adagrad-為例"></a> 優化器的作用 (以 AdaGrad 為例)</h3>
+<p>優化器的核心作用是<strong>根據計算出的梯度來更新模型的參數</strong>，目標是讓模型的損失函數 (loss) 越來越小。</p>
+<p>最基礎的優化器是隨機梯度下降 (SGD)，它的更新規則非常簡單：<code>新參數 = 舊參數 - 學習率 * 梯度</code>。然而，在複雜的訓練過程中，為所有參數使用固定的學習率可能不是最高效的。</p>
+<p>講義中以 <code>AdaGrad</code> 為例，展示了更進階的優化器如何工作。<code>AdaGrad</code> 的全稱是 “Adaptive Gradient Algorithm”，它的關鍵特性是<strong>為模型中的每一個參數獨立地調整學習率</strong>。</p>
+<p>根據講義中提供的 <code>AdaGrad</code> 程式碼實現，其運作機制如下：</p>
+<ol>
+<li><strong>維護一個「狀態 (state)」</strong>：<code>AdaGrad</code> 會為每一個參數 <code>p</code> 維護一個名為 <code>g2</code> 的狀態變數。這個 <code>g2</code> 用於累加該參數<strong>歷史所有梯度的平方和</strong>。</li>
+<li><strong>更新狀態</strong>：在每一步更新時，它會先取得當前的梯度 <code>grad</code>，將其平方後累加到 <code>g2</code> 中 (<code>g2 += torch.square(grad)</code>)。</li>
+<li><strong>自適應更新參數</strong>：參數的更新公式為 <code>p.data -= lr * grad / torch.sqrt(g2 + 1e-5)</code>。
+<ul>
+<li><strong>核心思想</strong>：分母中的 <code>sqrt(g2)</code> 會調節實際的學習率。如果一個參數的歷史梯度一直很大，它的 <code>g2</code> 就會很大，從而導致分母變大，實際的學習率就會<strong>減小</strong>。反之，如果一個參數的歷史梯度很小，它的 <code>g2</code> 就會小，實際學習率就會<strong>增大</strong>。</li>
+<li><strong>效果</strong>：這使得優化器能夠在梯度較大的維度上更謹慎地更新（防止步子太大邁過頭），在梯度較小的維度上更大膽地更新（鼓勵參數繼續學習）。</li>
+</ul>
+</li>
+</ol>
+<p>講義中也提到了一個優化器的演進層次關係：<code>SGD</code> -&gt; <code>AdaGrad</code> -&gt; <code>RMSProp</code> -&gt; <code>Adam</code>，<code>Adam</code> 是目前最常用的優化器之一，它結合了 <code>RMSProp</code> (AdaGrad 的變體) 和動量 (Momentum) 的思想。</p>
+<hr />
+<h3 id="笔记补充一個完整訓練步驟中的記憶體組成"><a class="markdownIt-Anchor" href="#笔记补充一個完整訓練步驟中的記憶體組成"></a> 笔记补充：一個完整訓練步驟中的記憶體組成</h3>
+<p>假設我們使用 32 位浮點數 (float32)，每個數值佔用 4 bytes。</p>
+<ol>
+<li><strong>模型參數 (Parameters)</strong>
+<ul>
+<li>這是模型本身的權重和偏置，是模型需要學習的核心。其大小由模型架構決定，在訓練過程中是固定的 (<code>num_parameters</code>)。</li>
+</ul>
+</li>
+<li><strong>梯度 (Gradients)</strong>
+<ul>
+<li>在反向傳播 (<code>loss.backward()</code>) 後，會為每一個模型參數計算一個梯度值。因此，梯度的數量和模型參數的數量完全相同 (<code>num_gradients = num_parameters</code>)。這部分記憶體用於暫存梯度，以便優化器後續使用。</li>
+</ul>
+</li>
+<li><strong>優化器狀態 (Optimizer States)</strong>
+<ul>
+<li>這是像 <code>AdaGrad</code> 或 <code>Adam</code> 這樣的自適應優化器需要的額外記憶體。</li>
+<li>以 <code>AdaGrad</code> 為例，它需要為每個參數儲存一個 <code>g2</code> (歷史梯度平方和)，所以它需要和參數一樣多的額外儲存空間 (<code>num_optimizer_states = num_parameters</code>)。</li>
+<li>(講義註：對於更常用的 <code>Adam</code> 優化器，需要儲存兩份狀態：一階動量和二階動量，所以其狀態記憶體大約是參數量的兩倍。)</li>
+</ul>
+</li>
+<li><strong>活化值 (Activations)</strong>
+<ul>
+<li>這是在前向傳播過程中產生的中間計算結果（例如 <code>h1 = x @ w1</code>）。</li>
+<li>這些中間結果<strong>必須被儲存</strong>，因為在反向傳播計算梯度時會被用到（鏈式法則）。</li>
+<li>活化值的記憶體大小與<strong>批量大小 (batch size)<strong>和</strong>序列長度</strong>直接相關，而不僅僅是模型大小。這是訓練大模型時一個非常重要的記憶體瓶頸。</li>
+</ul>
+</li>
+</ol>
+<p>總結來說，在一個訓練步驟中，總的記憶體消耗可以估算為：</p>
+<p><code>Total_memory = 4 * (num_parameters + num_gradients + num_optimizer_states + num_activations)</code></p>
+<hr />
+<p>好的，现在开始分析第二页的笔记。</p>
+<p>本页笔记的核心主题是<strong>模型量化 (Quantization)</strong>，这是一种关键的模型压缩与优化技术，旨在降低模型的计算和存储开销。</p>
+<h4 id="1-量化的基本思想"><a class="markdownIt-Anchor" href="#1-量化的基本思想"></a> <strong>1. 量化的基本思想</strong></h4>
+<p>量化的核心是将模型中高精度的数据类型（通常是32位浮点数，FP32）映射到低精度的数据类型（例如，8位整型，INT8）。</p>
+<ul>
+<li><strong>目标</strong>: 量化模型中的<strong>权重 (Weights)</strong> 和<strong>激活值 (Activations)</strong>。</li>
+<li><strong>优势</strong>:
+<ul>
+<li><strong>减少内存占用</strong>: INT8 只需 FP32 四分之一的存储空间。</li>
+<li><strong>加速计算</strong>: 硬件对整型运算的支持通常比浮点运算更快、更节能。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>: 将连续的浮点数映射到离散的整数，必然会引入精度损失（量化误差）。量化技术的目标就是最小化这种误差。</li>
+</ul>
+<h4 id="2-均匀量化affine-quantization"><a class="markdownIt-Anchor" href="#2-均匀量化affine-quantization"></a> <strong>2. 均匀量化（Affine Quantization）</strong></h4>
+<p>笔记中给出了最常用的一种量化方法——均匀仿射量化的核心公式。</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>X</mi><mrow><mi>i</mi><mi>n</mi><mi>t</mi></mrow></msub><mo>=</mo><mtext>clip</mtext><mo stretchy="false">(</mo><mtext>round</mtext><mo stretchy="false">(</mo><mfrac><msub><mi>X</mi><mtext>float</mtext></msub><mi>S</mi></mfrac><mo>+</mo><mi>Z</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>q</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo separator="true">,</mo><msub><mi>q</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X_{int}=\text{clip}(\text{round}(\frac{X_{\text{float}}}{S}+Z),q_{min},q_{max})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.04633em;vertical-align:-0.686em;"></span><span class="mord text"><span class="mord">clip</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">round</span></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">float</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>这个过程可以理解为对一个浮点数区间进行“平移和缩放”，以映射到目标整数区间。</p>
+<ul>
+<li><code>Xfloat</code>: 原始的 FP32 值。</li>
+<li><code>Xint</code>: 量化后的 INT8 值。</li>
+<li>S <strong>(Scale, 缩放因子)</strong>: 一个正的浮点数，决定了量化的粒度或精度。它将浮点数的范围映射到整数的范围。</li>
+<li>Z <strong>(Zero-point, 零点)</strong>: 一个整数，确保原始浮点数中的 0 能够准确地映射到量化后的整数域中的某个值。</li>
+<li>round(⋅): 将结果四舍五入到最接近的整数。</li>
+<li><code>clip(⋅,qmin,qmax)</code>: 将结果截断在目标整数类型的范围内（例如，对于 INT8，范围是 <code>[-128, 127]</code>）。</li>
+</ul>
+<h4 id="3-量化策略分类"><a class="markdownIt-Anchor" href="#3-量化策略分类"></a> <strong>3. 量化策略分类</strong></h4>
+<p>笔记中提到了两种不同的分类维度：</p>
+<p><strong>维度一：根据映射方式</strong></p>
+<ul>
+<li>
+<p><strong>均匀量化 (Uniform Quantization)</strong>: 如上述公式所示，量化步长（由缩放因子 S 决定）在整个数值范围内是恒定的。这是一种简单高效的方法。</p>
+<p><strong>非均匀量化 (Non-uniform Quantization)</strong>: 量化步长不是固定的，可以根据数据的实际分布进行调整。例如，在数据密集的区域使用更精细的量化步长，在稀疏区域使用较粗的步长。这种方法通常能更好地拟合呈现非均匀分布（如高斯分布）的权重和激活值，从而获得更高的精度，但实现也更复杂。</p>
+</li>
+</ul>
+<p><strong>维度二：根据应用时机</strong></p>
+<ul>
+<li>
+<p><strong>后训练量化 (Post-Training Quantization, PTQ)</strong>: 这是一种简单快捷的量化方法。它在模型已经完成标准 FP32 训练<strong>之后</strong>进行。只需少量校准数据集来计算权重和激活值的缩放因子 (S) 和零点 (Z)，无需重新训练模型。</p>
+</li>
+<li>
+<p><strong>量化感知训练 (Quantization-Aware Training, QAT)</strong>: 这种方法在<strong>训练过程中</strong>就“模拟”量化操作。具体来说，它在前向传播中模拟量化和反向传播中的舍入误差，让模型在训练时就适应量化带来的精度损失。QAT 通常能达到比 PTQ 更高的模型精度，但代价是需要完整的训练流程和数据，计算成本更高。</p>
+</li>
+</ul>
+<p>此外，笔记开头的</p>
+<p><strong>动态量化 (Dynamic Quantization)</strong> 与 <strong>静态量化 (Static Quantization)</strong>  是 PTQ 的两种主要形式：</p>
+<ul>
+<li>
+<p><strong>静态量化</strong>: 激活值的缩放因子和零点是通过一个校准数据集提前计算好的，在推理时直接使用。</p>
+</li>
+<li>
+<p><strong>动态量化</strong>: 权重量化是离线的，但激活值的量化是在运行时（on-the-fly）动态计算的。这为不同输入提供了更精确的缩放因子，但带来了额外的计算开销。</p>
+</li>
+<li>
+<p>好的，我们继续分析第三页的笔记。</p>
+<hr />
+</li>
+</ul>
+<p>这一页的笔记内容非常丰富，从训练的工程实践细节，深入到了 Transformer 模型的各种架构变体和关键组件的选择，反映了构建和优化现代大模型的深度考量。</p>
+<h4 id="1-训练的工程实践与考量"><a class="markdownIt-Anchor" href="#1-训练的工程实践与考量"></a> <strong>1. 训练的工程实践与考量</strong></h4>
+<ul>
+<li>
+<p><strong>参数初始化与随机种子 (Parameter Initialization &amp; Random Seed)</strong></p>
+<ul>
+<li>
+<p>为了保证实验的可复现性，需要在代码中固定所有可能的随机源。笔记中列举了三个关键部分：<code>torch.manual_seed</code>、<code>numpy.random.seed</code> 和 <code>random.seed</code>。</p>
+</li>
+<li>
+<p>一个良好的初始化策略（如 Kaiming He 或 Xavier 初始化）对于训练初期的稳定性至关重要。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>FLOPs vs. 实际运行时间 (Runtime)</strong></p>
+<ul>
+<li>
+<p>笔记中有一个非常深刻的观察：计算量 (FLOPs) 和实际运行时间并非完全成正比。</p>
+</li>
+<li>
+<p><strong>案例1</strong>: 矩阵乘法虽然占据了模型 99% 的 FLOPs，但其运行时间可能只占 60%，这是因为现代 GPU 对大规模并行计算（如矩阵乘法）做了极致优化，硬件利用率非常高。</p>
+</li>
+<li>
+<p><strong>案例2</strong>: 归一化操作 (Normalization) 的 FLOPs 占比极低（如 0.1%），但其运行时间可能高达 25%。这是因为这类操作涉及大量的逐元素读写和归约 (reduction) 操作，会频繁访问内存，成为访存瓶颈 (memory-bound) 而非计算瓶颈。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>训练内存占用估算 (Memory Estimation)</strong></p>
+<ul>
+<li>
+<p>在 FP32 精度下，使用 Adam/AdamW 优化器训练一个模型，其显存占用可以粗略估算。笔记中的公式可以整理为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">显</mi><mi mathvariant="normal">存</mi><mo>≈</mo><mn>4</mn><mo>×</mo><mo stretchy="false">(</mo><msub><mi>N</mi><mtext>params</mtext></msub><mo>+</mo><msub><mi>N</mi><mtext>activations</mtext></msub><mo>+</mo><msub><mi>N</mi><mtext>gradients</mtext></msub><mo>+</mo><msub><mi>N</mi><mtext>optimizer_states</mtext></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">显存≈4×(N_\text{params}+N_\text{activations}+N_\text{gradients}+N_\text{optimizer\_states})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.48312em;vertical-align:0em;"></span><span class="mord cjk_fallback">显</span><span class="mord cjk_fallback">存</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">params</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31750199999999995em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">activations</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">gradients</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.117em;vertical-align:-0.367em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31750199999999995em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">optimizer_states</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.367em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mtext>params</mtext></msub></mrow><annotation encoding="application/x-tex">N_\text{params}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">params</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>: 模型参数。</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mtext>activations</mtext></msub></mrow><annotation encoding="application/x-tex">N_\text{activations}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31750199999999995em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">activations</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: 为反向传播而缓存的激活值（大小与模型、序列长度和批次大小相关）。</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mtext>gradients</mtext></msub></mrow><annotation encoding="application/x-tex">N_\text{gradients}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">gradients</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>: 与模型参数量相等的梯度。</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mtext>optimizer_states</mtext></msub></mrow><annotation encoding="application/x-tex">N_\text{optimizer\_states}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.05033em;vertical-align:-0.367em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31750199999999995em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">optimizer_states</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.367em;"><span></span></span></span></span></span></span></span></span></span>: 优化器状态。Adam/AdamW 需要为每个参数存储动量 (momentum) 和方差 (variance) 两个状态，因此这部分大小约为 2×<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mtext>params</mtext></msub></mrow><annotation encoding="application/x-tex">N_\text{params}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord text mtight"><span class="mord mtight">params</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-transformer-架构的变体与优化-transformer-variations"><a class="markdownIt-Anchor" href="#2-transformer-架构的变体与优化-transformer-variations"></a> <strong>2. Transformer 架构的变体与优化 (Transformer Variations)</strong></h4>
+<ul>
+<li>
+<p><strong>激活函数 (Activation Function)</strong></p>
+<ul>
+<li>
+<p>现代 LLM 已经超越了传统的 ReLU，普遍采用基于门控线性单元 (Gated Linear Units, GLU) 的变体。</p>
+</li>
+<li>
+<p><strong>SwiGLU</strong> 是其中最成功的一种，其公式为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mi>F</mi><mi>N</mi><mo stretchy="false">(</mo><mi>X</mi><mo separator="true">,</mo><mi>W</mi><mo separator="true">,</mo><mi>V</mi><mo separator="true">,</mo><msub><mi>W</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mi>S</mi><mi>w</mi><mi>i</mi><mi>s</mi><mi>h</mi><mo stretchy="false">(</mo><mi>X</mi><mi>W</mi><mo stretchy="false">)</mo><mo>⊗</mo><mi>X</mi><mi>V</mi><mo stretchy="false">)</mo><msub><mi>W</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">FFN(X,W,V,W_2)=(Swish(XW)⊗XV)W_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">h</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⊗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mclose">)</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，其中 ⊗ 代表逐元素相乘，而 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>w</mi><mi>i</mi><mi>s</mi><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>x</mi><mo>⋅</mo><mi>s</mi><mi>i</mi><mi>g</mi><mi>m</mi><mi>o</mi><mi>i</mi><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Swish(x)=x⋅sigmoid(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">h</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.44445em;vertical-align:0em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>。这种门控机制被认为能提供更丰富的表达能力。</p>
+</li>
+<li>
+<p><strong>FFN 维度</strong>: 传统 Transformer 的 FFN 隐藏层维度通常是模型维度的4倍 (d_ff=4d_model) 。但使用 GLU 变体后，为保持参数量和计算量大致不变，这个比例通常会调整，例如 Llama 模型中使用的比例是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>8</mn><mi mathvariant="normal">/</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">8/3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">8</span><span class="mord">/</span><span class="mord">3</span></span></span></span>。笔记也鼓励实践者勇于打破常规 (“Be Rule breaker!”)。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>归一化层 (Normalization Layer)</strong></p>
+<ul>
+<li>
+<p><strong>位置</strong>: 笔记中的图示是 Post-LN 结构，即 <code>[Sublayer] -&gt; Add -&gt; Norm</code>。笔记中提出了一个关键问题：为什么 <code>LayerNorm</code> 不直接作用在残差连接 (Residual Path) 上？答案是，残差连接的核心是提供一条“恒等映射” (identity connection)，确保信息可以直接流向更深层；而 <code>LayerNorm</code> 会改变数据的分布，从而“破坏”这种直接的恒等连接。</p>
+</li>
+<li>
+<p><strong>LayerNorm vs. RMSNorm</strong>: <code>RMSNorm</code> 是 <code>LayerNorm</code> 的一个简化版本，它去掉了重新中心化 (re-centering) 的步骤，即移除了均值计算和偏置项 (bias)。这使得其计算量（FLOPs）大大减少，而在实践中发现其性能与 <code>LayerNorm</code> 相比几乎没有损失，因此在现代 LLM 中被广泛采用。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>位置编码 (Positional Embedding)</strong></p>
+<ul>
+<li><strong>旋转位置编码 (RoPE)</strong> 是目前的主流方案。</li>
+<li>其核心思想是，通过对词向量进行“旋转”，将绝对位置信息编码到向量的相位中，从而使得两个 token 在经过注意力计算后的得分，仅与其<strong>相对位置</strong>和内容相关，而与它们的绝对位置无关。这使得模型能更好地泛化到训练时未见过的更长序列。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-其他关键超参数"><a class="markdownIt-Anchor" href="#3-其他关键超参数"></a> <strong>3. 其他关键超参数</strong></h4>
+<p><strong>模型“长宽比”</strong>: 指模型的深度 (层数) 与宽度 (模型维度 <code>d_model</code>) 的比例，笔记建议这个比例可以在 1:100 左右作为参考。</p>
+<ul>
+<li><strong>注意力头维度 (<code>head dim</code>)</strong>: 每个注意力头的维度也是一个重要的设计选择。</li>
+<li><strong>词汇表大小 (<code>vocab size</code>)</strong>: 词汇表大小会影响模型的嵌入层大小和最终输出层的计算。</li>
+<li><strong>权重衰减 (Weight Decay)</strong>: 一种有效的正则化技术，用于防止过拟合，提高训练的鲁棒性。</li>
+</ul>
+<hr />
+<p>第四页的笔记分为左右两个部分。左侧主要探讨了标准 Transformer 架构中的一些关键优化技术，特别是在注意力和推理效率方面。右侧则引入了目前非常流行的高效架构——专家混合网络 (MoE)。</p>
+<h4 id="1-标准-transformer-架构的优化"><a class="markdownIt-Anchor" href="#1-标准-transformer-架构的优化"></a> <strong>1. 标准 Transformer 架构的优化</strong></h4>
+<ul>
+<li>
+<p><strong>Softmax 稳定性优化</strong></p>
+<ul>
+<li>在计算注意力分数时，Softmax 函数对非常大的输入值可能会产生数值溢出。一个标准的数值稳定技巧是 <strong>z-loss</strong> : 这是一个辅助损失项，用于惩罚输出层 Softmax 的 log-normalizer log(Z(x)) 过大。通过将这个值拉向 0，可以有效提升训练的稳定性 。</li>
+</ul>
+</li>
+<li>
+<p><strong>QK-Norm</strong></p>
+<ul>
+<li>
+<p>在注意力计算中，QKT 的点积结果可能会变得非常大，导致梯度不稳定或消失，尤其是在模型层数很深或使用低精度训练时。</p>
+</li>
+<li>
+<p>QK-Norm 是一种在前向传播中稳定注意力的技术。其思想是在 Q 和 K 进行矩阵相乘之前，分别对它们进行归一化（通常使用 LayerNorm 或 RMSNorm）。这能有效控制输出的方差，防止数值爆炸。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>推理效率优化：GQA &amp; MQA</strong></p>
+<ul>
+<li><strong>背景</strong>: 在自回归生成（解码）新 token 时，模型需要缓存（Cache）之前所有 token 的键（Key）和值（Value）矩阵，这被称为 K/V Cache。随着序列长度增加，K/V Cache 会占用巨大的显存，成为推理的主要瓶颈。</li>
+<li><strong>计算强度 (Arithmetic Intensity, AI)</strong>: 这个指标定义为 <code>浮点运算次数(FLOPs) / 内存访问字节数(Bytes)</code>。在生成 token 时，注意力计算需要从显存中读取庞大的 K/V Cache，但执行的计算量相对较少，因此这是一个典型的 <strong>访存密集型</strong>（或称计算强度低）操作。</li>
+<li><strong>解决方案</strong>:
+<ul>
+<li><strong>多查询注意力 (Multi-Query Attention, MQA)</strong>: 所有注意力头共享同一份 K 和 V 矩阵，极大地减小了 K/V Cache 的大小。</li>
+<li><strong>分组查询注意力 (Grouped-Query Attention, GQA)</strong>: 这是 MQA 和标准多头注意力（MHA）的折中方案。它将查询头（Q heads）分成若干组，组内的 Q 头共享一份 K 和 V 矩阵。GQA 在大幅减少 K/V Cache 的同时，相比 MQA 能更好地保留模型性能。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-专家混合网络-mixture-of-experts-moe"><a class="markdownIt-Anchor" href="#2-专家混合网络-mixture-of-experts-moe"></a> <strong>2. 专家混合网络 (Mixture of Experts, MoE)</strong></h4>
+<p>MoE 是一种旨在用更少的计算量（FLOPs）来激活和利用更大模型参数的架构，其性能通常优于同等计算量的稠密模型 (Dense Model) .</p>
+<p><img src="image-20250928153008200.png" alt="image-20250928153008200" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20250928153008200.png" class="lozad post-image"></p>
+<ul>
+<li><strong>核心思想</strong>
+<ul>
+<li>MoE 模型将传统 Transformer 中的前馈网络层（FFN）替换为一个“路由-专家”结构 121212。</li>
+<li>这个结构包含：
+<ol>
+<li><strong>选择层/路由器 (Select Layer / Router)</strong>：负责为每个输入 token 决定应该由哪些专家来处理。</li>
+<li><strong>多个并行的专家网络 (Experts)</strong>：每个专家本身就是一个 FFN。</li>
+</ol>
+</li>
+<li>对于每个 token，路由器仅激活少数几个（例如 Top-k）专家进行计算，其他专家则不激活状态。</li>
+</ul>
+</li>
+<li><strong>优势 (Advantages)</strong>
+<ul>
+<li><strong>参数量 vs. 计算量</strong>: MoE 的关键优势在于它解耦了模型的总参数量和单次前向传播的计算量。你可以在保持计算量（FLOPs）不变的情况下，极大地增加模型的总参数量（知识容量）。</li>
+<li><strong>性能提升</strong>: 在相同的计算预算下，MoE 模型因为拥有更多的总参数，通常能获得比稠密模型更好的性能。</li>
+</ul>
+</li>
+<li><strong>劣势 (Disadvantages)</strong>
+<ul>
+<li><strong>通信开销</strong>: 在多 GPU/多节点训练中，路由器需要将不同的 token 发送到存储在不同设备上的专家处，这个过程（All-to-All communication）会引入显著的通信延迟。</li>
+<li><strong>内存开销</strong>: 尽管每次只有少数专家被激活，但在训练或服务时，所有专家的参数都必须加载到内存/显存中，这带来了额外的内存开销。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>第五页笔记详细探讨了 MoE 模型的实现细节，从其并行计算的优势，到训练中的核心难题——负载均衡，再到具体的路由机制和损失函数设计。</p>
+<h4 id="1-moe-的并行计算模式"><a class="markdownIt-Anchor" href="#1-moe-的并行计算模式"></a> <strong>1. MoE 的并行计算模式</strong></h4>
+<ul>
+<li>笔记首先指出了 MoE 的一个关键优势：它天然支持 <strong>专家并行 (Expert Parallelism)</strong> 。可以将不同的专家（Experts）分布在不同的计算设备（如多个 GPU）上。当一个 token 被路由时，它的数据会被发送到对应的设备上进行计算，然后再将结果返回</li>
+<li>这种模式在多节点（Multi-node）集群上优势明显，但也带来了复杂的设备间通信问题 (Intra is complex)</li>
+</ul>
+<h4 id="2-moe-的训练挑战"><a class="markdownIt-Anchor" href="#2-moe-的训练挑战"></a> <strong>2. MoE 的训练挑战</strong></h4>
+<ul>
+<li><strong>路由器的训练是启发式的</strong>: MoE 的核心挑战在于如何有效地训练路由器（Router/Selection Layer。路由决策本质上是离散的，难以使用基于梯度的标准方法进行优化。</li>
+<li><strong>不稳定性</strong>: 路由器的训练过程有时会不稳定。笔记中提到，一些看似直观的方法，如强化学习（RL），虽然符合决策制定的思想，但实际效果不佳。而随机探索等方法效果也比较一般。</li>
+<li><strong>负载不均衡 (Load Imbalance)</strong>: 这是 MoE 训练中最核心的问题。路由器在训练初期会倾向于将 token 发送给少数几个表现稍好的“明星专家” (celebrity experts) 。这会导致这些专家被过度训练，而其他专家则因缺乏训练数据而“饿死”，最终导致模型容量被浪费，训练不均衡。</li>
+</ul>
+<h4 id="3-路由机制-routing-mechanism"><a class="markdownIt-Anchor" href="#3-路由机制-routing-mechanism"></a> <strong>3. 路由机制 (Routing Mechanism)</strong></h4>
+<p>笔记中提到了两种概念上的路由模式：</p>
+<ol>
+<li><strong>Token 选择专家 (Token-chooses-expert)</strong>: 这是最主流的方式。路由器为每个 token 计算其与所有专家的匹配分数，然后选择分数最高的前 K 个（Top-K）专家来处理该 token 。</li>
+<li><strong>专家选择 Token (Expert-chooses-token)</strong>: 一种对偶的思路。每个专家根据自身“特长”，从一批 token 中选择它最需要处理的前 K 个。</li>
+</ol>
+<h4 id="4-负载均衡损失-load-balancing-loss"><a class="markdownIt-Anchor" href="#4-负载均衡损失-load-balancing-loss"></a> <strong>4. 负载均衡损失 (Load Balancing Loss)</strong></h4>
+<p>为了解决不均衡问题，研究者们设计了一种 <strong>启发式的辅助损失函数 (Heuristic Loss balancing)</strong>  。</p>
+<ul>
+<li><strong>路由器的工作原理</strong>:
+<ul>
+<li>对于每个 token (t)，路由器会计算一个与所有专家 (i) 的匹配分数（logits），然后通过 Softmax 函数得到一个概率分布 Si,t 15。这个概率可以理解为该 token 与各个专家的匹配程度 16。</li>
+</ul>
+</li>
+<li><strong>辅助损失函数</strong>:
+<ul>
+<li>笔记中给出的公式是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>L</mi><mi>o</mi><mi>s</mi><mi>s</mi><mo>=</mo><mi>α</mi><mi>M</mi><mo>⋅</mo><mo>∑</mo><mi>f</mi><mi>i</mi><mo>⋅</mo><mi>P</mi><mi>i</mi></mrow><annotation encoding="application/x-tex">Loss=αM⋅∑fi⋅Pi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">L</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.00001em;vertical-align:-0.25001em;"></span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">i</span></span></span></span>，其中 α 是一个超参数，M 是专家数量。</li>
+<li>fi: 代表在该批次（batch）中，被分配给第 i 个专家的 token 比例（fraction of tokens。</li>
+<li>Pi: 代表在该批次中，所有 token 对第 i 个专家的平均路由概率（average router probability。</li>
+</ul>
+</li>
+<li><strong>工作机制</strong>:
+<ul>
+<li>该损失函数的目标是同时最小化 fi 和 Pi 的乘积。</li>
+<li>如果一个专家被频繁使用（fi 很高），那么损失函数会通过梯度下降来压低路由器分配给它的概率（Pi），从而形成一种“负反馈”。</li>
+<li>这种机制会鼓励路由器将 token 更均匀地分配给所有专家，从而实现负载均衡。</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-门控与输出合成"><a class="markdownIt-Anchor" href="#5-门控与输出合成"></a> <strong>5. 门控与输出合成</strong></h4>
+<ul>
+<li>token 被路由到 Top-K 个专家后，每个专家会独立进行计算（如一个 FFN 网络）。</li>
+<li>最终的输出是这些专家输出的加权和。权重就是路由器计算出的 Softmax 概率值（gating value。</li>
+</ul>
+<h4 id="6-其他高级-moe-概念"><a class="markdownIt-Anchor" href="#6-其他高级-moe-概念"></a> <strong>6. 其他高级 MoE 概念</strong></h4>
+<ul>
+<li><strong>共享专家 (Shared Expert)</strong>: 对于一些通用且总是被需要的功能，可以设置一些被所有 token 共享的专家。</li>
+<li><strong>细粒度专家 (Fine-grained Expert)</strong>: 可以将每个专家的规模做小，但增加专家的总数量，以实现更细粒度的知识划分。</li>
+</ul>
+<hr />
+<p>第六页笔记的主题转向了底层硬件和算法优化，具体分为两个部分：左侧介绍了 GPU 和 CUDA 的基本架构，右侧则详细阐述了革命性的优化算法——FlashAttention。</p>
+<h4 id="1-gpu-与-cuda-编程模型"><a class="markdownIt-Anchor" href="#1-gpu-与-cuda-编程模型"></a> <strong>1. GPU 与 CUDA 编程模型</strong></h4>
+<p>要充分发挥大模型的潜力，必须理解其运行的硬件基础。</p>
+<ul>
+<li>
+<p><strong>GPU 硬件层级 (GPU Hierarchy)</strong>:</p>
+<ul>
+<li><strong>GPU</strong>: 整个图形处理单元。</li>
+<li><strong>流式多处理器 (Streaming Multiprocessors, SMs)</strong>: 一个 GPU 包含多个 SM。可以将 SM 理解为 GPU 内部独立的核心，负责执行计算任务（“jobs”）。</li>
+<li><strong>流式处理器 (Streaming Processors, SPs)</strong>: 每个 SM 内部又包含多个 SP。SP 是最基本的执行单元，负责并行地执行具体的“线程” (threads)。</li>
+</ul>
+</li>
+<li>
+<p>CUDA 工作负载层级:</p>
+<p>CUDA 是 NVIDIA 的并行计算平台和编程模型，它将计算任务组织成以下层级：</p>
+<ul>
+<li><strong>Blocks</strong>: 线程（Threads）被组织成块（Blocks）。一个 Block 内的线程可以相互协作（例如通过高速的共享内存）。每个 Block 会被调度到一个 SM 上执行。</li>
+<li><strong>Warps</strong>: 块（Blocks）中的线程又被组织成线程束（Warps），通常一个 Warp 包含32个线程。</li>
+<li><strong>Threads</strong>: 最基本的工作单元。在同一个 Warp 中的线程会以“锁步” (lockstep) 的方式执行相同的指令，但处理不同的数据，这就是所谓的 <strong>SIMT (Single Instruction, Multiple Threads)</strong> 模型。</li>
+</ul>
+</li>
+<li>
+<p><strong>影响 GPU 效率的关键问题</strong>:</p>
+<ul>
+<li><strong>计算与访存的鸿沟</strong>: 现代 GPU 的计算速度（Compute）增长远快于内存带宽（Memory）的增长。这导致许多操作的瓶颈不在于计算本身，而在于等待数据从内存中读取或写入，即所谓的“访存墙”。</li>
+<li><strong>线程束发散 (Warp Divergence)</strong>: 在 SIMT 模型下，如果一个 Warp 内的线程执行了条件分支（如 if-else），导致不同线程需要执行不同的指令，这种并行执行的模式就会被打破，从而降低效率。</li>
+<li><strong>优化策略</strong>: 为了克服这些瓶颈，笔记中提到了几种关键技术：
+<ul>
+<li><strong>内存访问优化</strong>: 通过内存合并（Memory coalescing，让一个 Warp 内的线程访问连续的内存地址）和分块（Tiling，将大块数据切分后载入高速的共享内存）来提升访存效率。</li>
+<li><strong>减少内存 I/O</strong>: 通过算子融合（Operation Fusion，将多个连续操作合并成一个，避免中间结果写回内存）、重计算（Recompute，用计算换取访存）和使用更低的数据精度（Lower precisions）来减少对内存的依赖。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-flashattention"><a class="markdownIt-Anchor" href="#2-flashattention"></a> <strong>2. FlashAttention</strong></h4>
+<p>FlashAttention 是一种在硬件层面深度优化注意力机制的算法，其核心目标是解决标准注意力计算中的访存瓶颈。<strong>核心思想</strong>: 将标准注意力计算中需要多次读写全局内存（HBM）的“离线” Softmax，转变为一个单遍完成的“在线” Softmax。</p>
+<ul>
+<li><strong>实现方法</strong>:
+<ol>
+<li><strong>分块 (Tiling)</strong>: 将 Q,K,V 矩阵从速度较慢的 HBM（主显存）中分块读入到速度极快的片上 SRAM（共享内存）中。</li>
+<li><strong>在线 Softmax (Online Softmax)</strong>: 在 SRAM 内部，对一小块 Q 和 K 计算注意力得分后，不将完整的中间结果（QKT 矩阵）写回 HBM，而是在片上直接进行 Softmax 的归一化计算 16。它通过一种巧妙的流式算法，在处理完所有 K 的分块后，得到与标准 Softmax 完全相同的最终结果。</li>
+</ol>
+</li>
+<li><strong>优势</strong>:
+<ul>
+<li>计算过程（包括 Softmax）在高速的 SRAM 中完成，极大地减少了与 HBM 的数据交换次数。</li>
+<li>这使得原本是<strong>访存密集型</strong>的注意力计算，转变成了<strong>计算密集型</strong>，从而能更充分地利用 GPU 强大的计算能力，实现显著的加速并减少显存占用。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>这是对全部六页笔记的分析。内容涵盖了从分词、计算量估算、模型量化、Transformer 架构变体、MoE 模型，到最终的底层硬件优化，构成了一套完整的大模型构建知识体系。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/2025/09/28/CS336/">
+            https://tzturtle.moe/2025/09/28/CS336/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2025/08/15/my-interest-in-ag/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">现代大模型时代下的情感计算综述 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname,
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A1%B5%E7%AC%94%E8%AE%B0%E5%88%86%E6%9E%90%E4%B8%8E%E9%87%8D%E6%9E%84"><span class="toc-text"> 第一页笔记分析与重构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E8%AF%8D%E5%99%A8-tokenizer"><span class="toc-text"> 1. 分词器 (Tokenizer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AE%A1%E7%AE%97%E9%87%8F-flops-%E4%BC%B0%E7%AE%97"><span class="toc-text"> 2. 计算量 (FLOPs) 估算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%86%85%E5%AD%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E8%80%83%E9%87%8F"><span class="toc-text"> 3. 内存与计算考量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%84%AA%E5%8C%96%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8-%E4%BB%A5-adagrad-%E7%82%BA%E4%BE%8B"><span class="toc-text"> 優化器的作用 (以 AdaGrad 為例)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%94%E8%AE%B0%E8%A1%A5%E5%85%85%E4%B8%80%E5%80%8B%E5%AE%8C%E6%95%B4%E8%A8%93%E7%B7%B4%E6%AD%A5%E9%A9%9F%E4%B8%AD%E7%9A%84%E8%A8%98%E6%86%B6%E9%AB%94%E7%B5%84%E6%88%90"><span class="toc-text"> 笔记补充：一個完整訓練步驟中的記憶體組成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%87%8F%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-text"> 1. 量化的基本思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9D%87%E5%8C%80%E9%87%8F%E5%8C%96affine-quantization"><span class="toc-text"> 2. 均匀量化（Affine Quantization）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%87%8F%E5%8C%96%E7%AD%96%E7%95%A5%E5%88%86%E7%B1%BB"><span class="toc-text"> 3. 量化策略分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AE%AD%E7%BB%83%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%80%83%E9%87%8F"><span class="toc-text"> 1. 训练的工程实践与考量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8F%98%E4%BD%93%E4%B8%8E%E4%BC%98%E5%8C%96-transformer-variations"><span class="toc-text"> 2. Transformer 架构的变体与优化 (Transformer Variations)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B6%E4%BB%96%E5%85%B3%E9%94%AE%E8%B6%85%E5%8F%82%E6%95%B0"><span class="toc-text"> 3. 其他关键超参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A0%87%E5%87%86-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 标准 Transformer 架构的优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%B8%93%E5%AE%B6%E6%B7%B7%E5%90%88%E7%BD%91%E7%BB%9C-mixture-of-experts-moe"><span class="toc-text"> 2. 专家混合网络 (Mixture of Experts, MoE)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-moe-%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-text"> 1. MoE 的并行计算模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-moe-%E7%9A%84%E8%AE%AD%E7%BB%83%E6%8C%91%E6%88%98"><span class="toc-text"> 2. MoE 的训练挑战</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%B7%AF%E7%94%B1%E6%9C%BA%E5%88%B6-routing-mechanism"><span class="toc-text"> 3. 路由机制 (Routing Mechanism)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8D%9F%E5%A4%B1-load-balancing-loss"><span class="toc-text"> 4. 负载均衡损失 (Load Balancing Loss)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E9%97%A8%E6%8E%A7%E4%B8%8E%E8%BE%93%E5%87%BA%E5%90%88%E6%88%90"><span class="toc-text"> 5. 门控与输出合成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7-moe-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 6. 其他高级 MoE 概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-gpu-%E4%B8%8E-cuda-%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 1. GPU 与 CUDA 编程模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-flashattention"><span class="toc-text"> 2. FlashAttention</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>61</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>15</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A1%B5%E7%AC%94%E8%AE%B0%E5%88%86%E6%9E%90%E4%B8%8E%E9%87%8D%E6%9E%84"><span class="toc-text"> 第一页笔记分析与重构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E8%AF%8D%E5%99%A8-tokenizer"><span class="toc-text"> 1. 分词器 (Tokenizer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AE%A1%E7%AE%97%E9%87%8F-flops-%E4%BC%B0%E7%AE%97"><span class="toc-text"> 2. 计算量 (FLOPs) 估算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%86%85%E5%AD%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E8%80%83%E9%87%8F"><span class="toc-text"> 3. 内存与计算考量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%84%AA%E5%8C%96%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8-%E4%BB%A5-adagrad-%E7%82%BA%E4%BE%8B"><span class="toc-text"> 優化器的作用 (以 AdaGrad 為例)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%94%E8%AE%B0%E8%A1%A5%E5%85%85%E4%B8%80%E5%80%8B%E5%AE%8C%E6%95%B4%E8%A8%93%E7%B7%B4%E6%AD%A5%E9%A9%9F%E4%B8%AD%E7%9A%84%E8%A8%98%E6%86%B6%E9%AB%94%E7%B5%84%E6%88%90"><span class="toc-text"> 笔记补充：一個完整訓練步驟中的記憶體組成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%87%8F%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-text"> 1. 量化的基本思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9D%87%E5%8C%80%E9%87%8F%E5%8C%96affine-quantization"><span class="toc-text"> 2. 均匀量化（Affine Quantization）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%87%8F%E5%8C%96%E7%AD%96%E7%95%A5%E5%88%86%E7%B1%BB"><span class="toc-text"> 3. 量化策略分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AE%AD%E7%BB%83%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%80%83%E9%87%8F"><span class="toc-text"> 1. 训练的工程实践与考量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8F%98%E4%BD%93%E4%B8%8E%E4%BC%98%E5%8C%96-transformer-variations"><span class="toc-text"> 2. Transformer 架构的变体与优化 (Transformer Variations)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B6%E4%BB%96%E5%85%B3%E9%94%AE%E8%B6%85%E5%8F%82%E6%95%B0"><span class="toc-text"> 3. 其他关键超参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A0%87%E5%87%86-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 标准 Transformer 架构的优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%B8%93%E5%AE%B6%E6%B7%B7%E5%90%88%E7%BD%91%E7%BB%9C-mixture-of-experts-moe"><span class="toc-text"> 2. 专家混合网络 (Mixture of Experts, MoE)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-moe-%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-text"> 1. MoE 的并行计算模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-moe-%E7%9A%84%E8%AE%AD%E7%BB%83%E6%8C%91%E6%88%98"><span class="toc-text"> 2. MoE 的训练挑战</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%B7%AF%E7%94%B1%E6%9C%BA%E5%88%B6-routing-mechanism"><span class="toc-text"> 3. 路由机制 (Routing Mechanism)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8D%9F%E5%A4%B1-load-balancing-loss"><span class="toc-text"> 4. 负载均衡损失 (Load Balancing Loss)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E9%97%A8%E6%8E%A7%E4%B8%8E%E8%BE%93%E5%87%BA%E5%90%88%E6%88%90"><span class="toc-text"> 5. 门控与输出合成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7-moe-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 6. 其他高级 MoE 概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-gpu-%E4%B8%8E-cuda-%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 1. GPU 与 CUDA 编程模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-flashattention"><span class="toc-text"> 2. FlashAttention</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+        title="情感计算">
+        <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A1%B5%E7%AC%94%E8%AE%B0%E5%88%86%E6%9E%90%E4%B8%8E%E9%87%8D%E6%9E%84"><span class="toc-text"> 第一页笔记分析与重构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E8%AF%8D%E5%99%A8-tokenizer"><span class="toc-text"> 1. 分词器 (Tokenizer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AE%A1%E7%AE%97%E9%87%8F-flops-%E4%BC%B0%E7%AE%97"><span class="toc-text"> 2. 计算量 (FLOPs) 估算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%86%85%E5%AD%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E8%80%83%E9%87%8F"><span class="toc-text"> 3. 内存与计算考量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%84%AA%E5%8C%96%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8-%E4%BB%A5-adagrad-%E7%82%BA%E4%BE%8B"><span class="toc-text"> 優化器的作用 (以 AdaGrad 為例)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%94%E8%AE%B0%E8%A1%A5%E5%85%85%E4%B8%80%E5%80%8B%E5%AE%8C%E6%95%B4%E8%A8%93%E7%B7%B4%E6%AD%A5%E9%A9%9F%E4%B8%AD%E7%9A%84%E8%A8%98%E6%86%B6%E9%AB%94%E7%B5%84%E6%88%90"><span class="toc-text"> 笔记补充：一個完整訓練步驟中的記憶體組成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%87%8F%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-text"> 1. 量化的基本思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9D%87%E5%8C%80%E9%87%8F%E5%8C%96affine-quantization"><span class="toc-text"> 2. 均匀量化（Affine Quantization）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%87%8F%E5%8C%96%E7%AD%96%E7%95%A5%E5%88%86%E7%B1%BB"><span class="toc-text"> 3. 量化策略分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AE%AD%E7%BB%83%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%80%83%E9%87%8F"><span class="toc-text"> 1. 训练的工程实践与考量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8F%98%E4%BD%93%E4%B8%8E%E4%BC%98%E5%8C%96-transformer-variations"><span class="toc-text"> 2. Transformer 架构的变体与优化 (Transformer Variations)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B6%E4%BB%96%E5%85%B3%E9%94%AE%E8%B6%85%E5%8F%82%E6%95%B0"><span class="toc-text"> 3. 其他关键超参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A0%87%E5%87%86-transformer-%E6%9E%B6%E6%9E%84%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-text"> 1. 标准 Transformer 架构的优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%B8%93%E5%AE%B6%E6%B7%B7%E5%90%88%E7%BD%91%E7%BB%9C-mixture-of-experts-moe"><span class="toc-text"> 2. 专家混合网络 (Mixture of Experts, MoE)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-moe-%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-text"> 1. MoE 的并行计算模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-moe-%E7%9A%84%E8%AE%AD%E7%BB%83%E6%8C%91%E6%88%98"><span class="toc-text"> 2. MoE 的训练挑战</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%B7%AF%E7%94%B1%E6%9C%BA%E5%88%B6-routing-mechanism"><span class="toc-text"> 3. 路由机制 (Routing Mechanism)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8D%9F%E5%A4%B1-load-balancing-loss"><span class="toc-text"> 4. 负载均衡损失 (Load Balancing Loss)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E9%97%A8%E6%8E%A7%E4%B8%8E%E8%BE%93%E5%87%BA%E5%90%88%E6%88%90"><span class="toc-text"> 5. 门控与输出合成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7-moe-%E6%A6%82%E5%BF%B5"><span class="toc-text"> 6. 其他高级 MoE 概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-gpu-%E4%B8%8E-cuda-%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 1. GPU 与 CUDA 编程模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-flashattention"><span class="toc-text"> 2. FlashAttention</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-09-28</div>
+        <a href="/2025/09/28/CS336/"><div class="recent-posts-item-content">CS336 学习笔记 Part 1：从模型架构变体到底层硬件优化</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-08-15</div>
+        <a href="/2025/08/15/my-interest-in-ag/"><div class="recent-posts-item-content">现代大模型时代下的情感计算综述</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-21</div>
+        <a href="/2025/07/21/Rl-reproduce/"><div class="recent-posts-item-content">RL 实验复现随笔【Tool Agent】【PPO、GRPO】</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-07-16</div>
+        <a href="/2025/07/16/daily-story-pyenv-conda/"><div class="recent-posts-item-content">【实验室小品一则】什么是pyenv，什么是miniconda</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

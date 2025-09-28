@@ -45,7 +45,7 @@
         content="2025-08-19">
       <meta 
         property="og:article:modified_time" 
-        content="2025-08-21">
+        content="2025-08-26">
       <meta 
         property="og:article:author" 
         content="天泽龟">
@@ -286,7 +286,7 @@
     
     
       <span class="dot"></span>
-      <span>4.7k 字</span>
+      <span>5.5k 字</span>
     
   </div>
   
@@ -396,6 +396,37 @@
 <li><strong>Agentic RL 阶段</strong> ：1）<strong>应用场景</strong> 重点关注网页搜索和代码生成等可以自动检查每个动作或答案的 Agentic 场景 (verifiable)，2）<strong>奖励机制</strong> 对于网页搜索任务，使用最终答案的准确性作为整个 Agent 轨迹的奖励。同时，应用 <strong>格式惩罚</strong> (process format penalty)，如果模型未能生成正确的工具调用格式，则该轨迹将获得零奖励。3）<strong>迭代蒸馏</strong>：采用自蒸馏方法，在对初始模型进行强化学习训练后，用其生成的响应替换原始的冷启动数据，从而 train 一个更优的 SFT 模型，在此基础上继续进行 RL 训练。</li>
 <li><strong>函数调用强化学习 (Function Calling RL)</strong> ：1）<strong>逐步的基于规则的强化学习</strong>：对于有明确工具调用程序的任务，模型被训练以生成下一步的函数调用或用户响应，并使用基于规则的严格奖励函数来引导模型进行正确的函数调用；2）<strong>端到端的多轮强化学习</strong>：模型首先生成完整的轨迹，然后根据任务完成情况获得奖励 。</li>
 </ul>
+<h2 id="multi-turn-rl-training-tir"><a class="markdownIt-Anchor" href="#multi-turn-rl-training-tir"></a> Multi-turn RL Training (TIR)</h2>
+<h2 id="reward-hacking"><a class="markdownIt-Anchor" href="#reward-hacking"></a> Reward Hacking</h2>
+<p>先列一些论文在这里，额之后有机会再看：</p>
+<ul>
+<li>
+<p>在GRPO框架中，LLM可以作为“奖励生成器”（Reward Generator）或“奖励评估器”（Reward Evaluator），用于动态生成或评估奖励信号。例如，LLM可以被训练为一个“奖励模型”（Reward Model），通过输入智能体的行为序列，输出一个奖励分数。</p>
+<p>然而，这类方法面临的主要挑战包括：</p>
+<ul>
+<li><strong>奖励信号的可解释性差</strong>：LLM生成的奖励信号可能难以解释，难以与任务目标对齐。</li>
+<li><strong>奖励Hacking风险</strong>：LLM生成的奖励信号可能被智能体“欺骗”或“滥用”，导致智能体通过操纵行为来获取奖励，而忽略任务目标。</li>
+<li><strong>Reward Generation via Language Models</strong>. 通过LLM生成奖励信号.</li>
+<li><strong>Group Reinforcement Learning with Language Models</strong>. 群体强化学习中的奖励生成与策略优化。</li>
+<li><strong>Reward Hacking in Reinforcement Learning</strong>. 系统性地分析了奖励Hacking问题及其应对策略。</li>
+<li><strong>Optimizing Safe and Aligned Language Generation: A Multi-Objective GRPO Approach</strong>. 在GRPO框架内，使用了一个<strong>多标签奖励回归模型</strong>。这个模型能够预测多个维度的对齐分数（例如，有用性、无害性、诚实性等），然后将这些分数组合成一个单一的奖励信号来指导GRPO训练。</li>
+<li><strong>RRM: Robust Reward Model Training Mitigates Reward Hacking.</strong> Reward Hacking的根源在于奖励模型学到了许多与任务无关的虚假相关性（spurious correlations），例如文本长度、格式等。RRM通过 <strong>因果框架</strong> 和 <strong>数据增强</strong> 来迫使奖励模型关注真正与人类偏好相关的因果特征，而忽略这些虚假的上下文无关特征，从而训练出更鲁棒、不易被Hacking 的奖励模型。</li>
+<li><strong>Inform: Mitigating Reward Hacking in RLHF via Information-theoretic Reward Modeling</strong>，通过信息论的视角来建模奖励，以减少模型对奖励函数本身的过度拟合</li>
+<li><strong>Posterior-GRPO</strong> 提出了一种巧妙的解决方案来应对推理过程中的奖励操控。在代码生成等需要复杂推理链的任务中，如果仅奖励最终结果，则信号过于稀疏；如果奖励中间步骤，模型又可能学会生成看似合理但最终错误的过程。Posterior-GRPO 通过仅对那些最终产出正确结果的推理过程给予奖励，从而确保了过程奖励与最终目标的一致性，有效避免了模型“为了过程而过程”.</li>
+<li>**多层GRPO（Multi-Layer GRPO）**通过在一个单一模型内部引入一个双层处理流程，为解决问题提供了新的视角.</li>
+<li><strong>GRPO-CARE</strong>. 标准GRPO虽然提升了答案准确率，但推理过程与答案的逻辑一致性却下降了。为此，它设计了一个双层奖励：一层奖励最终答案的正确性，另一层通过一个缓慢演变的参考模型来评估当前推理路径与答案的逻辑一致性，并给予奖励。这种设计迫使模型在追求正确答案的同时，也必须生成一个能够逻辑上支持该答案的连贯推理过程</li>
+</ul>
+</li>
+</ul>
+<p><strong>参考资料：</strong></p>
+<ul>
+<li>
+<p><a target="_blank" rel="noopener" href="https://github.com/zhaochenyang20/Awesome-ML-SYS-Tutorial/tree/main/rlhf/verl/multi-turn/code-walk-through">Awesome-ML-SYS-Tutorial/rlhf/verl/multi-turn/code-walk-through at main · zhaochenyang20/Awesome-ML-SYS-Tutorial</a></p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://simpletir.notion.site/report">SimpleTIR: End-to-End Reinforcement Learning for Multi-Turn Tool-Integrated Reasoning | Notion</a></p>
+</li>
+</ul>
 <h3 id="my-thinking"><a class="markdownIt-Anchor" href="#my-thinking"></a> My thinking</h3>
 <ol>
 <li><strong>使用工具的能力（or 知识？）主要来源于 SFT 阶段，RL 阶段更像是利用这些工具培养解决实际问题的能力。</strong></li>
@@ -480,7 +511,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multi-turn-rl-training-tir"><span class="toc-text"> Multi-turn RL Training (TIR)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#reward-hacking"><span class="toc-text"> Reward Hacking</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -497,7 +528,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>60</span>
+    <span>61</span>
     <span>文章</span>
   </a>
   <a 
@@ -548,7 +579,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multi-turn-rl-training-tir"><span class="toc-text"> Multi-turn RL Training (TIR)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#reward-hacking"><span class="toc-text"> Reward Hacking</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -580,7 +611,7 @@
       <a href="/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
         <div class="categories-list-item">
           专业学习
-          <span class="categories-list-item-badge">26</span>
+          <span class="categories-list-item-badge">27</span>
         </div>
       </a>
     
@@ -649,6 +680,12 @@
       </a>
     
       <a 
+        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
         href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
         title="字符串">
         <div class="tags-list-item">字符串</div>
@@ -664,12 +701,6 @@
         href="/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
         title="情感计算">
         <div class="tags-list-item">情感计算</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
-        title="大模型">
-        <div class="tags-list-item">大模型</div>
       </a>
     
       <a 
@@ -720,7 +751,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%A0%94%E7%9B%AE%E6%A0%87"><span class="toc-text"> 调研目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%84-bench"><span class="toc-text"> τττ-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%CF%842-bench"><span class="toc-text"> τ2τ^2τ2-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swe-bench"><span class="toc-text"> SWE-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terminal-bench"><span class="toc-text"> Terminal-Bench</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#discussion"><span class="toc-text"> Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2-%E6%95%B0%E6%8D%AE%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2 （数据阶段）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E8%BF%9B%E5%8C%96%E5%87%BA%E5%90%88%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text"> 系统性地“进化”出合成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%BD%A8%E8%BF%B9%E7%94%9F%E6%88%90%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text"> 评估轨迹生成的正确性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kimi-k2%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text"> KIMI K2（训练阶段）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95%E7%BB%93%E5%90%88%E5%8F%AF%E9%AA%8C%E8%AF%81%E5%A5%96%E5%8A%B1%E4%B8%8E%E8%87%AA%E6%88%91%E6%89%B9%E5%88%A4%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-text"> 训练方法：结合可验证奖励与自我批判的强化学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#glm-45"><span class="toc-text"> GLM 4.5</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multi-turn-rl-training-tir"><span class="toc-text"> Multi-turn RL Training (TIR)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#reward-hacking"><span class="toc-text"> Reward Hacking</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#my-thinking"><span class="toc-text"> My thinking</span></a></li></ol></li></ol>
     </article>
   
   
@@ -735,6 +766,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-09-28</div>
+        <a href="/2025/09/28/CS336/"><div class="recent-posts-item-content">CS336 学习笔记 Part 1：从模型架构变体到底层硬件优化</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2025-08-15</div>
         <a href="/2025/08/15/my-interest-in-ag/"><div class="recent-posts-item-content">现代大模型时代下的情感计算综述</div></a>
       </div>
@@ -747,11 +783,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2025-07-16</div>
         <a href="/2025/07/16/daily-story-pyenv-conda/"><div class="recent-posts-item-content">【实验室小品一则】什么是pyenv，什么是miniconda</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2025-06-06</div>
-        <a href="/2025/06/06/memory-for-404/"><div class="recent-posts-item-content">缅怀我第一位逝去的朋友</div></a>
       </div>
     
   </div>
