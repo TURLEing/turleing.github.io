@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tzturtle.moe/sitemap.xml
+
+# 如果只想让搜索引擎收录、但不想内容被 AI 拿去训练，取消下面几行的注释：
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
