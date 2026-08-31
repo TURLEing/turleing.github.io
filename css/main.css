@@ -1562,6 +1562,15 @@ mjx-container svg:focus {
     margin-right: 0;
   }
 }
+.icon-scholar {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
+  background-color: currentColor;
+  -webkit-mask: url("/img/scholar.svg") no-repeat center/contain;
+  mask: url("/img/scholar.svg") no-repeat center/contain;
+}
 .comment-card-title {
   font-size: 1.15rem;
   margin-bottom: 16px;
