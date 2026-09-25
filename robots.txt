@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tzturtle.moe/sitemap.xml
+Sitemap: https://tzturtle.moe/blog/sitemap.xml
 
 # 如果只想让搜索引擎收录、但不想内容被 AI 拿去训练，取消下面几行的注释：
 User-agent: GPTBot
