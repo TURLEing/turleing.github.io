@@ -615,13 +615,6 @@
   </url>
   
   <url>
-    <loc>https://tzturtle.moe/blog/tags/NLP/</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://tzturtle.moe/blog/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
@@ -630,6 +623,13 @@
   
   <url>
     <loc>https://tzturtle.moe/blog/tags/%E6%97%A5%E9%BA%BB/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://tzturtle.moe/blog/tags/NLP/</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

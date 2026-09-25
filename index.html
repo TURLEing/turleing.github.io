@@ -359,7 +359,7 @@ body{
   <div class="disc" aria-hidden="true"></div>
   <div class="meta">
     <div class="now"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="bgmStatus" aria-live="polite">背景音乐</span></div>
-    <div class="song" id="bgmTitle">点留声机，放点音乐</div>
+    <div class="song" id="bgmTitle">点击留声机，放点音乐</div>
     <div class="artist" id="bgmArtist"></div>
   </div>
   <div class="ctrl">
@@ -1263,7 +1263,7 @@ body{
       if (k === 'egg') { eggJump = 0; showBubble('天泽龟在《守望先锋》中最喜欢的角色是路霸！', pig, new THREE.Vector3(0, .68, 0), 2600); }
       else if (k === 'flag') { flagBurst = 0; showBubble('天泽龟的头像是来自《少女前线》的 C-MS！', flag, new THREE.Vector3(.26, .42, 0), 2600); }
       else if (k === 'head') { smileT = 0; }
-      else if (k === 'music') { if (window.guikeBGM) window.guikeBGM.toggle(); }
+      else if (k === 'music') { if (window.guikeBGM) window.guikeBGM.toggle(true); }
       else if (k) { setHover(k, 'pointer'); go(k); }
       else {
         ray.setFromCamera(ndc, camera);
@@ -1576,16 +1576,21 @@ body{
   }
 
   // 只在访客自己点留声机或播放键时才出声；第一次放会慢慢淡入
-  function userPlay(){
-    if (!tracks.length) return;
-    if (audio.paused && window.guikeSFX) window.guikeSFX.play('needle');
-    wantPlay = true; play(!started);
+  // 音效：只有点留声机、从暂停到播放时是「唱针落下」，播放器上的其他操作都是 click
+  const sfx = (name, opt) => { if (window.guikeSFX) window.guikeSFX.play(name, opt); };
+  function userPlay(){ if (!tracks.length) return; wantPlay = true; play(!started); }
+  function userPause(){ wantPlay = false; audio.pause(); setStatus('已暂停'); }
+  function toggle(fromGramophone){
+    if (audio.paused) {
+      if (!tracks.length) return;
+      sfx(fromGramophone ? 'needle' : 'click');
+      userPlay();
+    } else {
+      sfx('click', { rate: .8 });
+      userPause();
+    }
   }
-  function userPause(){
-    if (!audio.paused && window.guikeSFX) window.guikeSFX.play('click', { rate: .8 });
-    wantPlay = false; audio.pause(); setStatus('已暂停');
-  }
-  function skip(d){ load(pos + d); userPlay(); }
+  function skip(d){ sfx('click'); load(pos + d); userPlay(); }
 
   audio.addEventListener('play', () => {
     if (!started) {
@@ -1612,7 +1617,7 @@ body{
     if (wantPlay) play(false);
   });
 
-  ui.play.addEventListener('click', () => { audio.paused ? userPlay() : userPause(); });
+  ui.play.addEventListener('click', () => toggle(false));
   ui.prev.addEventListener('click', () => skip(-1));
   ui.next.addEventListener('click', () => skip(1));
   ui.seek.addEventListener('input', () => {
@@ -1621,6 +1626,7 @@ body{
     ui.cur.textContent = fmt(p * (audio.duration || 0));
   });
   ui.seek.addEventListener('change', () => {
+    sfx('click', { gain: .6 });
     if (isFinite(audio.duration)) audio.currentTime = ui.seek.value / 1000 * audio.duration;
     dragging = false; renderSeek();
   });
@@ -1631,7 +1637,9 @@ body{
     store.set('guike-bgm-vol', String(volume)); store.set('guike-bgm-muted', '0');
     renderVol();
   });
+  ui.vol.addEventListener('change', () => sfx('click', { gain: .6 }));
   ui.mute.addEventListener('click', () => {
+    sfx('click');
     muted = !muted; if (!muted && volume === 0) { volume = DEFAULT_VOLUME; audio.volume = volume; }
     store.set('guike-bgm-muted', muted ? '1' : '0'); store.set('guike-bgm-vol', String(volume));
     renderVol();
@@ -1662,7 +1670,7 @@ body{
 
   // 给 3D 场景里的留声机用
   window.guikeBGM = {
-    toggle(){ audio.paused ? userPlay() : userPause(); },
+    toggle(fromGramophone){ toggle(!!fromGramophone); },
     get playing(){ return !audio.paused; }
   };
 })();
