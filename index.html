@@ -839,8 +839,8 @@ body{
   canvas.addEventListener('pointerup', e => {
     if (down && !down.moved) {
       setNdc(e); const k = pick();
-      if (k === 'egg') { eggJump = 0; showBubble('天泽龟在游戏《守望先锋》里最喜欢的角色，路霸！', pig, new THREE.Vector3(0, .68, 0), 2600); }
-      else if (k === 'flag') { flagBurst = 0; showBubble('天泽龟的头像是来自《少女前线的》的 C-MS！', flag, new THREE.Vector3(.26, .42, 0), 2600); }
+      if (k === 'egg') { eggJump = 0; showBubble('天泽龟在《守望先锋》中最喜欢的角色是路霸！', pig, new THREE.Vector3(0, .68, 0), 2600); }
+      else if (k === 'flag') { flagBurst = 0; showBubble('天泽龟的头像是来自《少女前线》的 C-MS！', flag, new THREE.Vector3(.26, .42, 0), 2600); }
       else if (k === 'head') { smileT = 0; }
       else if (k) { setHover(k, 'pointer'); go(k); }
     }
