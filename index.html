@@ -82,6 +82,18 @@ body{
 .clock .mode button:hover{color:var(--ink)}
 .clock .mode button[aria-checked="true"]{background:var(--ink);color:var(--sky)}
 .clock .mode button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.clock .sfx{
+  pointer-events:auto;display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  font:inherit;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;
+  padding:5px 12px 5px 9px;border-radius:999px;
+  background:var(--panel);border:1px solid var(--panel-line);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.clock .sfx svg{width:16px;height:16px}
+.clock .sfx .w{transition:opacity .2s}
+.clock .sfx[aria-pressed="false"]{color:var(--ink-soft)}
+.clock .sfx[aria-pressed="false"] .w{opacity:0}
+.clock .sfx:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .clock .phase i{width:8px;height:8px;border-radius:50%;background:var(--c-academic);box-shadow:0 0 0 3px color-mix(in srgb,var(--c-academic) 25%,transparent)}
 
 /* title */
@@ -170,6 +182,7 @@ body{
   .clock .phase{display:none}
   .clock .mode{margin-top:8px}
   .clock .mode button{padding:4px 9px;font-size:12px}
+  .clock .sfx{font-size:12px;padding:4px 10px 4px 8px}
   .title{top:calc(env(safe-area-inset-top,0px) + 16px);right:calc(env(safe-area-inset-right,0px) + 16px);gap:10px}
   .title img{width:38px;height:38px;border-width:2px}
   .title h1{font-size:24px}
@@ -316,6 +329,7 @@ body{
     <button type="button" role="radio" data-mode="day">白天</button>
     <button type="button" role="radio" data-mode="night">夜晚</button>
   </div>
+  <button type="button" class="sfx" id="sfxBtn" aria-pressed="true" aria-label="环境音效开关"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12c2-3 4-3 6 0s4 3 6 0"/><path class="w" d="M3 17c2-3 4-3 6 0s4 3 6 0M17 7c1.5 1.3 1.5 3.7 0 5M19.5 5c2.8 2.5 2.8 6.5 0 9"/></svg><span class="txt">音效：开</span></button>
 </div>
 
 <header class="title">
@@ -368,6 +382,167 @@ body{
 <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script>
+/* ================= 音效（水声、夜晚虫鸣、各种点击音效） =================
+   音效文件放在 sfx/ 文件夹。想换成别的音效，直接用同名文件替换即可；
+   gain 是每个音效的相对音量，loop 是环境音的无缝循环区间（秒）。 */
+(() => {
+  const SFX_DIR = 'sfx/';
+  const SOUNDS = {
+    water:  { file: 'water.mp3',  gain: .55, loop: { pad: .1, len: 24 } },
+    night:  { file: 'night.mp3',  gain: .7,  loop: { pad: .1, len: 16 } },
+    turtle: { file: 'turtle.mp3', gain: .32 },
+    piggy:  { file: 'piggy.mp3',  gain: .45 },
+    flag:   { file: 'flag.mp3',   gain: .6 },
+    needle: { file: 'needle.mp3', gain: 1 },
+    plop:   { file: 'plop.mp3',   gain: .4 },
+    click:  { file: 'click.mp3',  gain: .3 },
+    chime:  { file: 'chime.mp3',  gain: .28 }
+  };
+  const AMBIENT_LEVEL = .45;   // 环境音（水声 / 虫鸣）的整体音量
+  const MUSIC_DUCK = .3;       // 放音乐时，环境音压低到这个比例
+
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  let enabled = store.get('guike-sfx') !== 'off';
+  let night = 0, ducked = false, ambStarted = false;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  let ctx = null, master = null, loading = null;
+  const buffers = {};
+  let ambNodes = null, ambEls = null;
+
+  function ensureCtx(){
+    if (!AC) return null;
+    if (!ctx) {
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = enabled ? 1 : 0; master.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function loadBuf(name){
+    if (buffers[name]) return Promise.resolve(buffers[name]);
+    return fetch(SFX_DIR + SOUNDS[name].file)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(ab => new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej)))
+      .then(b => (buffers[name] = b))
+      .catch(() => (buffers[name] = null));
+  }
+  function loadAll(){
+    if (!loading) loading = ensureCtx() ? Promise.all(Object.keys(SOUNDS).map(loadBuf)) : Promise.resolve();
+    return loading;
+  }
+
+  // 本地双击打开网页时读不了文件，就退回用 <audio> 播放
+  function playEl(name, vol, rate){
+    const a = new Audio(SFX_DIR + SOUNDS[name].file);
+    a.volume = Math.min(1, vol); a.playbackRate = rate;
+    if ('preservesPitch' in a) a.preservesPitch = false;
+    a.play().catch(() => {});
+  }
+  function play(name, opt = {}){
+    const s = SOUNDS[name];
+    if (!enabled || !s) return;
+    const c = ensureCtx();
+    const vol = (opt.gain == null ? 1 : opt.gain) * s.gain, rate = opt.rate || 1;
+    if (c && buffers[name]) {
+      const src = c.createBufferSource(); src.buffer = buffers[name]; src.playbackRate.value = rate;
+      const g = c.createGain(); g.gain.value = vol;
+      src.connect(g); g.connect(master); src.start();
+      return;
+    }
+    playEl(name, vol, rate);
+    if (c) loadAll();
+  }
+
+  function targets(){
+    const base = enabled ? AMBIENT_LEVEL * (ducked ? MUSIC_DUCK : 1) : 0;
+    return { water: base * SOUNDS.water.gain * (1 - .6 * night), night: base * SOUNDS.night.gain * night };
+  }
+  function fadeEl(a, target){
+    a._target = target; if (a._fading) return; a._fading = true;
+    const step = () => {
+      const d = a._target - a.volume;
+      if (Math.abs(d) < .004) { a.volume = a._target; a._fading = false; return; }
+      a.volume = Math.max(0, Math.min(1, a.volume + d * .06)); requestAnimationFrame(step);
+    };
+    step();
+  }
+  function updateAmbient(slow){
+    const T = targets();
+    if (ambNodes) {
+      const now = ctx.currentTime;
+      for (const n in ambNodes) {
+        const g = ambNodes[n].gain; g.cancelScheduledValues(now); g.setTargetAtTime(T[n], now, slow ? 1.2 : .5);
+      }
+    }
+    if (ambEls) for (const n in ambEls) fadeEl(ambEls[n], Math.min(1, T[n]));
+  }
+  function startAmbient(){
+    if (ambStarted || !enabled) return;
+    ambStarted = true;
+    const c = ensureCtx();
+    loadAll().then(() => {
+      if (c && buffers.water && buffers.night) {
+        ambNodes = {};
+        ['water', 'night'].forEach(n => {
+          const L = SOUNDS[n].loop;
+          const src = c.createBufferSource(); src.buffer = buffers[n];
+          src.loop = true; src.loopStart = L.pad; src.loopEnd = L.pad + L.len;
+          const g = c.createGain(); g.gain.value = 0;
+          src.connect(g); g.connect(master); src.start(0, L.pad);
+          ambNodes[n] = g;
+        });
+      } else {
+        ambEls = {};
+        ['water', 'night'].forEach(n => {
+          const a = new Audio(SFX_DIR + SOUNDS[n].file); a.loop = true; a.volume = 0;
+          a.play().catch(() => {}); ambEls[n] = a;
+        });
+      }
+      updateAmbient(true);
+    });
+  }
+
+  // 浏览器要等访客先点一下才允许出声：第一次点击 / 触摸 / 按键后，水声慢慢淡入
+  const GESTURES = ['pointerdown', 'touchend', 'keydown'];
+  function onFirstGesture(){
+    GESTURES.forEach(ev => removeEventListener(ev, onFirstGesture, true));
+    if (!enabled) return;
+    ensureCtx(); startAmbient();
+  }
+  GESTURES.forEach(ev => addEventListener(ev, onFirstGesture, true));
+
+  // 音效开关（记在访客浏览器里）
+  const btn = document.getElementById('sfxBtn');
+  function renderBtn(){
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', String(enabled));
+    btn.querySelector('.txt').textContent = enabled ? '音效：开' : '音效：关';
+  }
+  function setEnabled(on){
+    enabled = on; store.set('guike-sfx', on ? 'on' : 'off'); renderBtn();
+    if (ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(on ? 1 : 0, ctx.currentTime, .15); }
+    if (on) { ensureCtx(); startAmbient(); play('click'); }
+    updateAmbient(false);
+  }
+  if (btn) btn.addEventListener('click', () => setEnabled(!enabled));
+  renderBtn();
+
+  document.querySelectorAll('.mode button').forEach(b => b.addEventListener('click', () => {
+    play('chime', { rate: b.dataset.mode === 'night' ? .75 : b.dataset.mode === 'day' ? 1.12 : .95 });
+  }));
+
+  window.guikeSFX = {
+    play,
+    setNight(n){ if (Math.abs(n - night) < .01 && n !== 0 && n !== 1) return; night = n; updateAmbient(false); },
+    setMusic(on){ ducked = on; updateAmbient(false); },
+    get enabled(){ return enabled; }
+  };
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
@@ -944,7 +1119,7 @@ body{
   let musicK = 0;
 
   /* ---------- pond dressing ---------- */
-  [[4.5, 2.4, .5], [3.9, -1.6, .6], [-2.8, -2.4, .55], [-3.5, .6, .48], [5.4, .9, .45], [-.7, -3.5, .5], [-4.6, -3.8, .6]].forEach(([x, z, r]) => {
+  [[4.5, 2.4, .5], [-.86, 3.26, .5], [-.16, 3.95, .32], [3.9, -1.6, .6], [-2.8, -2.4, .55], [-3.5, .6, .48], [5.4, .9, .45], [-.7, -3.5, .5], [-4.6, -3.8, .6]].forEach(([x, z, r]) => {
     const m = shadow(new THREE.Mesh(new THREE.CylinderGeometry(r, r, .03, 14, 1, false, .3, Math.PI * 2 - .6), mat(r > .5 ? '#4fa35f' : '#6bbf66')), false, true);
     m.position.set(x, .045, z); m.rotation.y = (x * 7 + z * 3) % 6; scene.add(m);
   });
@@ -979,6 +1154,12 @@ body{
     const m = new THREE.Mesh(new THREE.RingGeometry(1, 1.045, 56), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0, depthWrite: false }));
     m.rotation.x = -Math.PI / 2; m.position.set(.2, .06, 0); scene.add(m); return m;
   });
+  // 点水面时的小涟漪
+  const taps = [0, 1, 2, 3].map(() => {
+    const m = new THREE.Mesh(new THREE.RingGeometry(.2, .235, 40), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0, depthWrite: false }));
+    m.rotation.x = -Math.PI / 2; m.visible = false; scene.add(m); return { m, life: -1 };
+  });
+  let tapIdx = 0;
   const puffs = [];
   for (let i = 0; i < 7; i++) {
     const p = new THREE.Mesh(new THREE.IcosahedronGeometry(.09, 0), new THREE.MeshStandardMaterial({ color: '#ffffff', transparent: true, opacity: 0, flatShading: true, depthWrite: false }));
@@ -997,6 +1178,7 @@ body{
   let P, nightCur = night;
   function applyPalette(n){
     P = paletteFor(n);
+    if (window.guikeSFX) window.guikeSFX.setNight(n);
     scene.fog.color.copy(P.fog); paintSky(P);
     hemi.color.copy(P.hemiSky); hemi.groundColor.copy(P.hemiGround); hemi.intensity = P.hemiI;
     sun.color.copy(P.sun); sun.intensity = P.sunI; sun.position.set(...P.sunPos);
@@ -1074,11 +1256,24 @@ body{
   canvas.addEventListener('pointerup', e => {
     if (down && !down.moved) {
       setNdc(e); const k = pick();
+      const sfx = window.guikeSFX, vary = () => .94 + Math.random() * .12;
+      if (sfx && k === 'egg') sfx.play('piggy', { rate: vary() });
+      if (sfx && k === 'flag') sfx.play('flag', { rate: vary() });
+      if (sfx && k === 'head') sfx.play('turtle', { rate: vary() });
       if (k === 'egg') { eggJump = 0; showBubble('天泽龟在《守望先锋》中最喜欢的角色是路霸！', pig, new THREE.Vector3(0, .68, 0), 2600); }
       else if (k === 'flag') { flagBurst = 0; showBubble('天泽龟的头像是来自《少女前线》的 C-MS！', flag, new THREE.Vector3(.26, .42, 0), 2600); }
       else if (k === 'head') { smileT = 0; }
       else if (k === 'music') { if (window.guikeBGM) window.guikeBGM.toggle(); }
       else if (k) { setHover(k, 'pointer'); go(k); }
+      else {
+        ray.setFromCamera(ndc, camera);
+        const hit = ray.intersectObjects([water, turtle, post, gh, gram, egg], true)[0];
+        if (hit && hit.object === water) {
+          const tp = taps[tapIdx++ % taps.length];
+          tp.m.position.set(hit.point.x, .07, hit.point.z); tp.life = 0; tp.m.visible = true;
+          if (sfx) sfx.play('plop', { rate: .85 + Math.random() * .3 });
+        }
+      }
     }
     down = null; canvas.classList.remove('grabbing');
   });
@@ -1222,6 +1417,14 @@ body{
       fireflies.material.opacity = clamp((nightCur - .45) / .55, 0, 1) * (.65 + Math.sin(t * 3) * .25 * motion);
     }
     stars.rotation.y = t * .004 * motion;
+    taps.forEach(tp => {
+      if (tp.life < 0) return;
+      tp.life += dt / 1.1;
+      if (tp.life >= 1) { tp.life = -1; tp.m.visible = false; return; }
+      tp.m.scale.setScalar(1 + tp.life * 4.5);
+      tp.m.material.opacity = (1 - tp.life) * .6;
+      tp.m.material.color.copy(P.ring);
+    });
 
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
@@ -1373,8 +1576,15 @@ body{
   }
 
   // 只在访客自己点留声机或播放键时才出声；第一次放会慢慢淡入
-  function userPlay(){ if (!tracks.length) return; wantPlay = true; play(!started); }
-  function userPause(){ wantPlay = false; audio.pause(); setStatus('已暂停'); }
+  function userPlay(){
+    if (!tracks.length) return;
+    if (audio.paused && window.guikeSFX) window.guikeSFX.play('needle');
+    wantPlay = true; play(!started);
+  }
+  function userPause(){
+    if (!audio.paused && window.guikeSFX) window.guikeSFX.play('click', { rate: .8 });
+    wantPlay = false; audio.pause(); setStatus('已暂停');
+  }
   function skip(d){ load(pos + d); userPlay(); }
 
   audio.addEventListener('play', () => {
@@ -1383,9 +1593,10 @@ body{
       const t = tracks[order[pos]]; if (t) ui.title.textContent = t.title;
     }
     render(); setStatus('正在播放');
+    if (window.guikeSFX) window.guikeSFX.setMusic(true);
   });
   audio.addEventListener('playing', () => { fails = 0; });
-  audio.addEventListener('pause', render);
+  audio.addEventListener('pause', () => { render(); if (window.guikeSFX) window.guikeSFX.setMusic(false); });
   audio.addEventListener('ended', () => { load(pos + 1); play(false); });
   audio.addEventListener('loadedmetadata', renderSeek);
   audio.addEventListener('timeupdate', () => { if (!dragging) renderSeek(); });
