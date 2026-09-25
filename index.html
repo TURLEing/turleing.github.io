@@ -1447,7 +1447,7 @@ window.guikeI18n = (() => {
     happyEyes.forEach(a => a.visible = smileK > .5); eyes.forEach(ey => ey.visible = smileK <= .5);
     cheeks.forEach(c => c.scale.set(1 + smileK * .45, .5 + smileK * .2, .6));
     head.position.y = .88 + (smileT >= 0 && smileT < 1 ? Math.abs(Math.sin(smileT * 12)) * .04 * (1 - smileT) : 0);
-    head.rotation.y = lerp(head.rotation.y, clamp(-ndc.x, -1, 1) * .45 * motion, .05);
+    head.rotation.y = lerp(head.rotation.y, clamp(ndc.x, -1, 1) * .45 * motion, .05);
     head.rotation.z = lerp(head.rotation.z, clamp(ndc.y, -1, 1) * .18 * motion + .05 + smileK * .16, .08);
     if (motion && t > nextBlink) { blinkT = 0; nextBlink = t + 2.5 + Math.random() * 3; }
     if (blinkT >= 0) { blinkT += dt; eyes.forEach(eye => eye.scale.y = blinkT < .14 ? .12 : 1); if (blinkT > .14) blinkT = -1; }
