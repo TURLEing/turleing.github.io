@@ -1,7 +1,22 @@
 [
-  "DizzyAnchovy - Ponpon Shit.mp3",
-  "ryo (supercell) - 夏の大三角.mp3",
-  "VISUAL ARTS - 紬の夏休み.mp3",
-  "塞壬唱片-MSR,Eagle Wei - 海愿.mp3",
-  "塞壬唱片-MSR,Miaa - Storyteller.mp3"
+  {
+    "file": "DizzyAnchovy - Ponpon Shit.mp3",
+    "cover": "covers/09c89e6b04057894.jpg"
+  },
+  {
+    "file": "ryo (supercell) - 夏の大三角.mp3",
+    "cover": "covers/5a0b0574a27bb3e3.png"
+  },
+  {
+    "file": "VISUAL ARTS - 紬の夏休み.mp3",
+    "cover": "covers/76a2bcca83d954bc.jpg"
+  },
+  {
+    "file": "塞壬唱片-MSR,Eagle Wei - 海愿.mp3",
+    "cover": "covers/17d5225ded4afaea.png"
+  },
+  {
+    "file": "塞壬唱片-MSR,Miaa - Storyteller.mp3",
+    "cover": "covers/80816e5a3e118917.png"
+  }
 ]

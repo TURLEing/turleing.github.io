@@ -226,7 +226,7 @@ body{
 }
 .player .disc::after{
   content:"";position:absolute;inset:13px;border-radius:50%;
-  background:var(--avatar,none) center/cover,var(--c-blog);
+  background:var(--cover,none) center/cover,var(--c-blog);
   box-shadow:0 0 0 2px #10152e;
 }
 .player.playing .disc{animation-play-state:running}
@@ -1604,9 +1604,8 @@ window.guikeI18n = (() => {
     if ('ResizeObserver' in window) new ResizeObserver(fitLayout).observe(dock);
     addEventListener('resize', fitLayout);
   }
-  // 唱片中间贴上头像
+  // 没有内嵌封面的歌曲仍使用头像。
   const avatarSrc = ($('avatarImg') && $('avatarImg').getAttribute('src')) || '';
-  if (avatarSrc) player.querySelector('.disc').style.setProperty('--avatar', `url("${avatarSrc}")`);
 
   const audio = new Audio();
   audio.preload = 'metadata';
@@ -1641,6 +1640,9 @@ window.guikeI18n = (() => {
     t.src = /^(https?:)?\/\//.test(t.file) || t.file.startsWith('/')
       ? t.file
       : MUSIC_DIR + t.file.split('/').map(encodeURIComponent).join('/');
+    t.coverSrc = t.cover && (/^(https?:)?\/\//.test(t.cover) || t.cover.startsWith('/')
+      ? t.cover
+      : MUSIC_DIR + t.cover.split('/').map(encodeURIComponent).join('/'));
     return t;
   }
   async function loadList(){
@@ -1685,6 +1687,8 @@ window.guikeI18n = (() => {
     pos = (i % order.length + order.length) % order.length;
     const t = tracks[order[pos]];
     audio.src = t.src;
+    const cover = t.coverSrc || avatarSrc;
+    player.querySelector('.disc').style.setProperty('--cover', cover ? `url("${cover}")` : 'none');
     if (started) { titleKey = null; ui.title.textContent = t.title; } else setTitleKey('player.prompt');
     ui.title.title = t.title;
     ui.artist.textContent = t.artist || '';
@@ -1692,7 +1696,7 @@ window.guikeI18n = (() => {
     if ('mediaSession' in navigator && window.MediaMetadata) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: t.title, artist: t.artist || '', album: tr('album'),
-        artwork: avatarSrc ? [{ src: avatarSrc, sizes: '320x320', type: 'image/jpeg' }] : []
+        artwork: cover ? [{ src: cover, type: /\.png(?:[?#]|$)/i.test(cover) ? 'image/png' : 'image/jpeg' }] : []
       });
     }
   }
