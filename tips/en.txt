@@ -1,0 +1,11 @@
+# TZTURTLE facts (English): shown at random when visitors click the turtle's head.
+# One tip per line; blank lines and lines starting with # are ignored. Save as UTF-8.
+
+TZTURTLE's birthday is December 13!
+TZTURTLE's favorite visual novel is Summer Pockets!
+TZTURTLE's favorite anime is Yuri-Camp!
+TZTURTLE is a die-hard Soulslike fan!
+TZTURTLE's favorite classic cocktail is the Tequila Sunrise!
+The TURTLE in TZTURTLE is a pun of "Kun" and "Turtle" in Chinese, so it reads "Tianze Kun".!
+Try clicking the flag on the roof!
+❤️

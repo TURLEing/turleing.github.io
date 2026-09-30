@@ -155,13 +155,14 @@ body{
 .bubble{
   position:fixed;left:0;top:0;pointer-events:none;z-index:5;
   padding:9px 15px;border-radius:14px;
-  background:var(--ink);color:var(--sky);font-size:15px;font-weight:500;white-space:nowrap;
+  background:var(--ink);color:var(--sky);font-size:15px;font-weight:500;line-height:1.5;
+  width:max-content;max-width:min(340px,calc(100vw - 32px));text-align:center;
   box-shadow:0 8px 24px rgba(20,30,60,.2);
   opacity:0;transform:translate(-50%,calc(-100% - 12px)) scale(.6);transform-origin:50% 100%;
   transition:opacity .18s,transform .3s cubic-bezier(.3,1.6,.5,1);
 }
 .bubble::after{
-  content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;margin-left:-6px;
+  content:"";position:absolute;left:calc(50% + var(--arrow,0px));bottom:-6px;width:12px;height:12px;margin-left:-6px;
   background:inherit;transform:rotate(45deg);border-radius:2px;
 }
 .bubble.show{opacity:1;transform:translate(-50%,calc(-100% - 12px)) scale(1)}
@@ -479,6 +480,18 @@ window.guikeI18n = (() => {
       'tip.music': '点击留声机，放点音乐', 'tip.musicStop': '再点一下，停下音乐',
       'bubble.egg': '天泽龟在《守望先锋》中最喜欢的角色是路霸！',
       'bubble.flag': '天泽龟的头像是来自《少女前线》的 C-MS！',
+      // 点乌龟头时随机弹出的小档案。平时改 tips/zh.txt 和 tips/en.txt 就行（一行一条）；
+      // 这里只是备用：txt 读不到时（比如直接双击打开网页）才用这份
+      tips: [
+        '天泽龟的生日是 12 月 13 日',
+        '天泽龟最喜欢的 Galgame 是《夏日口袋》',
+        '天泽龟最喜欢的动画是《摇曳露营△》',
+        '天泽龟是类魂游戏的狂热爱好者',
+        '天泽龟最喜欢的经典特调鸡尾酒是龙舌兰日出',
+        '天泽龟的龟是龟裂的龟',
+        '试试点一下屋顶的旗子',
+        '❤️'
+      ],
       'board.blog': '博客', 'board.academic': '学术主页', 'board.github': 'GitHub',
       'term.name': '天泽龟',
       'player.aria': '背景音乐', 'player.idle': '背景音乐', 'player.prompt': '点击留声机，放点音乐',
@@ -507,6 +520,16 @@ window.guikeI18n = (() => {
       'tip.music': 'Click the gramophone for music', 'tip.musicStop': 'Click again to stop the music',
       'bubble.egg': `${EN_NAME}'s favorite Overwatch hero is Roadhog!`,
       'bubble.flag': `${EN_NAME}'s avatar is C-MS from Girls' Frontline!`,
+      tips: [
+        `${EN_NAME}'s birthday is December 13`,
+        `${EN_NAME}'s favorite visual novel is Summer Pockets`,
+        `${EN_NAME}'s favorite anime is Laid-Back Camp`,
+        `${EN_NAME} is a die-hard Soulslike fan`,
+        `${EN_NAME}'s favorite classic cocktail is the Tequila Sunrise`,
+        'The 龟 in 天泽龟 is the one in 龟裂 (jūn liè), so it reads jūn, not guī',
+        'Try clicking the flag on the roof',
+        '❤️'
+      ],
       'board.blog': 'Blog', 'board.academic': 'Academic', 'board.github': 'GitHub',
       'term.name': EN_NAME,
       'player.aria': 'Background music', 'player.idle': 'Music', 'player.prompt': 'Click the gramophone for music',
@@ -1422,7 +1445,34 @@ window.guikeI18n = (() => {
   }
   const bubbleEl = $('bubble'); let bubbleAnchor = null, bubbleTimer;
   const _bv = new THREE.Vector3();
+  // 乌龟小档案：从 tips/zh.txt、tips/en.txt 读（一行一条，空行和 # 开头的行会跳过）；
+  // 读不到就用词典里的备用列表。洗牌后依次取，全部看过一遍才会重复
+  const TIP_FILES = { zh: 'tips/zh.txt', en: 'tips/en.txt' };
+  const tipFiles = {};
+  Object.keys(TIP_FILES).forEach(l => {
+    fetch(TIP_FILES[l], { cache: 'no-cache' })
+      .then(r => (r.ok ? r.text() : ''))
+      .then(txt => {
+        const lines = txt.replace(/^\uFEFF/, '').split(/\r?\n/).map(x => x.trim()).filter(x => x && !x.startsWith('#'));
+        if (lines.length) tipFiles[l] = lines;
+      })
+      .catch(() => {});
+  });
+  let tipBag = [], tipBagList = null;
+  function nextTip(){
+    const lang = window.guikeI18n ? window.guikeI18n.lang : 'zh';
+    const list = tipFiles[lang] || tr('tips');
+    if (!Array.isArray(list) || !list.length) return '';
+    if (tipBagList !== list) { tipBag = []; tipBagList = list; }   // 换了语言或文件刚读到，重新洗牌
+    if (!tipBag.length) {
+      tipBag = [...list.keys()];
+      for (let i = tipBag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [tipBag[i], tipBag[j]] = [tipBag[j], tipBag[i]]; }
+    }
+    return list[tipBag.pop() % list.length];
+  }
   function showBubble(text, obj, offset, ms){
+    if (!text) return;
+    if (!ms) ms = Math.min(5500, 2200 + text.length * (/[\u4e00-\u9fff]/.test(text) ? 110 : 45));  // 字越多停留越久
     bubbleEl.textContent = text; bubbleAnchor = { obj, offset };
     placeBubble(); bubbleEl.classList.remove('show'); void bubbleEl.offsetWidth; bubbleEl.classList.add('show');
     clearTimeout(bubbleTimer); bubbleTimer = setTimeout(() => { bubbleEl.classList.remove('show'); bubbleAnchor = null; }, ms);
@@ -1431,7 +1481,11 @@ window.guikeI18n = (() => {
     if (!bubbleAnchor) return;
     bubbleAnchor.obj.updateWorldMatrix(true, false);
     _bv.copy(bubbleAnchor.offset).applyMatrix4(bubbleAnchor.obj.matrixWorld).project(camera);
-    bubbleEl.style.left = ((_bv.x + 1) / 2 * innerWidth) + 'px';
+    // 靠近屏幕边缘时把气泡往里推，小尖角仍然指着原来的位置
+    const x = (_bv.x + 1) / 2 * innerWidth, half = bubbleEl.offsetWidth / 2;
+    const cx = Math.min(Math.max(x, half + 12), innerWidth - half - 12);
+    bubbleEl.style.left = cx + 'px';
+    bubbleEl.style.setProperty('--arrow', Math.max(-half + 16, Math.min(half - 16, x - cx)) + 'px');
     bubbleEl.style.top = ((1 - _bv.y) / 2 * innerHeight) + 'px';
     bubbleEl.style.visibility = _bv.z > 1 ? 'hidden' : 'visible';
   }
@@ -1460,7 +1514,7 @@ window.guikeI18n = (() => {
       if (sfx && k === 'head') sfx.play('turtle', { rate: vary() });
       if (k === 'egg') { eggJump = 0; showBubble(tr('bubble.egg'), pig, new THREE.Vector3(0, .68, 0), 2600); }
       else if (k === 'flag') { flagBurst = 0; showBubble(tr('bubble.flag'), flag, new THREE.Vector3(.26, .42, 0), 2600); }
-      else if (k === 'head') { smileT = 0; }
+      else if (k === 'head') { smileT = 0; showTip(null); showBubble(nextTip(), head, new THREE.Vector3(0, .62, 0), 0); }
       else if (k === 'music') { if (window.guikeBGM) window.guikeBGM.toggle(true); }
       else if (k) { setHover(k, 'pointer'); go(k); }
       else {
