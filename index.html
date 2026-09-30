@@ -287,6 +287,62 @@ body{
 .player input[type=range]::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--sky)}
 .player input[type=range]:focus-visible{outline:2px solid var(--c-github);outline-offset:2px;border-radius:4px}
 
+/* ---------- 播放列表（从播放器上方展开） ---------- */
+.player .list-btn[aria-expanded="true"]{background:var(--hover);color:var(--c-github)}
+.playlist{
+  position:fixed;z-index:4;
+  display:flex;flex-direction:column;
+  width:340px;max-height:420px;
+  background:var(--panel);border:1px solid var(--panel-line);border-radius:18px;
+  -webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);
+  box-shadow:0 10px 40px rgba(20,30,60,.16);
+  opacity:0;visibility:hidden;transform:translateY(10px) scale(.98);transform-origin:100% 100%;
+  transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.3,1.2),visibility 0s .25s;
+}
+.playlist.open{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.3,1.2),visibility 0s}
+.playlist.left{transform-origin:0 100%}
+.playlist header{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 10px 8px 16px;border-bottom:1px solid var(--panel-line);
+}
+.playlist h2{margin:0;font-size:15px;font-weight:700}
+.playlist .count{font-size:12px;color:var(--ink-soft);font-weight:500}
+.playlist .close{
+  margin-left:auto;appearance:none;border:0;background:none;color:var(--ink);
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+}
+.playlist .close:hover{background:var(--hover)}
+.playlist .close svg{width:16px;height:16px}
+.playlist ol{list-style:none;margin:0;padding:6px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.playlist li button{
+  width:100%;display:grid;grid-template-columns:22px 34px minmax(0,1fr);align-items:center;gap:10px;
+  padding:7px 10px 7px 6px;border:0;border-radius:12px;background:none;
+  color:var(--ink);font:inherit;text-align:left;cursor:pointer;
+  transition:background-color .15s;
+}
+.playlist li button:hover{background:var(--hover)}
+.playlist li button:focus-visible{outline:2px solid var(--c-github);outline-offset:-2px}
+.playlist .no{font-size:12px;color:var(--ink-soft);text-align:center;font-variant-numeric:tabular-nums}
+.playlist .thumb{width:34px;height:34px;border-radius:8px;background:var(--c-blog) center/cover;box-shadow:0 2px 6px rgba(20,30,60,.18)}
+.playlist .txt{min-width:0}
+.playlist .t{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.playlist .a{display:block;font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.playlist .a:empty{display:none}
+.playlist li.current button{background:color-mix(in srgb,var(--c-github) 14%,transparent)}
+.playlist li.current .t{color:var(--c-github)}
+.playlist .eq{display:none;align-items:flex-end;justify-content:center;gap:2px;height:12px}
+.playlist .eq i{width:2px;height:3px;border-radius:1px;background:var(--c-github)}
+.playlist li.current .no b{display:none}
+.playlist li.current .eq{display:inline-flex}
+.playlist.playing li.current .eq i{animation:bgm-eq .9s ease-in-out infinite}
+.playlist.playing li.current .eq i:nth-child(2){animation-delay:-.3s}
+.playlist.playing li.current .eq i:nth-child(3){animation-delay:-.6s}
+.playlist .empty{padding:18px 16px;font-size:13px;color:var(--ink-soft)}
+@media (prefers-reduced-motion: reduce){
+  .playlist,.playlist.open{transition:none;transform:none}
+  .playlist.playing li.current .eq i{animation:none;height:8px}
+}
+
 /* 还没开始放歌时，播放器收成一个小胶囊 */
 .player.mini{width:auto;grid-template-columns:auto auto auto;grid-template-areas:"disc meta ctrl";padding:8px 8px 8px 8px;border-radius:999px}
 .player.mini .bar,.player.mini .vol,.player.mini .artist,.player.mini #bgmPrev,.player.mini #bgmNext{display:none}
@@ -374,6 +430,7 @@ body{
     <button type="button" id="bgmPrev" aria-label="上一首" data-i18n-aria="player.prev"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2.2v12H6zM9.5 12L19 6v12z"/></svg></button>
     <button type="button" id="bgmPlay" class="play" data-state="play" aria-label="播放"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
     <button type="button" id="bgmNext" aria-label="下一首" data-i18n-aria="player.next"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.8 6H18v12h-2.2zM14.5 12L5 6v12z"/></svg></button>
+    <button type="button" id="bgmList" class="list-btn" aria-label="展开播放列表" aria-expanded="false" aria-controls="playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6.5h11M4 12h11M4 17.5h7"/><path d="M18 14.5v-8l3 1.5" stroke-linejoin="round"/><circle cx="16.5" cy="16" r="2" fill="currentColor" stroke="none"/></svg></button>
   </div>
   <div class="bar">
     <span id="bgmCur">0:00</span>
@@ -384,6 +441,14 @@ body{
     <button type="button" id="bgmMute" data-muted="false" aria-label="静音"><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7a7 7 0 0 1 0 10"/></svg><svg class="i-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor"/><path d="M16 10l4 4M20 10l-4 4"/></svg></button>
     <input type="range" id="bgmVol" min="0" max="100" step="1" value="35" aria-label="音量" data-i18n-aria="player.volume">
   </div>
+</section>
+<section class="playlist" id="playlist" aria-labelledby="plTitle">
+  <header>
+    <h2 id="plTitle" data-i18n="playlist.title">播放列表</h2>
+    <span class="count" id="plCount"></span>
+    <button type="button" class="close" id="plClose" aria-label="收起播放列表" data-i18n-aria="playlist.close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </header>
+  <ol id="plList"></ol>
 </section>
 
 <div class="tip" id="tip"></div>
@@ -422,6 +487,7 @@ window.guikeI18n = (() => {
       'player.skipBad': '这首读不到，换下一首', 'player.empty': '留声机里还没有唱片',
       'player.prev': '上一首', 'player.next': '下一首', 'player.play': '播放', 'player.pause': '暂停',
       'player.seek': '播放进度', 'player.volume': '音量', 'player.mute': '静音', 'player.unmute': '取消静音',
+      'playlist.title': '播放列表', 'playlist.count': n => `共 ${n} 首`, 'playlist.open': '展开播放列表', 'playlist.close': '收起播放列表', 'playlist.empty': '还没有歌，往 music 文件夹里放几首吧',
       album: '天泽龟的龟壳屋'
     },
     en: {
@@ -449,6 +515,7 @@ window.guikeI18n = (() => {
       'player.skipBad': 'Skipped an unreadable track', 'player.empty': 'No records yet',
       'player.prev': 'Previous', 'player.next': 'Next', 'player.play': 'Play', 'player.pause': 'Pause',
       'player.seek': 'Seek', 'player.volume': 'Volume', 'player.mute': 'Mute', 'player.unmute': 'Unmute',
+      'playlist.title': 'Playlist', 'playlist.count': n => `${n} ${n === 1 ? 'track' : 'tracks'}`, 'playlist.open': 'Show playlist', 'playlist.close': 'Hide playlist', 'playlist.empty': 'No tracks yet. Drop a few into the music folder.',
       album: `${EN_NAME}'s Shell House`
     }
   };
@@ -1584,7 +1651,8 @@ window.guikeI18n = (() => {
   const ui = {
     status: $('bgmStatus'), title: $('bgmTitle'), artist: $('bgmArtist'),
     prev: $('bgmPrev'), play: $('bgmPlay'), next: $('bgmNext'),
-    seek: $('bgmSeek'), cur: $('bgmCur'), dur: $('bgmDur'), mute: $('bgmMute'), vol: $('bgmVol')
+    seek: $('bgmSeek'), cur: $('bgmCur'), dur: $('bgmDur'), mute: $('bgmMute'), vol: $('bgmVol'),
+    list: $('bgmList'), pl: $('playlist'), plList: $('plList'), plCount: $('plCount'), plClose: $('plClose')
   };
   const store = {
     get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -1667,6 +1735,7 @@ window.guikeI18n = (() => {
     player.classList.toggle('playing', on);
     ui.play.dataset.state = on ? 'pause' : 'play';
     ui.play.setAttribute('aria-label', tr(on ? 'player.pause' : 'player.play'));
+    ui.pl.classList.toggle('playing', on);
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = on ? 'playing' : 'paused';
   }
   function renderVol(){
@@ -1699,6 +1768,7 @@ window.guikeI18n = (() => {
         artwork: cover ? [{ src: cover, type: /\.png(?:[?#]|$)/i.test(cover) ? 'image/png' : 'image/jpeg' }] : []
       });
     }
+    markCurrent();
   }
   function fadeIn(){
     cancelAnimationFrame(fadeRaf);
@@ -1804,12 +1874,89 @@ window.guikeI18n = (() => {
       setTitleKey('player.empty');
       [ui.prev, ui.play, ui.next, ui.mute].forEach(b => b.disabled = true);
       ui.seek.disabled = ui.vol.disabled = true;
+      buildList();
       return;
     }
     order = shuffled(tracks.length);
+    buildList();
     load(0);
     audio.volume = volume;
   })();
+
+
+  /* ---------- 播放列表：按 playlist.json 的顺序列出，点哪首放哪首 ---------- */
+  function buildList(){
+    ui.plList.textContent = '';
+    ui.plCount.textContent = tracks.length ? tr('playlist.count', tracks.length) : '';
+    if (!tracks.length) {
+      const li = document.createElement('li'); li.className = 'empty'; li.textContent = tr('playlist.empty');
+      ui.plList.appendChild(li); return;
+    }
+    tracks.forEach((t, idx) => {
+      const li = document.createElement('li'); li.dataset.idx = idx;
+      const b = document.createElement('button'); b.type = 'button';
+      const no = document.createElement('span'); no.className = 'no';
+      no.innerHTML = '<b></b><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>';
+      no.querySelector('b').textContent = idx + 1;
+      const th = document.createElement('span'); th.className = 'thumb'; th.setAttribute('aria-hidden', 'true');
+      const cover = t.coverSrc || avatarSrc;
+      if (cover) th.style.backgroundImage = `url("${cover}")`;
+      const tx = document.createElement('span'); tx.className = 'txt';
+      const tt = document.createElement('span'); tt.className = 't'; tt.textContent = t.title;
+      const ta = document.createElement('span'); ta.className = 'a'; ta.textContent = t.artist || '';
+      tx.append(tt, ta); b.append(no, th, tx); li.appendChild(b); ui.plList.appendChild(li);
+      b.addEventListener('click', () => playTrack(idx));
+    });
+    markCurrent();
+  }
+  function markCurrent(){
+    if (!tracks.length || !order.length) return;
+    const cur = order[pos];
+    ui.plList.querySelectorAll('li[data-idx]').forEach(li => {
+      const on = +li.dataset.idx === cur;
+      li.classList.toggle('current', on);
+      const b = li.firstChild; if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+  }
+  function playTrack(idx){
+    sfx('click');
+    const p = order.indexOf(idx);
+    if (p === pos && started) { if (audio.paused) userPlay(); return; }  // 点的就是当前这首：继续放
+    load(p); userPlay();
+  }
+  // 面板贴着播放器上方展开；播放器在右边就右对齐，叠到左边（窄屏）就左对齐
+  function placeList(){
+    if (!ui.pl.classList.contains('open')) return;
+    const r = player.getBoundingClientRect();
+    const narrow = innerWidth <= 560;
+    const w = narrow ? r.width : Math.min(Math.max(r.width, 320), innerWidth - 24);
+    const onRight = !narrow && r.left + r.width / 2 > innerWidth / 2;
+    ui.pl.style.width = w + 'px';
+    ui.pl.style.bottom = (innerHeight - r.top + 10) + 'px';
+    ui.pl.style.left = onRight ? (r.right - w) + 'px' : r.left + 'px';
+    ui.pl.style.maxHeight = Math.max(160, Math.min(420, r.top - 10 - 20)) + 'px';
+    ui.pl.classList.toggle('left', !onRight);
+  }
+  function setList(open, focus){
+    if (open) {
+      ui.pl.classList.add('open'); placeList();
+      const cur = ui.plList.querySelector('li.current');
+      if (cur) cur.scrollIntoView({ block: 'nearest' });
+      if (focus) (ui.plList.querySelector('li.current button') || ui.plList.querySelector('button') || ui.plClose).focus();
+    } else {
+      ui.pl.classList.remove('open');
+      if (focus) ui.list.focus();
+    }
+    ui.list.setAttribute('aria-expanded', String(open));
+    ui.list.setAttribute('aria-label', tr(open ? 'playlist.close' : 'playlist.open'));
+  }
+  ui.list.addEventListener('click', e => { sfx('click'); setList(!ui.pl.classList.contains('open'), e.detail === 0); });
+  ui.plClose.addEventListener('click', e => { sfx('click'); setList(false, e.detail === 0); });
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && ui.pl.classList.contains('open')) { setList(false, ui.pl.contains(document.activeElement)); }
+  });
+  addEventListener('resize', placeList);
+  if ('ResizeObserver' in window) new ResizeObserver(placeList).observe(player);
 
   // 给 3D 场景里的留声机用
   // 切换语言时，把播放器上的提示文字也换掉（歌名保持原样）
@@ -1817,6 +1964,8 @@ window.guikeI18n = (() => {
   if (window.guikeI18n) window.guikeI18n.onChange(() => {
     setStatus(statusKey); if (titleKey) setTitleKey(titleKey);
     render(); renderVol();
+    buildList();
+    ui.list.setAttribute('aria-label', tr(ui.pl.classList.contains('open') ? 'playlist.close' : 'playlist.open'));
     const tk = tracks.length && tracks[order[pos]];
     if (tk && 'mediaSession' in navigator && navigator.mediaSession.metadata) navigator.mediaSession.metadata.album = tr('album');
   });
