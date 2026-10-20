@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta
+    name="theme-color"
+    content="#fff"
+    id="theme-color">
+  <meta
+    name="referrer"
+    content="no-referrer-when-downgrade">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>CMU AI Agents 学习笔记【五】：Planning and Task Decomposition</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="CMU AI Agents 学习笔记【五】：Planning and Task Decomposition">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-05/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;「先写计划再执行」听上去总没什么坏处，尤其是看 Agent 一口气改了一堆文件以后。可计划本身也可能错，任务又会在执行中暴露新信息。到底要提前决定多少、什么时候允许推翻、谁负责检查，这一讲比「让模型列个 Todo」复杂得多。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-10-20">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-20">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="大模型">
+        
+          <meta 
+            property="og:article:tag" 
+            content="AI Agents">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/blog/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/blog/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/blog/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/blog/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/blog/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a
+        href="/blog/"
+        class="navbar-menu-item"
+        >
+        
+          首页
+        
+      </a>
+    
+      <a
+        href="/blog/archives"
+        class="navbar-menu-item"
+        >
+        
+          归档
+        
+      </a>
+    
+      <a
+        href="/blog/tags"
+        class="navbar-menu-item"
+        >
+        
+          标签
+        
+      </a>
+    
+      <a
+        href="/blog/categories"
+        class="navbar-menu-item"
+        >
+        
+          分类
+        
+      </a>
+    
+      <a
+        href="/blog/about"
+        class="navbar-menu-item"
+        >
+        
+          关于
+        
+      </a>
+    
+      <a
+        href="/blog/links"
+        class="navbar-menu-item"
+        >
+        
+          友链
+        
+      </a>
+    
+      <a
+        href="/blog/bangumis"
+        class="navbar-menu-item"
+        >
+        
+          番剧
+        
+      </a>
+    
+      <a
+        href="https://tzturtle.moe/cv/"
+        class="navbar-menu-item"
+        target="_blank" rel="noopener">
+        
+          学术主页
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      CMU AI Agents 学习笔记【五】：Planning and Task Decomposition
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-10-20T12:45:50.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-10-20</span>
+    </time>
+    
+      <span class="dot"></span>
+      <span id="busuanzi_container_page_pv" style="display: none;">
+        <span id="busuanzi_value_page_pv"></span> 次阅读
+      </span>
+    
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/blog/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.6k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+            class="post-meta-link">
+            大模型
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/blog/tags/AI-Agents/" 
+            class="post-meta-link">
+            AI Agents
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>「先写计划再执行」听上去总没什么坏处，尤其是看 Agent 一口气改了一堆文件以后。可计划本身也可能错，任务又会在执行中暴露新信息。到底要提前决定多少、什么时候允许推翻、谁负责检查，这一讲比「让模型列个 Todo」复杂得多。</p>
+<span id="more"></span>
+<h2 id="51-一个采购任务为什么会失控"><a class="markdownIt-Anchor" href="#51-一个采购任务为什么会失控"></a> 5.1 一个采购任务为什么会失控？</h2>
+<p>假设让 Agent 给实验室买 GPU 工作站：比较几家供应商、查内部 wiki 的兼容要求，最后提交采购申请。朴素 ReAct Agent 可能逐个网站浏览，直到第几十步才发现机架与供电限制；长上下文压缩以后，它记得只有供应商 D 合适，但 D 交期长达 20 周，于是纠结一会儿，还是提交了。</p>
+<p>这里的问题并不只是某一步判断差。供应商搜索可以并行，兼容性检查依赖内部要求，交期可能迫使任务新增第五家供应商，而提交申请是有后果的动作。<strong>任务具有结构，而且结构还会变化。</strong> 把它全部塞进一条越来越长的对话，当然也能跑，只是很容易把不同层面的决策混在一起。</p>
+<p>Plan 可以定义为对未来动作或子目标、以及顺序和依赖关系的显式表示。它针对当前任务；Skill 则提供跨任务方法。计划是提议，执行过程中仍需要验证前提。</p>
+<p><img src="task-graph.png" alt="供应商搜索、兼容性检查与提交之间的依赖" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="task-graph.png" class="lozad post-image"></p>
+<p>Plan Mode 常把只读调查、澄清问题、写计划、人审核与执行组织起来。不过效果来自哪里要分开：额外推理算力、更充分的上下文、持久化产物、任务分解和人工纠偏，都可能贡献收益。看到 Plan Mode 更好，不能直接把所有功劳归给「先输出一张列表」。</p>
+<h2 id="52-从-cot-到显式分解"><a class="markdownIt-Anchor" href="#52-从-cot-到显式分解"></a> 5.2 从 CoT 到显式分解</h2>
+<p>CoT 已经包含某种规划：中间文本提供 scratchpad，后面的预测可以参考前面的思路；Plan-and-Solve 又进一步要求先理解问题、提出计划，再解题。但计划和答案可能仍在一次生成里，没有任何独立模块检查计划。</p>
+<p>Least-to-Most 把过程拆成两阶段：先生成子问题，再按顺序求解，把先前结果传给后面的步骤。例如先算一次上下滑梯需几分钟，再算开放时间内能完成几次。复杂问题不好直接解，子问题却可能很好解，每次处理需要的上下文也更小。</p>
+<p>Decomposed Prompting 再把子任务路由给专门 handler，例如简单 QA、关系查询、列表遍历等。各模块可以独立提供示例或训练，这才是 decomposition 带来的模块化收益。Recursive Language Models 等思路又允许对子上下文或子任务递归调用，而不要求所有工作在同一窗口展开。</p>
+<p>不过拆分会产生接口问题：子问题有没有覆盖原目标？答案传递是否丢失条件？前一步错了，后一步能否发现？把一道错题拆成五道互相依赖的错题，并没有多赚四次成功）</p>
+<h2 id="53-推理和现实动作的区别"><a class="markdownIt-Anchor" href="#53-推理和现实动作的区别"></a> 5.3 推理和现实动作的区别</h2>
+<p>文本推理主要改变生成内容，写错了还可以继续改写；外部动作则改变下一轮环境，可能揭示未知信息、执行失败，也可能不能轻易撤销。例如发送邮件、提交申请，不是后面再补一句「我刚才没发」就能撤回。</p>
+<p>经典规划对此有比较明确的表示：状态由谓词描述，动作有前置条件与效果。拿积木世界来说，<code>pick-up(x)</code> 要求积木在桌上、上方空闲、手是空的；执行后变成手持该积木，并修改相关谓词。寻找一个始终满足前置条件、最后到达目标的动作序列，就是规划搜索。</p>
+<p>这让我想起以前写 BFS / DFS，给状态和转移找一条合法路径，本来也可以看成规划。LLM 的变化在于很多世界知识与动作效果都隐含在参数里，生成一个流畅计划变容易了，确认它对世界的假设却变难了。因此观察、适用性检查、执行验证和恢复都很重要。</p>
+<p>计划的表示也有取舍：形式化计划便于在已建模范围内校验，自然语言更通用，程序介于两者之间。Code as Policies、ProgPrompt、Binder 等路线让代码调用感知与控制 API，利用程序结构组织动作。程序可运行、可检查，但仍受接口覆盖与控制流限制；调用的感知模型本身也可能错。</p>
+<h2 id="54-提前承诺多少"><a class="markdownIt-Anchor" href="#54-提前承诺多少"></a> 5.4 提前承诺多少？</h2>
+<p>可以把执行方式放在一条连续线上：开发者规定固定 workflow；模型先生成计划，再承诺执行；模型在执行时根据反馈动态修改。对应的是不同程度的决策开放。</p>
+<p>固定流程便宜、可预测，特别适合步骤稳定的任务；先规划后执行让模型选择这次的路线，但执行阶段仍较固定；动态 replanning 则能在四家供应商都不合适时新增搜索。<strong>只有反馈值得改变下一步时，重规划的开销才有理由。</strong></p>
+<p>LLM-Planner、Inner Monologue、SwiftSage 等工作把环境反馈带回高层决策。比如原来打算找土豆，实际只看见冰箱，就应修改搜索路径；目标容器没找到，可能要继续观察或重新选择动作，而不是闭眼按初版步骤完成。</p>
+<h2 id="55-planner-executor-分离有什么实际价值"><a class="markdownIt-Anchor" href="#55-planner-executor-分离有什么实际价值"></a> 5.5 Planner / Executor 分离有什么实际价值？</h2>
+<p>我更认可能力上的分离，而不是先给几个模型起职业名字。比如视觉模型能理解「点击上方搜索框」，却不擅长输出精确像素坐标；UGround 一类 executor 就可以用单独训练的较小模型把语言动作落到坐标上。Planner 与 Executor 的数据、模型和优化目标各有侧重。</p>
+<p>Plan-and-Act 的一条训练路径是让教师对成功轨迹分段、标注高层计划，再分别训练 planner 与 executor。这样抽象层次也进入了监督数据，而不完全依靠推理时临场分工。</p>
+<p><img src="planner-executor.png" alt="语言动作规划与像素坐标执行的分工" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="planner-executor.png" class="lozad post-image"></p>
+<p>固定「架构师—开发者—测试员」角色却可能有反作用。测试员如果不能自己定位代码，只能等开发者发摘要，就缺少验证答案的能力；交接报告又可能丢掉上下文。单 Agent 可以在同一任务中灵活切换定位、编辑与验证，未必比固定角色差。多 Agent 的收益要对应到具体瓶颈。</p>
+<h2 id="56-计划可行吗affordance-与信息获取"><a class="markdownIt-Anchor" href="#56-计划可行吗affordance-与信息获取"></a> 5.6 计划可行吗？Affordance 与信息获取</h2>
+<p>SayCan 提醒我区分语言上的合理与物理上的可执行：LLM 可能觉得某个技能适合当前目标，但机器人未必有条件完成。它结合语言相关性与技能 value / affordance，后者估计当前状态下技能成功的可能性。示意为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">score</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo><mo>∝</mo><msub><mi>p</mi><mrow><mi mathvariant="normal">L</mi><mi mathvariant="normal">M</mi></mrow></msub><mo stretchy="false">(</mo><mi>a</mi><mo>∣</mo><mtext>instruction, history</mtext><mo stretchy="false">)</mo><mtext> </mtext><msub><mi>V</mi><mi>a</mi></msub><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\operatorname{score}(a)\propto p_{\rm LM}(a\mid\text{instruction, history})\,V_a(s).
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">s</span><span class="mord mathrm">c</span><span class="mord mathrm">o</span><span class="mord mathrm">r</span><span class="mord mathrm">e</span></span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">L</span><span class="mord mathrm mtight">M</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">instruction, history</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.22222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mord">.</span></span></span></span></span></p>
+<p>语言先验与可行性一起决定选择。value 也需要学习、校准，乘起来并不会消除所有误差，但至少显式地问了一次「这事现在干得成吗」。</p>
+<p>另一个选择是把计算花在想、采样还是交互上。Test-Time Interaction 在匹配预算下比较更长 CoT、更多候选与更多环境交互；某些任务中，新增观察比继续在已有信息上推理更有效。这里我比较认同：缺证据时多想并不会凭空长出证据。</p>
+<p><img src="thinking-and-acting.png" alt="固定预算下比较思考、候选采样与环境交互" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="thinking-and-acting.png" class="lozad post-image"></p>
+<p>例如文件格式由分隔符、引号、是否有表头三个因素决定，共有 12 种组合，文件名只提供有限线索。与其反复根据名字推测，不如检查文件或运行低成本解析测试。Calibrate-then-Act 把格式可能性的估计加入上下文，帮助模型依据置信度决定是否先验证。需要的是对不确定性作出合适动作，而不是把「我不确定」写得更长。</p>
+<p>Overthinking 也不只表现为推理长，还包括 analysis paralysis、无关动作链和过早放弃。相关实验发现 overthinking score 与 issue resolution 负相关；这不表示长度单独导致失败，但足以提醒我们，推理预算应该带来有价值的决策或观察。</p>
+<h2 id="57-长任务里的-self-conditioning"><a class="markdownIt-Anchor" href="#57-长任务里的-self-conditioning"></a> 5.7 长任务里的 Self-conditioning</h2>
+<p>Vending-Bench 让 Agent 经营自动售货机，涉及定价、订货和补货，最长跨数千条消息与数百个模拟日。有个失败链非常典型：把「今天应到货」当成「已经到货」，补货失败后推断生意已经终止，后续又把日常费用理解成欺诈，始终没有等确认邮件或重新检查。</p>
+<p>一次临时误判变成后续所有行动的前提，这就是 self-conditioning 的危险。模型不只会被外部错误信息影响，也会相信自己之前写下的话。</p>
+<p>若各步独立成功率近似为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span>，连续 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 步全对的概率是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>p</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">p^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035771em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span>，提高单步准确率可以大幅延伸有效执行长度。但真实轨迹里，前面错误会改变后面输入，后续成功率可能继续下降。部分实验中更大模型可以执行更长任务，同时也显示出更强的错误自条件化；模型变大没有自动消灭这个问题。</p>
+<p>规划、上下文隔离与定期重新核对证据都可能帮助，但光保留一个计划文件也不够。文件里如果写的就是错误状态，Agent 只是有组织地继续错下去。</p>
+<h2 id="58-动态-递归地委派"><a class="markdownIt-Anchor" href="#58-动态-递归地委派"></a> 5.8 动态、递归地委派</h2>
+<p>委派本身可以被看成 action。RAO 一类方法让 Agent 调用 <code>launch_subagent(goal)</code>，子 Agent 又可继续委派，各节点按自身任务结果及子任务完成情况评分。训练时不必人工固定整棵任务树，模型可以学习什么时候需要进一步分解；在中等任务上训练后，也可能在更难任务中形成更深结构。</p>
+<p>这种递归有助于限制各节点上下文，但还需要控制重复工作、深度、总预算与结果检查。ADaPT 等自适应分解与递归执行思路，都在讨论何时把失败或困难子任务继续拆开。</p>
+<p>分解以后也有一类东西不能拆散：全局约束。TravelPlanner 可以把交通、酒店、餐饮与景点分开查，可总预算、时间衔接与饮食限制跨越所有子任务。需要一个地方持续维护这些条件，并检查组合结果。每块单独正确，不代表拼起来能用。</p>
+<h2 id="59-计划作为控制与安全边界"><a class="markdownIt-Anchor" href="#59-计划作为控制与安全边界"></a> 5.9 计划作为控制与安全边界</h2>
+<p>Plan Mode 的人工审核不仅能改步骤，也能明确权限。例如采购前先审查配置和金额，再允许提交，而不是让浏览页面里的任意文本都参与决定付款。</p>
+<p>ReAct 每轮读到新网页后，都可能据此改变下一步动作，恶意内容因此有机会变成指令。受限程序可以把网页内容当数据值使用，而不接受它提出的新动作。这提供了一种边界，但前提是允许的动作、输入处理和执行器真的被限制；生成了程序并不天然免疫 prompt injection。</p>
+<p>更一般地说，需要区分规划者掌握的信息与执行者拥有的权限，明确谁能修改计划、哪些动作需要检查，以及不可逆操作前由谁负责批准。</p>
+<h2 id="510-macu把结构落实到-computer-use"><a class="markdownIt-Anchor" href="#510-macu把结构落实到-computer-use"></a> 5.10 MACU：把结构落实到 Computer Use</h2>
+<p>Odysseys 中一个长任务是查找纽约的 ACL 手术医生并整理电子表格。仅仅搜到名字远远不够：要验证官方 profile 中的手术专长，收集医院、科室、链接，保留对应标签页，最后形成恰好 10 位医生的表格及机构汇总。不同 rubric 分散在不同应用与步骤里，正好暴露长任务里的证据保存和验收问题。</p>
+<p>MACU 用 Manager 维护子任务 DAG，scheduler 执行已满足依赖的节点，把工作分给 Computer Use workers 与独立虚拟机。Worker 完成后，Manager 可以要求继续、确认完成或修改图，再调度下一批。核心不是并排摆多个模型，而是 <strong>按依赖执行、检查结果、根据反馈修改图</strong>。</p>
+<p><img src="manager-loop.png" alt="Manager、任务图与执行反馈" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="manager-loop.png" class="lozad post-image"></p>
+<p>几个实验细节值得留下：</p>
+<table>
+<thead>
+<tr>
+<th>任务集</th>
+<th>单 Agent 成功率</th>
+<th>MACU 成功率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OSWorld</td>
+<td>43.8%</td>
+<td>48.5%</td>
+</tr>
+<tr>
+<td>Online-M2W</td>
+<td>52.2%</td>
+<td>55.6%</td>
+</tr>
+<tr>
+<td>WebTailBench</td>
+<td>20.8%</td>
+<td>29.5%</td>
+</tr>
+<tr>
+<td>Odysseys</td>
+<td>8.5%</td>
+<td>34.0%</td>
+</tr>
+</tbody>
+</table>
+<p>在 36 个 OSWorld 任务的消融中，固定较弱 worker 时，不同 Manager 带来的成功率不同；较强 Manager 的协调价值很明显。固定 Manager 再换 worker，较弱 worker 往往获得较大提升，但并非严格单调。一个 4B worker 的单 Agent 结果为 25.0%，组合后达到 58.3%，说明部分工作确实可以由管理层补足。</p>
+<p>并行实验则更直接：45 个 Odysseys easy tasks 上，worker 数从 1、2 到 4，耗时约 25.4、13.1、7.9 分钟；成功率为 53.3%、48.9%、60.4%。速度改善清楚，质量并不是每加一个 worker 都上涨。另一个 planning budget 消融从 0 增至 10，成功率由 25.0% 升至 58.3%，同时成本增加。replan 有用，但也要付账。</p>
+<p><img src="parallelism.png" alt="Worker 并行数对耗时与成功率的影响" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="parallelism.png" class="lozad post-image"></p>
+<p><img src="replanning-budget.png" alt="规划预算增加时的成功率和成本" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="replanning-budget.png" class="lozad post-image"></p>
+<p>这一讲留下的开放问题还是挺实在的：自然语言计划如何校验；模型怎样校准该思考、观察、提问还是重规划；跨子任务状态怎样维护；以及外部 scaffolding 的哪些部分最终会被模型训练吸收。现在先不用急着给所有任务都上多 Agent，能说明白分解解决了哪个问题，就已经比纯堆角色强不少了。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/blog/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-05/">
+            https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-05/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/blog/2026/10/20/cmu-ai-agents-lecture-06/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/blog/2026/10/20/cmu-ai-agents-lecture-04/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">CMU AI Agents 学习笔记【四】：Memory and Skills，让 Agent 少从头再来 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      var valineOptions = {
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname.replace(/^\/blog(?=\/)/, ''),
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      };
+      new Valine(valineOptions);
+      
+    };
+  </script>
+
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#51-%E4%B8%80%E4%B8%AA%E9%87%87%E8%B4%AD%E4%BB%BB%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%8E%A7"><span class="toc-text"> 5.1 一个采购任务为什么会失控？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#52-%E4%BB%8E-cot-%E5%88%B0%E6%98%BE%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="toc-text"> 5.2 从 CoT 到显式分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#53-%E6%8E%A8%E7%90%86%E5%92%8C%E7%8E%B0%E5%AE%9E%E5%8A%A8%E4%BD%9C%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 5.3 推理和现实动作的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#54-%E6%8F%90%E5%89%8D%E6%89%BF%E8%AF%BA%E5%A4%9A%E5%B0%91"><span class="toc-text"> 5.4 提前承诺多少？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#55-planner-executor-%E5%88%86%E7%A6%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%AE%9E%E9%99%85%E4%BB%B7%E5%80%BC"><span class="toc-text"> 5.5 Planner &#x2F; Executor 分离有什么实际价值？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#56-%E8%AE%A1%E5%88%92%E5%8F%AF%E8%A1%8C%E5%90%97affordance-%E4%B8%8E%E4%BF%A1%E6%81%AF%E8%8E%B7%E5%8F%96"><span class="toc-text"> 5.6 计划可行吗？Affordance 与信息获取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#57-%E9%95%BF%E4%BB%BB%E5%8A%A1%E9%87%8C%E7%9A%84-self-conditioning"><span class="toc-text"> 5.7 长任务里的 Self-conditioning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#58-%E5%8A%A8%E6%80%81-%E9%80%92%E5%BD%92%E5%9C%B0%E5%A7%94%E6%B4%BE"><span class="toc-text"> 5.8 动态、递归地委派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#59-%E8%AE%A1%E5%88%92%E4%BD%9C%E4%B8%BA%E6%8E%A7%E5%88%B6%E4%B8%8E%E5%AE%89%E5%85%A8%E8%BE%B9%E7%95%8C"><span class="toc-text"> 5.9 计划作为控制与安全边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#510-macu%E6%8A%8A%E7%BB%93%E6%9E%84%E8%90%BD%E5%AE%9E%E5%88%B0-computer-use"><span class="toc-text"> 5.10 MACU：把结构落实到 Computer Use</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/blog/archives">
+    <span>70</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/blog/categories">
+    <span>6</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/blog/tags">
+    <span>17</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#51-%E4%B8%80%E4%B8%AA%E9%87%87%E8%B4%AD%E4%BB%BB%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%8E%A7"><span class="toc-text"> 5.1 一个采购任务为什么会失控？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#52-%E4%BB%8E-cot-%E5%88%B0%E6%98%BE%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="toc-text"> 5.2 从 CoT 到显式分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#53-%E6%8E%A8%E7%90%86%E5%92%8C%E7%8E%B0%E5%AE%9E%E5%8A%A8%E4%BD%9C%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 5.3 推理和现实动作的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#54-%E6%8F%90%E5%89%8D%E6%89%BF%E8%AF%BA%E5%A4%9A%E5%B0%91"><span class="toc-text"> 5.4 提前承诺多少？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#55-planner-executor-%E5%88%86%E7%A6%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%AE%9E%E9%99%85%E4%BB%B7%E5%80%BC"><span class="toc-text"> 5.5 Planner &#x2F; Executor 分离有什么实际价值？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#56-%E8%AE%A1%E5%88%92%E5%8F%AF%E8%A1%8C%E5%90%97affordance-%E4%B8%8E%E4%BF%A1%E6%81%AF%E8%8E%B7%E5%8F%96"><span class="toc-text"> 5.6 计划可行吗？Affordance 与信息获取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#57-%E9%95%BF%E4%BB%BB%E5%8A%A1%E9%87%8C%E7%9A%84-self-conditioning"><span class="toc-text"> 5.7 长任务里的 Self-conditioning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#58-%E5%8A%A8%E6%80%81-%E9%80%92%E5%BD%92%E5%9C%B0%E5%A7%94%E6%B4%BE"><span class="toc-text"> 5.8 动态、递归地委派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#59-%E8%AE%A1%E5%88%92%E4%BD%9C%E4%B8%BA%E6%8E%A7%E5%88%B6%E4%B8%8E%E5%AE%89%E5%85%A8%E8%BE%B9%E7%95%8C"><span class="toc-text"> 5.9 计划作为控制与安全边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#510-macu%E6%8A%8A%E7%BB%93%E6%9E%84%E8%90%BD%E5%AE%9E%E5%88%B0-computer-use"><span class="toc-text"> 5.10 MACU：把结构落实到 Computer Use</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/blog/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">11</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E6%97%A5%E5%B8%B8%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          日常分享
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/blog/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/AI-Agents/" 
+        title="AI Agents">
+        <div class="tags-list-item">AI Agents</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+        title="情感计算">
+        <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%80%9D%E8%80%83/" 
+        title="思考">
+        <div class="tags-list-item">思考</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#51-%E4%B8%80%E4%B8%AA%E9%87%87%E8%B4%AD%E4%BB%BB%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%8E%A7"><span class="toc-text"> 5.1 一个采购任务为什么会失控？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#52-%E4%BB%8E-cot-%E5%88%B0%E6%98%BE%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="toc-text"> 5.2 从 CoT 到显式分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#53-%E6%8E%A8%E7%90%86%E5%92%8C%E7%8E%B0%E5%AE%9E%E5%8A%A8%E4%BD%9C%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 5.3 推理和现实动作的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#54-%E6%8F%90%E5%89%8D%E6%89%BF%E8%AF%BA%E5%A4%9A%E5%B0%91"><span class="toc-text"> 5.4 提前承诺多少？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#55-planner-executor-%E5%88%86%E7%A6%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%AE%9E%E9%99%85%E4%BB%B7%E5%80%BC"><span class="toc-text"> 5.5 Planner &#x2F; Executor 分离有什么实际价值？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#56-%E8%AE%A1%E5%88%92%E5%8F%AF%E8%A1%8C%E5%90%97affordance-%E4%B8%8E%E4%BF%A1%E6%81%AF%E8%8E%B7%E5%8F%96"><span class="toc-text"> 5.6 计划可行吗？Affordance 与信息获取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#57-%E9%95%BF%E4%BB%BB%E5%8A%A1%E9%87%8C%E7%9A%84-self-conditioning"><span class="toc-text"> 5.7 长任务里的 Self-conditioning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#58-%E5%8A%A8%E6%80%81-%E9%80%92%E5%BD%92%E5%9C%B0%E5%A7%94%E6%B4%BE"><span class="toc-text"> 5.8 动态、递归地委派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#59-%E8%AE%A1%E5%88%92%E4%BD%9C%E4%B8%BA%E6%8E%A7%E5%88%B6%E4%B8%8E%E5%AE%89%E5%85%A8%E8%BE%B9%E7%95%8C"><span class="toc-text"> 5.9 计划作为控制与安全边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#510-macu%E6%8A%8A%E7%BB%93%E6%9E%84%E8%90%BD%E5%AE%9E%E5%88%B0-computer-use"><span class="toc-text"> 5.10 MACU：把结构落实到 Computer Use</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-07/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【七】：Supervised Fine-Tuning for Agents</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-06/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-05/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【五】：Planning and Task Decomposition</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-04/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【四】：Memory and Skills，让 Agent 少从头再来</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2026
+        </span>
+        &nbsp;
+        <a 
+          href="/blog/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/blog/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/blog/js/main.js"></script>
+    
+      <script src="/blog/js/legacy-page-views.js"></script>
+      <script> 
+        loadScript('/blog/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/blog/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>

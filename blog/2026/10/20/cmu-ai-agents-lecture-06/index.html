@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta
+    name="theme-color"
+    content="#fff"
+    id="theme-color">
+  <meta
+    name="referrer"
+    content="no-referrer-when-downgrade">
+  <meta 
+    name="description" 
+    content="天泽龟的龟壳屋">
+  <link 
+    rel="icon" 
+    href="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+  <title>CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-06/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg">
+    
+    
+      <meta 
+        property="og:img" 
+        content="&lt;p&gt;这几年对 Coding 的期待变得有点快：开始是补全一行，后来是写一段函数，现在是把整个仓库交给 Agent，让它自己找问题、改代码、跑测试。三者需要的能力有重叠，但不能拿一个函数生成分数，就推断它能独立维护软件项目。这讲按模型、工具和交互三条线来学。对我来说，最值得多想一下的是代码数据怎样组织、修改格式怎样影响模型，以及「测对了」到底包含多少工作。&lt;/p&gt;">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-10-20">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-20">
+      <meta 
+        property="og:article:author" 
+        content="天泽龟">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="大模型">
+        
+          <meta 
+            property="og:article:tag" 
+            content="AI Agents">
+        
+      
+    
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  
+    <link rel="preload" href="/blog/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/blog/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/blog/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" as="script">
+  
+  
+    
+    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  <link rel="stylesheet" href="/blog/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+    <link rel="stylesheet" href="/blog/js/lib/lightbox/baguetteBox.min.css">
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+        <img 
+          class="navbar-logo-img" 
+          src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">天泽龟的龟壳屋</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+      <a
+        href="/blog/"
+        class="navbar-menu-item"
+        >
+        
+          首页
+        
+      </a>
+    
+      <a
+        href="/blog/archives"
+        class="navbar-menu-item"
+        >
+        
+          归档
+        
+      </a>
+    
+      <a
+        href="/blog/tags"
+        class="navbar-menu-item"
+        >
+        
+          标签
+        
+      </a>
+    
+      <a
+        href="/blog/categories"
+        class="navbar-menu-item"
+        >
+        
+          分类
+        
+      </a>
+    
+      <a
+        href="/blog/about"
+        class="navbar-menu-item"
+        >
+        
+          关于
+        
+      </a>
+    
+      <a
+        href="/blog/links"
+        class="navbar-menu-item"
+        >
+        
+          友链
+        
+      </a>
+    
+      <a
+        href="/blog/bangumis"
+        class="navbar-menu-item"
+        >
+        
+          番剧
+        
+      </a>
+    
+      <a
+        href="https://tzturtle.moe/cv/"
+        class="navbar-menu-item"
+        target="_blank" rel="noopener">
+        
+          学术主页
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-10-20T12:45:51.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-10-20</span>
+    </time>
+    
+      <span class="dot"></span>
+      <span id="busuanzi_container_page_pv" style="display: none;">
+        <span id="busuanzi_value_page_pv"></span> 次阅读
+      </span>
+    
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/blog/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/" 
+          class="post-meta-link">
+          专业学习
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+            class="post-meta-link">
+            大模型
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/blog/tags/AI-Agents/" 
+            class="post-meta-link">
+            AI Agents
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>这几年对 Coding 的期待变得有点快：开始是补全一行，后来是写一段函数，现在是把整个仓库交给 Agent，让它自己找问题、改代码、跑测试。三者需要的能力有重叠，但不能拿一个函数生成分数，就推断它能独立维护软件项目。这讲按模型、工具和交互三条线来学。对我来说，最值得多想一下的是代码数据怎样组织、修改格式怎样影响模型，以及「测对了」到底包含多少工作。</p>
+<span id="more"></span>
+<!--more-->
+<h2 id="61-代码能力的三个层次"><a class="markdownIt-Anchor" href="#61-代码能力的三个层次"></a> 6.1 代码能力的三个层次</h2>
+<p>从 prompt 写代码，需要理解编程语言、API 与惯用法；编辑代码，需要同时考虑修改位置前后文；从 specification 得到正确行为，则还要推理约束和边界。放到仓库中，还要处理文件关系、依赖与已有工程惯例。</p>
+<p>训练路径也因此不只是喂一堆 <code>.py</code>：预训练学语言和代码结构，mid-training 调整代码 / 文本 / 数学配比并延长上下文，后训练再用示范或执行奖励改善解题与交互。Prompt、Tools、LLM 三者最终一起决定 Coding Agent 的表现。</p>
+<h2 id="62-预训练代码也有数据工程"><a class="markdownIt-Anchor" href="#62-预训练代码也有数据工程"></a> 6.2 预训练：代码也有数据工程</h2>
+<p>混合语料可以包括网页、技术文档、数学、源代码、issue、commit 和 notebook。语言建模目标仍是：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>L</mi><mrow><mi mathvariant="normal">L</mi><mi mathvariant="normal">M</mi></mrow></msub><mo>=</mo><mo>−</mo><msub><mi mathvariant="double-struck">E</mi><mrow><mi>x</mi><mo>∼</mo><msub><mi>D</mi><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">x</mi></mrow></msub></mrow></msub><munder><mo>∑</mo><mi>t</mi></munder><mi>log</mi><mo>⁡</mo><msub><mi>p</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo>∣</mo><msub><mi>x</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">L_{\rm LM}=-\mathbb E_{x\sim D_{\rm mix}}\sum_t\log p_\theta(x_t\mid x_{&lt;t}).
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">L</span><span class="mord mathrm mtight">M</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.3000100000000003em;vertical-align:-1.250005em;"></span><span class="mord">−</span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mrel mtight">∼</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3340428571428572em;"><span style="top:-2.357em;margin-left:-0.02778em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">m</span><span class="mord mathrm mtight">i</span><span class="mord mathrm mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.050005em;"><span style="top:-1.8999949999999999em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span><span style="top:-3.0500049999999996em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.250005em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.17737em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord">.</span></span></span></span></span></p>
+<p>难的是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">x</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\rm mix}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31750199999999995em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">m</span><span class="mord mathrm mtight">i</span><span class="mord mathrm mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 长什么样。代码要保留缩进、文件边界、API 与文本之间的对应；清洗时过滤乱码、重复 dump 和低价值生成内容，去掉 fork、vendored libraries、近重复文件及复制题解，并记录来源、许可证、时间与敏感信息处理。</p>
+<p>数据划分也不能只随机拆文件：同一仓库的相近实现、同一题目的复制解法，可能同时落进训练和测试。按 repository 或 problem family 隔离、对评估题去污染，才能比较接近我们想测的泛化能力。</p>
+<p>Tokenizer 也不是把自然语言那套处理原样套过来。Byte-level BPE 可以同时处理代码与文字，但标识符可能跨多个 token，空格、tab、换行又带有语法与字符串含义。常见连续空白可以合并为 token，提高长度效率；不能直接把缩进清掉，说自己做了「文本归一化」。</p>
+<p>StarCoderBase 是一个有代表性的例子：15.5B 参数、1T tokens、80 多种语言，数据不只源代码，还包括 issues、commits 和 notebooks。训练中大多数语言的代码表现随 token 增加而改善；同时仍要看各领域 held-out loss 与执行任务，不能只用一个总 loss 判断所有代码能力。</p>
+<h2 id="63-mid-training更多代码也别把其他能力练没了"><a class="markdownIt-Anchor" href="#63-mid-training更多代码也别把其他能力练没了"></a> 6.3 Mid-training：更多代码，也别把其他能力练没了</h2>
+<p>Code Llama 从 Llama 2 继续进行大规模代码训练；这类阶段仍可以采用语言建模目标，只是语料与长度分布改变。Qwen2.5-Coder 的一个数据混合对比很能说明问题：</p>
+<table>
+<thead>
+<tr>
+<th>Code / Text / Math</th>
+<th>Common code</th>
+<th>MATH</th>
+<th>MMLU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 / 0 / 0</td>
+<td>49.8</td>
+<td>10.3</td>
+<td>23.8</td>
+</tr>
+<tr>
+<td>70 / 20 / 10</td>
+<td>48.3</td>
+<td>33.2</td>
+<td>62.9</td>
+</tr>
+</tbody>
+</table>
+<p>代码指标略有变化，数学与通用能力却差很多。这个比例当然不是万能配方，但它说明理解需求、推理与其他知识也会影响代码任务。专门化训练要检查收益，也要看回归。</p>
+<p>长代码上下文更要有组织。比如 <code>types.py</code> 定义某个值可以是 <code>None</code>，<code>worker.py</code> 传递这个结构，<code>caller.py</code> 才需要补空值判断。把相关文件、路径和依赖放成连贯序列，比随机拼成长文本更有意义。可以沿依赖图筛选相关文件，也要控制仓库级上下文带来的成本。</p>
+<p>长度上可以先从 8K 到 32K，再通过合适的位置扩展到更长；但验证应覆盖跨文件补全、infilling 与短上下文能力，不能只检查「程序没有因为输入太长报错」。</p>
+<h2 id="64-infilling把填空变成自回归"><a class="markdownIt-Anchor" href="#64-infilling把填空变成自回归"></a> 6.4 Infilling：把填空变成自回归</h2>
+<p>这个构造我挺喜欢。常规续写只看前缀，但代码编辑经常需要看后缀。例如：</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">is_positive</span>(<span class="hljs-params">x: <span class="hljs-built_in">int</span></span>) -&gt; ____:<br>    <span class="hljs-keyword">return</span> x &gt; <span class="hljs-number">0</span><br></code></pre>
+<p>函数体在缺口右侧，已经给出了返回类型 <code>bool</code> 的证据。InCoder 把 <code>prefix + span + suffix</code> 改排成：</p>
+<pre class="highlight"><code class="hljs text">prefix [M0] suffix [M0] span [END]<br></code></pre>
+<p>推理时给出前缀、后缀与缺口标记，模型继续生成 span。多缺口可以使用不同 sentinel 对应位置。<strong>模型仍在自回归，只是待预测内容被排到了已知上下文后面。</strong> 类似地，类型推断、补注释、重命名都可以写成填空。</p>
+<p><img src="infilling.png" alt="通过重排序列利用缺口两侧内容" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="infilling.png" class="lozad post-image"></p>
+<p>在 HumanEval 衍生的 infilling 实验中，单行 / 多行填空的测试通过比例分别为：普通左到右单候选 48.2% / 24.9%，生成 10 个候选再用后缀重排为 54.9% / 28.2%，直接利用后缀生成的 causal-masked infilling 为 69.0% / 38.6%。生成时用上右侧信息，和生成完再筛选，差别很大。</p>
+<p>相同 52B-token 预算下，causal masking 的 HumanEval / MBPP pass@1 为 8.0% / 10.9%，对应左到右目标为 6.0% / 8.9%。至少在这组消融里，加入填空目标没有以牺牲普通补全为代价。</p>
+<p>代码数据还有更多结构可用：OctoPack 利用 commit 前后和消息学习修改；DrRepair 用错误代码与诊断学习修复；CodeRL 用执行测试结果提供奖励；CodeExecutor 学程序执行过的语句与状态。源代码、修改历史和运行反馈，分别提供不同监督。</p>
+<h2 id="65-如何评估生成代码"><a class="markdownIt-Anchor" href="#65-如何评估生成代码"></a> 6.5 如何评估生成代码？</h2>
+<h3 id="文本与结构指标"><a class="markdownIt-Anchor" href="#文本与结构指标"></a> 文本与结构指标</h3>
+<p>Exact Match 检查是否与参考完全相同，BLEU-4 比较 n-gram 重合。问题很直观：<code>x &gt; 0</code> 和 <code>x &gt;= 0</code> 只差一个符号，在零上却不同；<code>not (x &lt;= 0)</code> 文本变了，对整数却等价。</p>
+<p>CodeBLEU 在 n-gram 之外加入加权 n-gram、AST 语法结构与 data-flow 匹配；CodeBERTScore 则把 prompt 与代码编码成上下文向量，按 token 间最佳相似匹配构造 precision、recall 和 F-score。它们比裸文本重合更贴近代码结构与表示，但仍属于代理指标。</p>
+<p><img src="code-evaluation.png" alt="CodeBLEU 对文本、语法树和数据流的比较" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="code-evaluation.png" class="lozad post-image"></p>
+<h3 id="执行行为"><a class="markdownIt-Anchor" href="#执行行为"></a> 执行行为</h3>
+<p>运行代码可以接受不同的正确实现，也能直接发现边界语义错误。HumanEval 是 164 个 Python 函数补全任务，用隐藏单测验证；CodeContests 则更接近算法竞赛，从完整题面生成可编译执行的程序。</p>
+<p>但执行测试有三个前提：测试覆盖足够、依赖与环境准备正确、执行隔离且有时间和内存限制。有限测试通过只是覆盖范围内的证据，不是一般正确性的证明。设计可靠测试本身就很难，这个问题不能因为答案是程序就突然消失。</p>
+<h3 id="多次采样与非功能性要求"><a class="markdownIt-Anchor" href="#多次采样与非功能性要求"></a> 多次采样与非功能性要求</h3>
+<p><code>pass@k</code> 是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> 次采样中至少一个候选通过全部测试的概率。若生成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span> 个样本，其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">c</span></span></span></span> 个正确，常用估计式为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mrow><mi mathvariant="normal">pass@</mi><mo>⁡</mo><mi>k</mi></mrow><mo stretchy="true">^</mo></mover><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mrow><mi>n</mi><mo>−</mo><mi>c</mi></mrow><mi>k</mi></mfrac><mo fence="true">)</mo></mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>n</mi><mi>k</mi></mfrac><mo fence="true">)</mo></mrow></mfrac><mo separator="true">,</mo><mspace width="2em"/><mi>n</mi><mo>≥</mo><mi>k</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\widehat{\operatorname{pass@}k}=1-\frac{\binom{n-c}{k}}{\binom nk},\qquad n\ge k.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.18888em;vertical-align:-0.19444em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.99444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">p</span><span class="mord mathrm">a</span><span class="mord mathrm">s</span><span class="mord mathrm">s</span><span class="mord mathrm">@</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span><span class="svg-align" style="top:-3.69444em;"><span class="pstrut" style="height:3em;"></span><span style="height:0.3em;"><svg width='100%' height='0.3em' viewBox='0 0 2364 300' preserveAspectRatio='none'><path d='M1181 0h2l1171 176c6 0 10 5 10 11l-2 23c-1 6-5 10
+-11 10h-1L1182 67 15 220h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.6823509999999997em;vertical-align:-1.09001em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5923409999999998em;"><span style="top:-2.2600000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size1">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7453919999999999em;"><span style="top:-2.3550000000000004em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.144em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size1">)</span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7400100000000003em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size1">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.852331em;"><span style="top:-2.3550000000000004em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span style="top:-3.144em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mbin mtight">−</span><span class="mord mathdefault mtight">c</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size1">)</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.09001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:2em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord">.</span></span></span></span></span></p>
+<p>它衡量候选覆盖能力，未解决真实系统怎样选出那个正确答案。候选排序器、测试反馈与额外执行成本，也都应该算进方案。</p>
+<p>「代码更快」又是另一类要求。相同输出之外，需要在可比较条件下测 runtime、memory 或 latency；可维护性和安全性可能结合静态检查与参考修改。NoFunEval 的 397 个编辑任务就涉及 speedup、DiffBLEU、CodeQL 等不同指标，但参考修改相似度也不能代替真实性能。评估方式要对应需求。</p>
+<h2 id="66-用执行结果训练代码推理"><a class="markdownIt-Anchor" href="#66-用执行结果训练代码推理"></a> 6.6 用执行结果训练代码推理</h2>
+<p>流程可以写成：采样推理与最终代码 → 运行测试 → 得到 reward → 更新模型 → 再采样。像 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>+</mo><mo>⋯</mo><mo>+</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1+\cdots+n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>、<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>≤</mo><mn>1</mn><msup><mn>0</mn><mn>12</mn></msup></mrow><annotation encoding="application/x-tex">n\le10^{12}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span> 这样的题，循环求和可能数学上没错，却根本跑不完；使用 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">n(n+1)/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/</span><span class="mord">2</span></span></span></span> 才兼顾效率，误写成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">n(n-1)/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/</span><span class="mord">2</span></span></span></span> 又会在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 立即失败。</p>
+<p>执行奖励因此能提供很明确的区分，但取决于测试是否覆盖大输入与边界。DeepCoder 的训练曲线还提醒我区分 <strong>训练时增加 response 长度上限</strong> 与 <strong>训练结束后只增加推理预算</strong>：16K 到 32K 的训练调整，和用 64K evaluation 得到更高成绩，是不同来源的收益。把两者都叫「RL 提升」会漏掉 inference scaling 的贡献。</p>
+<h2 id="67-agentic-codinglocalizeeditverify"><a class="markdownIt-Anchor" href="#67-agentic-codinglocalizeeditverify"></a> 6.7 Agentic Coding：Localize—Edit—Verify</h2>
+<p>单步代码任务给出相对自包含的 prompt；Agentic coding 接受 issue 与现有文件，要自己搜索、编辑、运行测试，交付 patch 和证据。拿配置的例子说：</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">return</span> config.get(<span class="hljs-string">&quot;retries&quot;</span>) <span class="hljs-keyword">or</span> <span class="hljs-number">3</span><br></code></pre>
+<p>用户设置 <code>retries=0</code>，结果却变成 <code>3</code>。先搜索 <code>retries</code>，沿配置输入、默认值逻辑与调用方追踪，复现零在哪一步被覆盖，再判断原因是 Python 把零当作 falsy。修改可以是：</p>
+<pre class="highlight"><code class="hljs python">value = config.get(<span class="hljs-string">&quot;retries&quot;</span>)<br><span class="hljs-keyword">return</span> <span class="hljs-number">3</span> <span class="hljs-keyword">if</span> value <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">else</span> value<br></code></pre>
+<p>这里假设缺失与 <code>None</code> 都使用默认值；如果两者在接口中有不同语义，还需单独区分。验证至少包括缺失、<code>None</code>、零、正数，以及调用方回归。若零仍然消失，继续定位别处的转换；若默认值变错，再修规则。<strong>测试反馈应改变下一步假设。</strong></p>
+<p><img src="repair-loop.png" alt="在定位、编辑与验证之间迭代" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="repair-loop.png" class="lozad post-image"></p>
+<p>定位也不能只靠关键词命中。一个 flag、loader 与 retry loop 都可能出现同一个词；LocAgent 一类方法利用代码依赖图找到相关邻域，再通过执行验证。长上下文可以帮助，但没必要每次把整个 repo 倒进去。</p>
+<p>Agentless 则提供固定 workflow 的对照：从仓库结构逐级定位文件、类 / 函数与编辑位置，生成候选补丁和复现测试，过滤与排序，最后提交。它说明一些任务可以用明确流程组织，不必把所有环节都开放成自由 Agent loop。</p>
+<p><img src="agentless.png" alt="Agentless 的分层定位、修复与补丁验证流程" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="agentless.png" class="lozad post-image"></p>
+<h2 id="68-编辑接口会影响模型表现"><a class="markdownIt-Anchor" href="#68-编辑接口会影响模型表现"></a> 6.8 编辑接口会影响模型表现</h2>
+<p>只给 Shell 也能工作：<code>rg</code> / <code>cat</code> 读和搜，<code>sed</code> / Python / patch 改文件，测试和构建命令做验证，返回 stdout、exit status 与 timeout。通用性很强，但 shell quoting、替换范围与文件操作也都需要模型正确处理。</p>
+<p>专用编辑工具可以减少这些负担，常见形式包括：</p>
+<table>
+<thead>
+<tr>
+<th>形式</th>
+<th>好处</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>整文件输出</td>
+<td>简单，应用直接</td>
+<td>重复未修改代码，长文件成本高</td>
+</tr>
+<tr>
+<td>Search / Replace</td>
+<td>紧凑，只发旧块与新块</td>
+<td>旧块必须能无歧义匹配</td>
+</tr>
+<tr>
+<td>Unified Diff</td>
+<td>标准，提供上下文</td>
+<td>行号、hunk 长度和格式可能出错</td>
+</tr>
+<tr>
+<td>文件操作型 patch</td>
+<td>显式添加 / 更新 / 删除及上下文</td>
+<td>模型仍需熟悉对应协议</td>
+</tr>
+</tbody>
+</table>
+<p><img src="patch-format.png" alt="编辑格式变化对同一类重构任务的影响" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="patch-format.png" class="lozad post-image"></p>
+<p>Aider 的 89 个 Python 重构任务中，同一 GPT-4 Turbo 配合 Search / Replace 得到 20%，简化 unified diff 得到 61%。这个例子很能说明工具格式不是无关紧要的包装。模型训练时更熟悉哪种编辑表示，换 Harness 后会不会不适应，值得实际测；不能只把所有 parser 失败都归成模型不会写代码。</p>
+<h2 id="69-从可运行任务到-agent-训练"><a class="markdownIt-Anchor" href="#69-从可运行任务到-agent-训练"></a> 6.9 从可运行任务到 Agent 训练</h2>
+<p>SWE-bench 给 issue 与修改前仓库，模型产生 patch，评估器恢复环境、应用修改、运行测试。<strong>Fail-to-Pass</strong> 检查所需修复，<strong>Pass-to-Pass</strong> 检查原有行为。只修好新测试却弄坏旧功能，不能算完整解决。</p>
+<p>训练前要先把环境准备成 runnable task：文件版本、依赖、运行命令、需求和复现条件，以及修改前失败、正确修复后恢复的检查。SWE-Gym 等环境建设很关键；环境不稳定时收集来的「失败轨迹」，可能根本不是模型做错。</p>
+<p>多步 RL 继续优化 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mo><mi>max</mi><mo>⁡</mo></mo><mi>θ</mi></msub><msub><mi mathvariant="double-struck">E</mi><mrow><mi>τ</mi><mo>∼</mo><msub><mi>π</mi><mi>θ</mi></msub></mrow></msub><mo stretchy="false">[</mo><mi>R</mi><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\max_\theta\mathbb E_{\tau\sim\pi_\theta}[R(\tau)]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.00586em;vertical-align:-0.25586em;"></span><span class="mop"><span class="mop">max</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139199999999997em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.1132em;">τ</span><span class="mrel mtight">∼</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.25586em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.1132em;">τ</span><span class="mclose">)</span><span class="mclose">]</span></span></span></span>。模型动作包括搜索、编辑、测试和结束，工具返回是后续条件；最终修复奖励稀疏，不能直接指出前面哪一次定位或修改造成了失败，这就是 credit assignment 问题。R2E-Gym 等路线在可执行环境里收集和训练这类交互。</p>
+<p>数据也可以合成。SWE-smith 从测试通过的基线出发，修改实现而不改测试，保留造成新失败的变体，再构造修复任务。比如把 <code>value is None</code> 改成 <code>not value</code>，让原本通过的零值用例失败；恢复后又通过。这至少建立了一个可执行的错误信号，但合成 bug 的分布是否像真实 issue，还需要另外评估。</p>
+<p>训练规模与推理规模都能带来变化：增加轨迹训练学生，或者多采样 rollout 并由 learned verifier 选择，都可能提高结果。后者既依赖候选覆盖，也依赖排序器，不能只报采样数。</p>
+<p>跨语言任务更要先看项目配置：Python 的 <code>pyproject.toml</code>、TypeScript 的 <code>package.json</code>、Rust 的 <code>Cargo.toml</code>，分别决定怎样安装、构建与测试。默认所有 repo 都能 <code>pytest</code>，通常不是一个好主意。</p>
+<h2 id="610-multi-harness-training"><a class="markdownIt-Anchor" href="#610-multi-harness-training"></a> 6.10 Multi-harness Training</h2>
+<p>Harness 包括 prompts、tools、agent loop 和 context management。相同模型在不同 Harness 中会面对不同工具名、编辑格式和观察。多 Harness 收集训练数据，可以让模型少依赖某一种系统惯例；例如共享模型 API，接入 OpenHands、OpenCode 等原生循环，按相同任务标准检查 patch。</p>
+<p><img src="multi-harness.png" alt="共享模型在不同 Harness 中收集轨迹与奖励" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="multi-harness.png" class="lozad post-image"></p>
+<p>这不是只把数据文件混起来就够了。消息格式、工具语义和最终渲染仍需对齐，下一讲 SFT 会继续讲这个问题。</p>
+<h2 id="611-前端代码通过不代表界面能用"><a class="markdownIt-Anchor" href="#611-前端代码通过不代表界面能用"></a> 6.11 前端：代码通过不代表界面能用</h2>
+<p>前端也遵循定位—编辑—验证，但验证多了浏览器行为与视觉状态。比如联系人姓名只检查 <code>value.length</code>，一串空格也能保存；改为 <code>value.trim().length</code> 后，应确认空白输入显示错误且不新增记录，正常姓名仍能保存，错误提示也真的可见、可读。</p>
+<p><img src="frontend-verification.png" alt="前端修复的行为检查与视觉检查" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="frontend-verification.png" class="lozad post-image"></p>
+<p>Browser Agent 可以观察界面再决定下一步，适合自适应探索；Playwright 之类脚本则把输入、点击、断言和截图写成可重复流程。截图可以辅助人工 / 模型视觉检查，也可以与认可的基线比较，但不是每个带图片的 issue 都该按图片相似度打分。SWE-bench Multimodal 也仍然通过任务测试评价补丁。</p>
+<p>更广的软件开发还包括本地化、应用与库开发、维护、测试和 CI；代码行为预测模型也可能帮助执行与规划。学到这里我反而觉得，「能写代码」这个标签太宽了。真正可信的 Coding Agent，得在仓库、工具和环境中把修改的依据与结果一起交代清楚。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/blog/about">
+            天泽龟
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-06/">
+            https://tzturtle.moe/blog/2026/10/20/cmu-ai-agents-lecture-06/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/blog/2026/10/20/cmu-ai-agents-lecture-07/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">CMU AI Agents 学习笔记【七】：Supervised Fine-Tuning for Agents </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/blog/2026/10/20/cmu-ai-agents-lecture-05/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">CMU AI Agents 学习笔记【五】：Planning and Task Decomposition </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      var valineOptions = {
+        el: '#vcomments',
+        appId: '4CiiPBXpbjDnPvIIwfuEPEY6-gzGzoHsz',
+        appKey: '3AQY35K3Laq9fLvTG2uOHDUT',
+        placeholder: '留下你的评论...',
+        path: window.location.pathname.replace(/^\/blog(?=\/)/, ''),
+        avatar: 'identicon',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'true',
+        requiredFields: [],
+      };
+      new Valine(valineOptions);
+      
+    };
+  </script>
+
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#61-%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%89%E4%B8%AA%E5%B1%82%E6%AC%A1"><span class="toc-text"> 6.1 代码能力的三个层次</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#62-%E9%A2%84%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E4%B9%9F%E6%9C%89%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B"><span class="toc-text"> 6.2 预训练：代码也有数据工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#63-mid-training%E6%9B%B4%E5%A4%9A%E4%BB%A3%E7%A0%81%E4%B9%9F%E5%88%AB%E6%8A%8A%E5%85%B6%E4%BB%96%E8%83%BD%E5%8A%9B%E7%BB%83%E6%B2%A1%E4%BA%86"><span class="toc-text"> 6.3 Mid-training：更多代码，也别把其他能力练没了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64-infilling%E6%8A%8A%E5%A1%AB%E7%A9%BA%E5%8F%98%E6%88%90%E8%87%AA%E5%9B%9E%E5%BD%92"><span class="toc-text"> 6.4 Infilling：把填空变成自回归</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#65-%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6.5 如何评估生成代码？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E4%B8%8E%E7%BB%93%E6%9E%84%E6%8C%87%E6%A0%87"><span class="toc-text"> 文本与结构指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%A1%8C%E4%B8%BA"><span class="toc-text"> 执行行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%AC%A1%E9%87%87%E6%A0%B7%E4%B8%8E%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E8%A6%81%E6%B1%82"><span class="toc-text"> 多次采样与非功能性要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#66-%E7%94%A8%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E6%8E%A8%E7%90%86"><span class="toc-text"> 6.6 用执行结果训练代码推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#67-agentic-codinglocalizeeditverify"><span class="toc-text"> 6.7 Agentic Coding：Localize—Edit—Verify</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#68-%E7%BC%96%E8%BE%91%E6%8E%A5%E5%8F%A3%E4%BC%9A%E5%BD%B1%E5%93%8D%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0"><span class="toc-text"> 6.8 编辑接口会影响模型表现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#69-%E4%BB%8E%E5%8F%AF%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1%E5%88%B0-agent-%E8%AE%AD%E7%BB%83"><span class="toc-text"> 6.9 从可运行任务到 Agent 训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#610-multi-harness-training"><span class="toc-text"> 6.10 Multi-harness Training</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#611-%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E9%80%9A%E8%BF%87%E4%B8%8D%E4%BB%A3%E8%A1%A8%E7%95%8C%E9%9D%A2%E8%83%BD%E7%94%A8"><span class="toc-text"> 6.11 前端：代码通过不代表界面能用</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://i.loli.net/2021/07/16/yKghkEQWcY34rOU.jpg" 
+    class="author-img" 
+    alt="author avatar">
+
+<p class="author-name">天泽龟</p>
+<p class="author-description">天泽龟的龟是龟裂的龟哦。</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/blog/archives">
+    <span>70</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/blog/categories">
+    <span>6</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/blog/tags">
+    <span>17</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://space.bilibili.com/12645985">
+          <i class="iconfont icon-bilibili society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/TURLEing">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://turleing.github.io/about/">
+          <i class="iconfont icon-mail society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#61-%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%89%E4%B8%AA%E5%B1%82%E6%AC%A1"><span class="toc-text"> 6.1 代码能力的三个层次</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#62-%E9%A2%84%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E4%B9%9F%E6%9C%89%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B"><span class="toc-text"> 6.2 预训练：代码也有数据工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#63-mid-training%E6%9B%B4%E5%A4%9A%E4%BB%A3%E7%A0%81%E4%B9%9F%E5%88%AB%E6%8A%8A%E5%85%B6%E4%BB%96%E8%83%BD%E5%8A%9B%E7%BB%83%E6%B2%A1%E4%BA%86"><span class="toc-text"> 6.3 Mid-training：更多代码，也别把其他能力练没了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64-infilling%E6%8A%8A%E5%A1%AB%E7%A9%BA%E5%8F%98%E6%88%90%E8%87%AA%E5%9B%9E%E5%BD%92"><span class="toc-text"> 6.4 Infilling：把填空变成自回归</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#65-%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6.5 如何评估生成代码？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E4%B8%8E%E7%BB%93%E6%9E%84%E6%8C%87%E6%A0%87"><span class="toc-text"> 文本与结构指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%A1%8C%E4%B8%BA"><span class="toc-text"> 执行行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%AC%A1%E9%87%87%E6%A0%B7%E4%B8%8E%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E8%A6%81%E6%B1%82"><span class="toc-text"> 多次采样与非功能性要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#66-%E7%94%A8%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E6%8E%A8%E7%90%86"><span class="toc-text"> 6.6 用执行结果训练代码推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#67-agentic-codinglocalizeeditverify"><span class="toc-text"> 6.7 Agentic Coding：Localize—Edit—Verify</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#68-%E7%BC%96%E8%BE%91%E6%8E%A5%E5%8F%A3%E4%BC%9A%E5%BD%B1%E5%93%8D%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0"><span class="toc-text"> 6.8 编辑接口会影响模型表现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#69-%E4%BB%8E%E5%8F%AF%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1%E5%88%B0-agent-%E8%AE%AD%E7%BB%83"><span class="toc-text"> 6.9 从可运行任务到 Agent 训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#610-multi-harness-training"><span class="toc-text"> 6.10 Multi-harness Training</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#611-%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E9%80%9A%E8%BF%87%E4%B8%8D%E4%BB%A3%E8%A1%A8%E7%95%8C%E9%9D%A2%E8%83%BD%E7%94%A8"><span class="toc-text"> 6.11 前端：代码通过不代表界面能用</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/blog/categories/%E7%94%9F%E6%B4%BB%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          生活分享
+          <span class="categories-list-item-badge">11</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">
+        <div class="categories-list-item">
+          算法竞赛
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E4%B8%93%E4%B8%9A%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          专业学习
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%A7%91%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+        <div class="categories-list-item">
+          科研学习
+          <span class="categories-list-item-badge">8</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E7%A4%BE%E5%9B%A2%E6%8E%A8%E9%80%81/">
+        <div class="categories-list-item">
+          社团推送
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/blog/categories/%E6%97%A5%E5%B8%B8%E5%88%86%E4%BA%AB/">
+        <div class="categories-list-item">
+          日常分享
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/blog/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
+        title="计算机组成原理">
+        <div class="tags-list-item">计算机组成原理</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" 
+        title="大模型">
+        <div class="tags-list-item">大模型</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
+        title="博弈论">
+        <div class="tags-list-item">博弈论</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" 
+        title="强化学习">
+        <div class="tags-list-item">强化学习</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/AI-Agents/" 
+        title="AI Agents">
+        <div class="tags-list-item">AI Agents</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+        title="情感计算">
+        <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" 
+        title="操作系统">
+        <div class="tags-list-item">操作系统</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%80%9D%E8%80%83/" 
+        title="思考">
+        <div class="tags-list-item">思考</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#61-%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%89%E4%B8%AA%E5%B1%82%E6%AC%A1"><span class="toc-text"> 6.1 代码能力的三个层次</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#62-%E9%A2%84%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E4%B9%9F%E6%9C%89%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B"><span class="toc-text"> 6.2 预训练：代码也有数据工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#63-mid-training%E6%9B%B4%E5%A4%9A%E4%BB%A3%E7%A0%81%E4%B9%9F%E5%88%AB%E6%8A%8A%E5%85%B6%E4%BB%96%E8%83%BD%E5%8A%9B%E7%BB%83%E6%B2%A1%E4%BA%86"><span class="toc-text"> 6.3 Mid-training：更多代码，也别把其他能力练没了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64-infilling%E6%8A%8A%E5%A1%AB%E7%A9%BA%E5%8F%98%E6%88%90%E8%87%AA%E5%9B%9E%E5%BD%92"><span class="toc-text"> 6.4 Infilling：把填空变成自回归</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#65-%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6.5 如何评估生成代码？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E4%B8%8E%E7%BB%93%E6%9E%84%E6%8C%87%E6%A0%87"><span class="toc-text"> 文本与结构指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%A1%8C%E4%B8%BA"><span class="toc-text"> 执行行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%AC%A1%E9%87%87%E6%A0%B7%E4%B8%8E%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E8%A6%81%E6%B1%82"><span class="toc-text"> 多次采样与非功能性要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#66-%E7%94%A8%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E8%AE%AD%E7%BB%83%E4%BB%A3%E7%A0%81%E6%8E%A8%E7%90%86"><span class="toc-text"> 6.6 用执行结果训练代码推理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#67-agentic-codinglocalizeeditverify"><span class="toc-text"> 6.7 Agentic Coding：Localize—Edit—Verify</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#68-%E7%BC%96%E8%BE%91%E6%8E%A5%E5%8F%A3%E4%BC%9A%E5%BD%B1%E5%93%8D%E6%A8%A1%E5%9E%8B%E8%A1%A8%E7%8E%B0"><span class="toc-text"> 6.8 编辑接口会影响模型表现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#69-%E4%BB%8E%E5%8F%AF%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1%E5%88%B0-agent-%E8%AE%AD%E7%BB%83"><span class="toc-text"> 6.9 从可运行任务到 Agent 训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#610-multi-harness-training"><span class="toc-text"> 6.10 Multi-harness Training</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#611-%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E9%80%9A%E8%BF%87%E4%B8%8D%E4%BB%A3%E8%A1%A8%E7%95%8C%E9%9D%A2%E8%83%BD%E7%94%A8"><span class="toc-text"> 6.11 前端：代码通过不代表界面能用</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-07/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【七】：Supervised Fine-Tuning for Agents</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-06/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【六】：从 Code Model 到 Coding Agent</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-05/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【五】：Planning and Task Decomposition</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-20</div>
+        <a href="/blog/2026/10/20/cmu-ai-agents-lecture-04/"><div class="recent-posts-item-content">CMU AI Agents 学习笔记【四】：Memory and Skills，让 Agent 少从头再来</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020 -
+          
+          2026
+        </span>
+        &nbsp;
+        <a 
+          href="/blog/" 
+          class="footer-link">
+          天泽龟的龟壳屋
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer> 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton" 
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+      
+
+  
+  
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+
+  
+ 
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/blog/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/blog/js/main.js"></script>
+    
+      <script src="/blog/js/legacy-page-views.js"></script>
+      <script> 
+        loadScript('/blog/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/blog/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
+</html>
