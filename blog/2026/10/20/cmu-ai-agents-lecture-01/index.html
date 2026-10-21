@@ -332,7 +332,7 @@
     
     
       <span class="dot"></span>
-      <span>3k 字</span>
+      <span>2.8k 字</span>
     
   </div>
   
@@ -400,21 +400,20 @@
 </table>
 <p>这里需要区分 <strong>环境的真实状态</strong> 与 <strong>模型看到的观察</strong>。仓库里确实有什么文件，是环境状态；模型读了其中三个文件后得到的内容，才是它的 observation。它并没有天然获得整个仓库的上帝视角。Computer Use 更明显：屏幕截图只是当前时刻的一部分信息，页面背后的状态还得靠操作去发现。</p>
 <p>Reward 也不意味着每个 Agent 在线工作时都在做 RL。测试结果可以只作为下一步推理的反馈；只有拿它构造训练目标并更新参数时，才进入训练的问题。否则正常用一下 Agent 就要给模型反传一遍，也太热闹了。</p>
-<p>能力与可靠性也得分开看。一边有 16 个 Agent 协作两周、构建约十万行 C 编译器并用于编译 Linux 内核的展示，另一边也有邮件清理任务违反用户确认要求、连续把邮件移入垃圾箱的失败案例。前者说明复杂任务的能力，后者暴露授权和停止机制的问题。它们可以同时发生在 Agent 这个类别里，不能拿一条成功演示抵消另一类故障。</p>
+<p>能力与可靠性也得分开看。一边有 16 个 Agent 协作两周、构建约十万行 C 编译器并用于编译 Linux 内核的展示，另一边也有邮件清理任务违反用户确认要求、连续把邮件移入垃圾箱的失败案例。前者说明复杂任务的能力，后者暴露授权和停止机制的问题。<s>所以说Agent是把双刃剑。</s></p>
 <h2 id="12-语言模型如何产生一个动作"><a class="markdownIt-Anchor" href="#12-语言模型如何产生一个动作"></a> 1.2 语言模型如何产生一个动作？</h2>
 <p>语言模型的基本工作仍然是 next-token prediction：根据已有前缀预测下一个 token，再把生成结果接回前缀。CoT 也是一样，先生成一些中间推理，让后续预测可以读到这些内容。</p>
 <p>工具调用没有改变这一点。我们先给模型一个工具定义，例如：</p>
 <pre class="highlight"><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;read_file&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Read a UTF-8 file.&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;parameters&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;path&quot;</span><span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre>
-<p>名称说明调用对象，description 帮助判断什么时候用，JSON Schema 约定参数结构。API 里的这些对象会经由 <code>apply_chat_template</code> 等步骤，被渲染成模型实际接受的序列。模型看到的最终还是 token，而不是 Python 进程里那个活生生的函数。</p>
-<p>接下来它可能生成：</p>
+<p>名称说明调用对象，description 帮助判断什么时候用，JSON Schema 约定参数结构。API 里的这些对象会经由 <code>apply_chat_template</code> 等步骤，被渲染成模型实际接受的序列。模型看到的最终还是 token，而不是 Python 进程里那个活生生的函数。接下来它可能生成：</p>
 <pre class="highlight"><code class="hljs text">&lt;tool_call&gt;<br>&#123;&quot;name&quot;:&quot;read_file&quot;,&quot;arguments&quot;:&#123;&quot;path&quot;:&quot;test.py&quot;&#125;&#125;<br>&lt;/tool_call&gt;<br></code></pre>
-<p>外部程序解析这段输出，找到对应函数，校验参数并执行，最后再把文件内容包装成工具消息送回来。工具结果应与调用 ID 对应；下一轮模型读到 observation，才能继续解释文件内容，或者处理「文件不存在」这样的错误。</p>
-<p><strong>因此，工具调用在模型内部是文本生成，在系统外部才变成执行。</strong> 模型说自己读过文件，和文件确实被读取，是两回事。这也是为什么看 Agent 的最终回答还不够，得看中间到底调用了什么、拿到了什么结果。</p>
+<p>外部程序解析这段输出，找到对应函数，校验参数并执行，最后再把文件内容包装成工具消息送回来。工具结果应与调用 ID 对应；下一轮模型读到 observation，才继续解释文件内容，或处理「文件不存在」这样的错误。</p>
+<p><strong>因此，工具调用在模型内部是文本生成，在系统外部才变成执行。</strong> 模型说自己读过文件，和文件确实被读取，是两回事。这也是为什么在实际 debug 的时候，光看 Agent 的最终回答还不够，还得看完整轨迹，check 中间他的工具调用有没有问题，以及实际拿到了什么结果。</p>
 <h2 id="13-harness以及那个并不复杂的循环"><a class="markdownIt-Anchor" href="#13-harness以及那个并不复杂的循环"></a> 1.3 Harness，以及那个并不复杂的循环</h2>
-<p>承接模型与外部执行的运行系统，通常叫 <strong>Harness</strong>。把模型理解为 engine 的话，Harness 就是让这个 engine 能在特定环境里工作的一套装置：消息管理、工具注册、执行分发、权限控制、错误恢复、终止条件等，都要有人处理。</p>
+<p><strong>承接模型与外部执行的运行系统叫 Harness</strong>。把模型理解为 engine 的话，Harness 就是让这个 engine 能在特定环境里工作的一套装置：消息管理、工具注册、执行分发、权限控制、错误恢复、终止条件等，都要有人处理。</p>
 <p>最小的 Agent Loop 反而很好理解：</p>
 <pre class="highlight"><code class="hljs python">messages = [system_message, user_task]<br><br><span class="hljs-keyword">for</span> step <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_steps):<br>    reply = model.generate(messages, tools=tool_definitions)<br>    messages.append(reply)<br><br>    <span class="hljs-keyword">if</span> reply.is_final:<br>        <span class="hljs-keyword">break</span><br><br>    <span class="hljs-keyword">for</span> call <span class="hljs-keyword">in</span> reply.tool_calls:<br>        <span class="hljs-keyword">try</span>:<br>            result = execute_checked(call)<br>        <span class="hljs-keyword">except</span> ToolError <span class="hljs-keyword">as</span> error:<br>            result = &#123;<span class="hljs-string">&quot;error&quot;</span>: <span class="hljs-built_in">str</span>(error)&#125;<br>        messages.append(tool_message(call.<span class="hljs-built_in">id</span>, result))<br></code></pre>
-<p>这只是示意，真实协议里的终止方式、并行调用、预算与异常处理会复杂一些。但最核心的步骤就是 <strong>query → execute → observation → query</strong>。<code>mini-swe-agent</code> 把这个循环写得很直接，值得对着实现看一遍：初始化 system / user 消息，然后不断 <code>step()</code>；<code>step()</code> 先查询模型，再执行动作、追加结果。原来 Agent 的神秘感有一半来自我们没打开源码）</p>
+<p>真实协议里的终止方式、并行调用、预算与异常处理肯定比这个会复杂一些，但最核心的步骤就是 <strong>query → execute → observation → query</strong>。<code>mini-swe-agent</code> 把这个循环写得很直接，值得对着实现看一遍：首先，初始化 system / user 消息，然后不断 <code>step()</code>；<code>step()</code> 里面先查询模型，再执行动作、追加结果。原来 Agent 的神秘感有一半来自我们没打开源码）</p>
 <p>ReAct 所强调的 reasoning 与 acting 交替进行，也可以放到这个循环里理解。模型不必一次把所有步骤猜完，而是采取动作、获取新信息，再决定下一步。History 则把此前的决策与观察带进当前上下文。</p>
 <p><img src="agent-loop.png" alt="ReAct 的模型、动作与环境反馈循环" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="agent-loop.png" class="lozad post-image"></p>
 <p>实际检查轨迹时，可以沿 system 指令、用户 issue、assistant 动作、tool 返回与错误逐步读下去。比如仓库 issue 指出某个参数没有生效，模型接下来究竟复现了问题，还是直接猜了一处修改，这些都藏在中间轨迹里。把它展开以后，所谓「Agent 修好了」就变成了一串可以检查的决定。</p>
@@ -462,11 +461,10 @@
 </tbody>
 </table>
 <p>我自己还想把 <strong>Intention Understanding</strong> 放得更靠前一些。用户一句「帮我整理一下」可能包含很多没明说的期待：改文件还是只给建议？只是分类，还是允许删除？模型对用户意图理解错了，后面工具调用再准确也只是在高效地做错事。这个问题与指令理解、权限边界和任务成功判定都有关系。</p>
-<p>环境理解也值得单独强调。同一个模型会写 Python，不代表它就会用 Blender；会读 HTML，也不等于能只凭截图准确操作所有界面。需要让模型理解 observation 的形状、动作的含义，以及动作产生怎样的后果。领域数据与真实交互都在补这件事。</p>
 <h2 id="15-改模型还是改-harness"><a class="markdownIt-Anchor" href="#15-改模型还是改-harness"></a> 1.5 改模型，还是改 Harness？</h2>
-<p>这大概是本讲对我最有用的区分。提高 Agent 能力有两条路：一条是改变模型参数，把行为学进 policy；另一条是改变它周围的系统，让它在更好的信息与控制流程下工作。</p>
-<p>训练大致经过预训练、继续预训练 / mid-training、SFT、RL 等阶段。预训练提供语言、代码和世界知识；mid-training 可以继续补领域分布、长序列和相关数据，SFT 则直接学习指令及轨迹中的示范行为；RL 根据结果或偏好调整策略。<strong>mid-training 与 SFT 不是同一个目标函数</strong>，虽然在整个 pipeline 中都可能承担「从通用基模走向 Agent」的过渡作用。</p>
-<p>Harness engineering 则通过 prompts、tools、memory 和 control flow 来提供能力。比如长任务记不住约束，可以先把约束保存在可靠的任务状态里；工具格式偶尔错，可以先校验、约束解码或反馈错误。没必要每遇到一个问题就立刻 train 一发，训练成本又不会因为你很着急就自动消失。</p>
+<p>这感觉是 lecture 最有意思的部分，宏观地讲了提高 agent 能力的两条路线：一条是改变模型参数，把行为学进 policy；另一条是改变它周围的系统，让它在更好的信息与控制流程下工作。</p>
+<p>训练大致经过预训练、继续预训练 / mid-training、SFT、RL 等阶段。预训练提供语言、代码和世界知识；mid-training 可以继续补领域分布、长序列和相关数据，SFT 则直接学习指令及轨迹中的示范行为；RL 根据结果或偏好调整策略。mid-training 与 SFT 不是同一个目标函数，虽然在整个 pipeline 中都承担了「从通用基模走向 Agent」的过渡作用。</p>
+<p>Harness engineering 则通过 prompts、tools、memory 和 control flow 来提供能力。比如长任务记不住约束，可以先把约束保存在可靠的任务状态里；工具格式偶尔错，可以先校验、约束解码或反馈错误。没必要每遇到个问题就 train 一发，训练成本不会因为你很急就消失，有时候改个 harness 就能解决很多事。</p>
 <p><img src="model-and-harness.png" alt="模型训练与 Harness engineering 的两条改进路径" / srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="model-and-harness.png" class="lozad post-image"></p>
 <p>但反过来，有些行为也不能靠外部流程彻底补上。模型如果一直看不懂某类界面，或者无法根据观察选择正确动作，再精美的工具描述也有上限。我的理解是：<strong>先判断问题落在哪一层，再决定改哪一层。</strong> Harness 可以帮助暴露模型能力，也可以掩盖模型弱点，评估时尤其要把两者一起考虑。</p>
 <h2 id="16-一个-agent-系统还有什么"><a class="markdownIt-Anchor" href="#16-一个-agent-系统还有什么"></a> 1.6 一个 Agent 系统还有什么？</h2>
@@ -475,11 +473,9 @@
 <p><strong>Sandbox</strong> 负责隔离执行，限制文件、网络与计算资源，也提供可复现环境。跑 SWE-bench 一类任务时，仓库版本、依赖、测试命令都要固定；否则一次通过、一次失败，究竟是模型变化还是环境变化都说不清。Docker、Apptainer 或托管执行环境，都在处理这层问题。</p>
 <p><strong>Inference serving</strong> 负责可靠地生成：请求调度、batching、流式输出、并行与 KV Cache 复用。Agent 的上下文会反复增长，推理服务效率直接影响它能不能承担长任务。vLLM、SGLang 是这一层的典型系统；它们和 Agent 的任务规划不是同一层工作，但最终延迟会一起算到用户头上。</p>
 <p><strong>Training system</strong> 负责数据准备、rollout 收集、分布式 worker、奖励计算、参数更新、checkpoint 和评估。SkyRL、Miles 等框架把这些工作组织起来。训练 Agent 难的也不只是 loss 怎么写，还包括许多环境如何同时跑、失败任务如何回收、数据如何保持可追踪。</p>
-<p><strong>Observability</strong> 则记录完整 trace 与指标：调用了什么工具、哪一步失败、用了多少 token、时间花在哪里、结果是否正确。只留一个「success=True」很方便，也基本解释不了问题。Laminar、MLflow 这类系统可以辅助观察，但首先得知道自己要记录什么。</p>
 <h2 id="17-从做出来走到说清楚"><a class="markdownIt-Anchor" href="#17-从做出来走到说清楚"></a> 1.7 从「做出来」走到「说清楚」</h2>
-<p>这门课还要你自己实现 Harness，再设计多步任务的 evaluation，最后训练并分析行为变化。能演示成功当然很好，但 demo 往往只展示最顺利的一条轨迹；真正的证据还要看失败模式、成本、稳定性与权限约束。</p>
-<p>比如诊断线上故障、发营销邮件、提交报税和调整用药，即便都能写成一串工具调用，允许自主执行的程度也完全不同。模型具备能力，只回答了「做不做得到」；系统还要回答「当前是否被授权、结果如何确认、出了错怎样恢复」。</p>
-<p>目前先记住最基本的一点：Agent 是模型与环境持续交互的系统。后面学习 Tools、Context、Memory 和 Planning 时，我更关心的是它们分别改变了这个循环的哪一部分，以及最后怎样证明真的变好了。以及这篇博客以及后续博客其实是ai看我的笔记之后写的，感觉有点唐氏，但是意思就是这些个意思。</p>
+<p>这门课还要你自己实现 Harness，再设计多步任务的 evaluation，最后训练并分析行为变化。能演示成功当然很好，但 demo 往往只展示最顺利的一条轨迹；真正的证据还要看失败模式、成本、稳定性与权限约束。比如诊断线上故障、发营销邮件、提交报税和调整用药，即便都能写成一串工具调用，允许自主执行的程度也完全不同。模型具备能力，只回答了「做不做得到」；系统还要回答「当前是否被授权、结果如何确认、出了错怎样恢复」。</p>
+<p>目前先记住最基本的一点：Agent 是模型与环境持续交互的系统。后面学习 Tools、Context、Memory 和 Planning 时，我更关心的是它们分别改变了这个循环的哪一部分，以及最后怎样证明真的变好了。这篇博客以及后续博客其实是ai看我的笔记之后写的，感觉有点唐氏，但是意思就是这些个意思）我也会看一遍，把一些突兀的部分修一修，给大家一个流畅的观看体验。</p>
 
   </div>
   <div>
@@ -730,12 +726,6 @@
   <div class="tags-list">
     
       <a 
-        href="/blog/tags/%E9%9A%8F%E7%AC%94/" 
-        title="随笔">
-        <div class="tags-list-item">随笔</div>
-      </a>
-    
-      <a 
         href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" 
         title="计算机组成原理">
         <div class="tags-list-item">计算机组成原理</div>
@@ -748,39 +738,15 @@
       </a>
     
       <a 
-        href="/blog/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" 
-        title="博弈论">
-        <div class="tags-list-item">博弈论</div>
+        href="/blog/tags/AI-Agents/" 
+        title="AI Agents">
+        <div class="tags-list-item">AI Agents</div>
       </a>
     
       <a 
-        href="/blog/tags/NLP/" 
-        title="NLP">
-        <div class="tags-list-item">NLP</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E6%97%A5%E9%BA%BB/" 
-        title="日麻">
-        <div class="tags-list-item">日麻</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
-        title="线性基">
-        <div class="tags-list-item">线性基</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
-        title="强连通分量">
-        <div class="tags-list-item">强连通分量</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
-        title="推荐系统">
-        <div class="tags-list-item">推荐系统</div>
+        href="/blog/tags/%E9%9A%8F%E7%AC%94/" 
+        title="随笔">
+        <div class="tags-list-item">随笔</div>
       </a>
     
       <a 
@@ -790,21 +756,9 @@
       </a>
     
       <a 
-        href="/blog/tags/AI-Agents/" 
-        title="AI Agents">
-        <div class="tags-list-item">AI Agents</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
-        title="多项式">
-        <div class="tags-list-item">多项式</div>
-      </a>
-    
-      <a 
-        href="/blog/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
-        title="情感计算">
-        <div class="tags-list-item">情感计算</div>
+        href="/blog/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
       </a>
     
       <a 
@@ -814,15 +768,57 @@
       </a>
     
       <a 
-        href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
-        title="分布式">
-        <div class="tags-list-item">分布式</div>
+        href="/blog/tags/%E6%97%A5%E9%BA%BB/" 
+        title="日麻">
+        <div class="tags-list-item">日麻</div>
       </a>
     
       <a 
         href="/blog/tags/%E6%80%9D%E8%80%83/" 
         title="思考">
         <div class="tags-list-item">思考</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" 
+        title="字符串">
+        <div class="tags-list-item">字符串</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" 
+        title="分布式">
+        <div class="tags-list-item">分布式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97/" 
+        title="情感计算">
+        <div class="tags-list-item">情感计算</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%A4%9A%E9%A1%B9%E5%BC%8F/" 
+        title="多项式">
+        <div class="tags-list-item">多项式</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" 
+        title="推荐系统">
+        <div class="tags-list-item">推荐系统</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F/" 
+        title="强连通分量">
+        <div class="tags-list-item">强连通分量</div>
+      </a>
+    
+      <a 
+        href="/blog/tags/%E7%BA%BF%E6%80%A7%E5%9F%BA/" 
+        title="线性基">
+        <div class="tags-list-item">线性基</div>
       </a>
     
   </div>
